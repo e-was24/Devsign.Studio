@@ -1,5 +1,5 @@
 import React from 'react';
-import './MicroController.css';
+import './microController.css';
 import Loading from '../components/Loader';
 
 function MicroController() {
