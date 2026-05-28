@@ -1,0 +1,10 @@
+[
+  {
+    "id": 1,
+    "name": "Premium T-Shirt",
+    "price": "Rp 150.000",
+    "category": "Clothing",
+    "img": "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500",
+    "inStock": true
+  }
+]

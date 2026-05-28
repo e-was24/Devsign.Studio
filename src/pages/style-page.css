@@ -1,0 +1,605 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+:root {
+    --border: #6e6e6e;
+    --html: #F16529;
+    --css: #264DE4;
+    --js: #F0DB4F;
+    --react: #61DBFB;
+    --php: #777BB3;
+    --nodeJs: #68A063;
+    --code: #888888;
+    --figma-purple: #A259FF;
+    --git: #F05032;
+    --github: #333333;
+    --bootstrap: #563d7c;
+}
+
+*,
+html {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.layout {
+    position: relative;
+    max-width: 476px;
+    margin: 0 auto;
+    border: 1px solid var(--border);
+    height: 100svh;
+    font-size: .9em;
+    text-align: center;
+    padding: 16px 0;
+    overflow-y: scroll;
+}
+
+
+
+.layout .headers {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    padding: 16px 0;
+    margin: 0 16px;
+}
+
+.layout .headers .profile {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background-image: url('../assets/elan-portfolio-img.png');
+    background-position: center;
+    background-size: cover;
+    border: 2px solid white;
+}
+
+.layout .headers .profile .code {
+    position: absolute;
+    top: -1rem;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.layout .headers .title {
+    font-family: 'montserrat', sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: 1.5em;
+    background-image: url('../assets/background-awan.jpg');
+    background-position: center;
+    background-size: cover;
+    background-clip: text;
+    background-attachment: fixed;
+    -webkit-background-clip: text;
+    color: transparent;
+    opacity: .8;
+}
+
+.layout .headers .subtitle {
+    font-family: 'montserrat', sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: .8em;
+    color: #3b4c5e;
+    border-bottom: 2px solid #81818154;
+}
+
+.layout .headers .desCover {
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    flex-direction: column;
+    background: #1e1f27;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 5px 5px 0px #81818154;
+    margin-top: 2rem;
+    animation: UpDownLoop 3s ease-in-out infinite;
+    width: 100%;
+}
+
+@keyframes UpDownLoop {
+    0% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+
+}
+
+.layout .headers .desCover .deskrip {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'lato', sans-serif;
+    color: #494949;
+}
+
+.layout .headers .desCover .deskrip .code {
+    color: var(--code);
+}
+
+.layout .headers .desCover .deskrip .html {
+    color: var(--html);
+}
+
+.layout .headers .desCover .deskrip .tailwind-css,
+.layout .headers .desCover .deskrip .css {
+    color: var(--css);
+}
+
+.layout .headers .desCover .deskrip .react {
+    color: var(--react);
+}
+
+.layout .headers .desCover .deskrip .js {
+    color: var(--js);
+}
+
+.layout .headers .desCover .deskrip .node-js {
+    color: var(--nodeJs);
+}
+
+.layout .headers .desCover .deskrip .php {
+    color: var(--php);
+}
+
+.layout .headers .desCover .deskrip .figma {
+    color: var(--figma-purple);
+}
+
+.layout .headers .desCover .deskrip .bootstrap {
+    color: var(--bootstrap);
+}
+
+.layout .headers .desCover .deskrip .vscode {
+    width: 16px;
+    height: 16px;
+    background-image: url('../assets/icon/visual-studio-code-icons/vscode.png');
+    background-position: center;
+    background-size: cover;
+}
+.layout .headers .desCover .deskrip .typescript {
+    width: 16px;
+    height: 16px;
+    background-image: url('../assets/icon/typescript-icon.png');
+    background-position: center;
+    background-size: cover;
+}
+
+.layout .headers .desCover .deskrip .nextJs {
+    width: 16px;
+    height: 16px;
+    background-image: url('../assets/icon/nextJs-icon.png');
+    background-position: center;
+    background-size: cover;
+    filter: drop-shadow(0 0 1px white);
+}
+
+.layout .headers .desCover .deskrip .PSQL {
+    width: 16px;
+    height: 16px;
+    background-image: url('../assets/icon/PSQL-icon.png');
+    background-position: center;
+    background-size: cover;
+}
+
+.layout .headers .desCover .deskrip .git {
+    color: var(--git);
+}
+
+.layout .headers .desCover .deskrip .github {
+    color: var(--github);
+}
+
+/* ==========================================================================
+   KONTEN UTAMA RAK (CONTAINER & GRID)
+   ========================================================================== */
+
+.rack-container {
+    margin: 2rem 1rem;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #1b1c24;
+    /* Background luar tetap gelap */
+}
+
+/* Kontainer utama untuk rak */
+.rack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    /* Jarak antar project item */
+    justify-content: center;
+    /* Membuat item rapi di tengah */
+    padding: 20px;
+}
+
+/* PERBAIKAN UTAMA: Memaksa judul untuk memakan 100% lebar agar kartu turun ke bawahnya */
+
+.text-border {
+    width: 100%;
+    text-align: center;
+    /* Mengetengahkan judul proyek */
+    font-family: 'montserrat', sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: 1.5em;
+    color: white;
+    margin-bottom: 20px;
+}
+
+/* ==========================================================================
+   KARTU PER PROJECT ITEM
+   ========================================================================== */
+.rack-item {
+    position: relative;
+    /* WAJIB ditambahkan agar .status-badge posisinya absolut terhadap kartu ini */
+    background: #1e1f27;
+    /* Background kartu proyek */
+    border-radius: 12px;
+    padding: 16px;
+    width: 300px;
+    /* Lebar standar kotak project */
+    box-shadow: 5px 5px 1px #2e2d2d;
+    /* Style brutalist shadow milikmu */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    border: 1px solid #2e2d2d;
+    padding-top: 55px;
+    /* Ruang di atas agar h3 tidak menabrak status-badge */
+}
+
+/* Efek sedikit terangkat saat kursor diarahkan ke kotak */
+.rack-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 7px 7px 1px #3e3d3d;
+    /* Mempertegas bayangan saat di-hover */
+}
+
+.rack-item h3 {
+    margin-bottom: 12px;
+    font-family: sans-serif;
+    color: whitesmoke;
+}
+
+/* Wadah gambar thumbnail */
+.rack-item .thumbnail {
+    width: 100%;
+    /* Mengikuti lebar rack-item */
+    height: 150px;
+    /* Tinggi gambar pas */
+    border-radius: 8px;
+    margin-bottom: 16px;
+    filter: brightness(80%);
+
+    /* Pengaturan agar inline-style background-image muncul dengan rapi */
+    background-size: cover;
+    /* Diubah ke cover agar gambar penuh dan tidak menyisakan ruang kosong di kiri-kanan */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #2e2d2d;
+    /* Diubah ke gelap agar senada dengan tema jika gambar gagal load */
+}
+
+/* ==========================================================================
+   IKON TEKNOLOGI (TAMBAHAN BIAR SELALU MUNCUL RAPI)
+   ========================================================================== */
+.project-tech-icons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+    font-size: 1.25rem;
+    width: 100%;
+}
+
+/* Warna Ikon Teknologi */
+.html {
+    color: #E34F26;
+}
+
+.css {
+    color: #1572B6;
+}
+
+.js {
+    color: #F7DF1E;
+}
+
+.php {
+    color: #777BB4;
+}
+
+.node-js {
+    color: #339933;
+}
+
+.react {
+    color: #61DAFB;
+}
+
+.bootstrap {
+    color: #7952B3;
+}
+
+.figma {
+    color: #F24E1E;
+}
+
+.git {
+    color: #F05032;
+}
+
+.github {
+    color: #ffffff;
+}
+
+.typescript {
+    color: #3178c6;
+}
+
+/* Diubah ke putih agar terlihat di background gelap */
+
+/* Ikon Kustom */
+.icon-nextjs,
+.icon-psql,
+.icon-typescript,
+.icon-vscode {
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.icon-nextjs {
+    background-image: url('../assets/icon/nextJs-icon.png');
+    filter: brightness(0) invert(1);
+}
+
+/* Filter agar logonya jadi putih */
+.icon-psql {
+    background-image: url('../assets/icon/PSQL-icon.png');
+}
+
+.icon-typescript {
+    background-image: url('../assets/icon/typescript.png');
+}
+
+.icon-vscode {
+    background-image: url('../assets/icon/visual-studio-code-icons/vscode.png');
+}
+
+
+/* ==========================================================================
+   STYLING TOMBOL
+   ========================================================================== */
+.btn-item {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    background-color: #2563eb;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: auto;
+    /* Memaksa tombol selalu berada di paling bawah kartu */
+}
+
+.btn-item:hover {
+    background-color: #1d4ed8;
+}
+
+.btn-item a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    height: 100%;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   STATUS BADGE
+   ========================================================================== */
+.status-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 0.6rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 4px 8px;
+    border-radius: 20px;
+}
+
+/* Variasi Warna Berdasarkan Isi Status */
+.status-badge.production {
+    background-color: #dcfce7;
+    color: #15803d;
+}
+
+.status-badge.on-progress,
+.status-badge.development {
+    background-color: #fef9c3;
+    color: #a16207;
+}
+
+.status-badge.maintenance {
+    background-color: #dbeafe;
+    color: #1d4ed8;
+}
+
+.status-badge.build {
+    background-color: #f3f4f6;
+    color: #374151;
+}
+
+
+/* ==========================================================================
+   STYLING FOOTER (DARK THEME & BRUTALIST ALIGNMENT)
+   ========================================================================== */
+
+.footer-container {
+    background: #1b1c24;
+    border-top: 1px solid #2e2d2d;
+    padding: 3rem 2rem 1.5rem 2rem;
+    font-family: 'lato', sans-serif;
+    color: whitesmoke;
+    margin-top: 4rem;
+}
+
+.footer-content {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+/* 1. Brand Section */
+.footer-brand {
+    flex: 1;
+    min-width: 250px;
+}
+
+.footer-brand h2 {
+    font-family: 'montserrat', sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: 1.6rem;
+    color: white;
+    margin-bottom: 12px;
+}
+
+.footer-brand h2 span {
+    font-size: 0.8em;
+    font-weight: 300;
+}
+
+.footer-brand p {
+    color: #818181;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    max-width: 320px;
+}
+
+/* 2. Links Section */
+.footer-links {
+    min-width: 150px;
+}
+
+.footer-links h3, .footer-socials h3 {
+    font-family: 'montserrat', sans-serif;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: white;
+    margin-bottom: 15px;
+}
+
+.footer-links ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links ul li {
+    margin-bottom: 10px;
+}
+
+.footer-links ul li a {
+    color: #818181;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s ease, padding-left 0.2s ease;
+}
+
+/* Efek geser sedikit saat link navigasi di-hover */
+.footer-links ul li a:hover {
+    color: #2563eb; /* Warna biru modern samakan dengan tombolmu */
+    padding-left: 4px;
+}
+
+/* 3. Socials Section */
+.footer-socials {
+    min-width: 200px;
+}
+
+.social-icons {
+    display: flex;
+    gap: 15px;
+}
+
+.social-icons a {
+    color: whitesmoke;
+    background: #1e1f27;
+    border: 1px solid #2e2d2d;
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    box-shadow: 3px 3px 0px #2e2d2d; /* Efek brutalist shadow tipis */
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    text-decoration: none;
+}
+
+/* Efek interaktif tombol sosial media */
+.social-icons a:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px #2563eb;
+    background: #14151a;
+    color: #2563eb;
+}
+
+/* 4. Bottom Copyright Section */
+.footer-bottom {
+    max-width: 1100px;
+    margin: 3rem auto 0 auto;
+    padding-top: 1.5rem;
+    border-top: 1px solid #2e2d2d;
+    text-align: center;
+}
+
+.footer-bottom p {
+    color: #555555;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+}
+
+/* Responsif untuk layar HP kecil */
+@media (max-width: 600px) {
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .footer-brand p {
+        margin: 0 auto;
+    }
+
+    .social-icons {
+        justify-content: center;
+    }
+}

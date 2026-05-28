@@ -1,0 +1,175 @@
+/* ==========================================================================
+   KONTEN UTAMA & STRUKTUR HALAMAN (DARK MODE)
+   ========================================================================== */
+
+.rack-container-microC {
+    margin: 0 16px;
+    min-height: 50vh;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: #1b1c24;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+}
+
+.microC {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    padding: 16px 0;
+    margin: 0 16px;
+    max-width: 476;
+}
+
+/* CONTAINER UTAMA: Pembungkus Tech Stack yang Melayang */
+.microC .desCover-microController {
+    flex-direction: column;
+    background: #1e1f27;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 5px 5px 0px #81818154;
+    margin-top: 2rem;
+    margin: 0 16px 2rem 16px;
+    width: 100%;
+    animation: UpDownLoop 3s ease-in-out infinite;
+}
+
+/* ANIMASI MELAYANG (LOOPING EFFECT) */
+@keyframes UpDownLoop {
+    0% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-6px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+/* ==========================================================================
+   BARIS DESKRIPSI & TEKS
+   ========================================================================== */
+
+.microC .desCover-microController .deskrip {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    font-family: 'lato', sans-serif;
+    color: #494949;
+    margin: 0 auto;
+}
+
+/* Kategori Label (Language, Tools, dll) */
+.category-label {
+    font-family: 'montserrat', sans-serif;
+    letter-spacing: 0.5px;
+}
+
+/* Teks Utama Nama Teknologi */
+.tech-text {
+    font-family: 'lato', sans-serif;
+    font-weight: 500;
+}
+
+/* ==========================================================================
+   COLOR STYLING FOR MICROCONTROLLER & IOT TECH STACK
+   ========================================================================== */
+
+/* 1. BAHASA PEMROGRAMAN */
+.microC .desCover-microController .deskrip .c-lang {
+    color: #A8B9CC;
+    /* Abu-abu kebiruan khas bahasa C */
+}
+
+.microC .desCover-microController .deskrip .python {
+    color: #3776AB;
+    /* Biru MicroPython */
+}
+
+.microC .desCover-microController .deskrip .rust {
+    color: #CE412B;
+    /* Oranye kemerahan khas Rust */
+}
+
+/* 2. RUNTIME ENVIRONMENT & PROTOKOL JARINGAN */
+.microC .desCover-microController .deskrip .arduino {
+    color: #00979D;
+    /* Toska khas Arduino */
+}
+
+.microC .desCover-microController .deskrip .mqtt {
+    color: #3C525C;
+    /* Warna gelap khas MQTT */
+}
+
+.microC .desCover-microController .deskrip .wifi {
+    color: #1D4ED8;
+    /* Biru internet untuk Rest API */
+}
+
+/* 3. TOOLS PENDUKUNG */
+.microC .desCover-microController .deskrip .git {
+    color: #F05032;
+    /* Merah oranye khas Git */
+}
+
+/* 4. BASIS DATA */
+.microC .desCover-microController .deskrip .influxdb {
+    color: #22ADF6;
+    /* Biru muda cerah khas InfluxDB */
+}
+
+.microC .desCover-microController .deskrip .firebase {
+    color: #FFCA28;
+    /* Kuning/Emas khas Firebase */
+}
+
+/* ==========================================================================
+   IKON KUSTOM (MENGGUNAKAN GAMBAR LOKAL)
+   ========================================================================== */
+
+.microC .desCover-microController .deskrip .icon-platformio {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    /* Wajib ada agar span mengenali ukuran */
+    background-image: url('../assets/icon/PIO.png');
+    background-position: center;
+    background-size: cover;
+    vertical-align: middle;
+}
+
+.microC .desCover-microController .deskrip .cpp {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    /* Wajib ada agar span mengenali ukuran */
+    background-image: url('../assets/icon/cpp.png');
+    background-position: center;
+    background-size: cover;
+    vertical-align: middle;
+}
+
+/* Pengaman tambahan untuk semua icon fontAwesome agar posisinya sejajar di tengah */
+.microC .desCover-microController .deskrip i {
+    font-size: 1.1rem;
+    vertical-align: middle;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ==========================================================================
+   STYLING LOADING AREA (SHOWCASE IOT)
+   ========================================================================= */
+
+.rack-container-microC .iot-loading-wrapper .loading-cover {
+    margin: 0 auto;
+}

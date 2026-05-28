@@ -1,0 +1,174 @@
+/* ==========================================================================
+   HALAMAN UTAMA SHOP
+   ========================================================================== */
+.shop-container {
+    padding: 60px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #fafafa;
+    min-height: 100vh;
+}
+
+.shop-title {
+    font-size: 2.8rem;
+    font-weight: 800;
+    margin-bottom: 40px;
+    color: #1e2229;
+    letter-spacing: -1px;
+}
+
+.shop-title span {
+    font-size: 0.75em;
+    font-weight: 300;
+    color: #888;
+    margin-right: 8px;
+}
+
+/* ==========================================================================
+   GRID LAYOUT (Otomatis Susun Kolom Sesuai Lebar Layar)
+   ========================================================================== */
+.product-grid {
+    display: grid;
+    /* Membuat kolom otomatis minimal lebar 260px, sisa ruang dibagi rata */
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 30px;
+}
+
+/* ==========================================================================
+   KARTU PRODUK (Product Card)
+   ========================================================================== */
+.product-card {
+    background: #ffffff;
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+    border: 1px solid #f0f0f0;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Efek Hover Mengambang & Bayangan Lebih Tebal */
+.product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    border-color: #e0e0e0;
+}
+
+/* ==========================================================================
+   BADGE STATUS STOK
+   ========================================================================== */
+.stock-badge {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    z-index: 2;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.stock-badge.in-stock {
+    background-color: #e6f4ea;
+    color: #137333;
+}
+
+.stock-badge.out-of-stock {
+    background-color: #fce8e6;
+    color: #c5221f;
+}
+
+/* ==========================================================================
+   GAMBAR PRODUK
+   ========================================================================== */
+.product-image {
+    height: 240px;
+    background-size: cover;
+    background-position: center;
+    background-color: #f5f6fa;
+    transition: transform 0.5s ease;
+}
+
+/* Efek Zoom Halus Gambar saat Kartu di-hover */
+.product-card:hover .product-image {
+    transform: scale(1.03);
+}
+
+/* ==========================================================================
+   DETAIL KONTEN (Teks & Harga)
+   ========================================================================== */
+.product-details {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Mendorong tombol beli agar selalu sejajar di paling bawah */
+}
+
+.product-category {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #a0a5b5;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+}
+
+.product-details h3 {
+    margin: 0 0 12px 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2d3436;
+    line-height: 1.4;
+}
+
+.product-price {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #ff4757; /* Warna merah modern untuk harga */
+    margin: auto 0 0 0; /* Menaruh harga pas di atas tombol */
+}
+
+/* ==========================================================================
+   TOMBOL BELI (Button)
+   ========================================================================== */
+.btn-buy {
+    margin: 0 20px 20px 20px;
+    padding: 14px;
+    border: none;
+    background-color: #1e2229; /* Hitam pekat modern */
+    color: #ffffff;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Efek Hover Tombol */
+.btn-buy:hover:not(:disabled) {
+    background-color: #ff4757; /* Berubah jadi merah saat diarahkan mouse */
+    box-shadow: 0 8px 15px rgba(255, 71, 87, 0.3);
+}
+
+/* Efek saat Tombol Diklik */
+.btn-buy:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+/* Gaya Tombol saat Stok Habis (Disabled) */
+.btn-buy:disabled {
+    background-color: #e0e0e0;
+    color: #a0a0a0;
+    cursor: not-allowed;
+    box-shadow: none;
+}
