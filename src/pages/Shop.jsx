@@ -7,25 +7,37 @@ function Shop() {
     const [paymentStatus, setPaymentStatus] = useState({});
     const [loadingProductId, setLoadingProductId] = useState(null);
     const [downloadUrl, setDownloadUrl] = useState({});
+    const [customerEmail, setCustomerEmail] = useState('');
 
     // API Key Pakasir (Disarankan ditaruh di file .env)
     const PAKKASIR_API_KEY = import.meta.env.VITE_PAKKASIR_API_KEY; 
 
     // Fungsi untuk membuat tagihan ke Pakasir
     const handleBayar = async (product) => {
+        if (!customerEmail) {
+            alert("Silakan masukkan email Anda terlebih dahulu.");
+            return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(customerEmail)) {
+            alert("Silakan masukkan format email yang valid.");
+            return;
+        }
+
         setLoadingProductId(product.id);
         
         try {
             // Membuka transaksi langsung ke API Pakasir sesuai dokumentasi
-            const response = await fetch(`https://api.pakasir.com/v1/status/${product.pakasir_slug}`, {
+            // Domain diubah dari api.pakasir.com ke app.pakasir.com untuk memperbaiki ERR_NAME_NOT_RESOLVED
+            const response = await fetch(`https://app.pakasir.com/api/v1/status/${product.pakasir_slug}`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${PAKKASIR_API_KEY}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    // Kamu bisa memasukkan email pembeli jika ada formnya nanti
-                    customer_email: "buyer@example.com", 
+                    customer_email: customerEmail, 
                     reference_id: `ORDER-${product.id}-${Date.now()}` // ID Unik Transaksi
                 })
             });
@@ -81,6 +93,19 @@ function Shop() {
         <div className="shop-container">
             <h1 className="shop-title"><span>Digital</span> Shop.</h1>
             
+            <div className="email-input-container">
+                <label htmlFor="customer-email">Email Pengiriman:</label>
+                <input 
+                    id="customer-email"
+                    type="email" 
+                    placeholder="Masukkan email untuk menerima link download..." 
+                    value={customerEmail}
+                    onChange={(e) => setCustomerEmail(e.target.value)}
+                    className="email-field"
+                />
+                <p className="email-helper">File akan dikirimkan ke email ini setelah pembayaran lunas.</p>
+            </div>
+
             <div className="product-grid">
                 {products.map((product) => {
                     const status = paymentStatus[product.id];
