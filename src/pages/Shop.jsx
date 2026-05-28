@@ -12,7 +12,7 @@ function Shop() {
     // API Key Pakasir (Disarankan ditaruh di file .env)
     const PAKKASIR_API_KEY = import.meta.env.VITE_PAKKASIR_API_KEY; 
 
-    // Fungsi untuk membuat tagihan ke Pakasir
+    // Fungsi untuk membuat tagihan ke Pakasir via Backend Proxy
     const handleBayar = async (product) => {
         if (!customerEmail) {
             alert("Silakan masukkan email Anda terlebih dahulu.");
@@ -28,37 +28,31 @@ function Shop() {
         setLoadingProductId(product.id);
         
         try {
-            // Membuka transaksi langsung ke API Pakasir sesuai dokumentasi
-            // Domain diubah dari api.pakasir.com ke app.pakasir.com untuk memperbaiki ERR_NAME_NOT_RESOLVED
-            const response = await fetch(`https://app.pakasir.com/api/v1/status/${product.pakasir_slug}`, {
+            // Memanggil API lokal kita (Serverless Function) untuk menghindari CORS
+            const response = await fetch(`/api/create-payment`, {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${PAKKASIR_API_KEY}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
+                    pakasir_slug: product.pakasir_slug,
                     customer_email: customerEmail, 
-                    reference_id: `ORDER-${product.id}-${Date.now()}` // ID Unik Transaksi
+                    reference_id: `ORDER-${product.id}-${Date.now()}`
                 })
             });
 
             const data = await response.json();
 
             if (data.success && data.payment_url) {
-                // Catat di aplikasi bahwa user sedang proses membayar
                 setPaymentStatus(prev => ({ ...prev, [product.id]: 'pending' }));
-                
-                // Buka halaman pembayaran Pakasir di tab baru
                 window.open(data.payment_url, '_blank');
-
-                // Mulai cek status pembayaran secara berkala (Polling setiap 5 detik)
-                mulaiCekStatusBerkala(product.id, data.invoice_id);
+                mulaiCekStatusBerkala(product.id, data.invoice_id || data.data?.invoice_id);
             } else {
-                alert("Gagal membuat pembayaran. Cek konfigurasi API/Slug kamu.");
+                alert("Gagal membuat pembayaran. Cek log server atau konfigurasi slug.");
             }
         } catch (error) {
             console.error("Error:", error);
-            alert("Terjadi kesalahan koneksi.");
+            alert("Terjadi kesalahan koneksi ke server.");
         } finally {
             setLoadingProductId(null);
         }
