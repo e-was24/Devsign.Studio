@@ -33,7 +33,7 @@ function Footer() {
                         <a href="https://github.com/e-was24" target="_blank" rel="noopener noreferrer" title="GitHub">
                             <i className="fa-brands fa-github"></i>
                         </a>
-                        <a href="https://wa.me/6281227347103" target="_blank" rel="noopener noreferrer" title="Whatsapp">
+                        <a href="https://wa.me/6288740007150" target="_blank" rel="noopener noreferrer" title="Whatsapp">
                             <i className="fa-brands fa-whatsapp"></i>
                         </a>
                         <a href="https://www.instagram.com/qnsis__?igsh=MXhva2JyaHdyZGp2Ng==" target="_blank" rel="noopener noreferrer" title="Instagram">
