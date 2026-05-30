@@ -1,7 +1,8 @@
 import './style-page.css';
 import Rack from './Rack';
 import MicroController from './MicroController';
-import Specialbutton from '../components/SpecialButton'
+import Specialbutton from '../components/SpecialButton';
+import Certification from './Certification';
 import Footer from './Footer';
 
 function Home() {
@@ -89,6 +90,10 @@ function Home() {
             <div className="rack-container-microC">
                 <MicroController />
             </div>
+            {/* <h1 className='text-border'><span style={{fontSize: '.8em', fontWeight: '100'}}>My</span>Certification &nbsp;<i className="fa-brands fa-google"></i> &nbsp; <span style={{fontSize: '.8em', fontWeight: '100'}}>|</span> &nbsp; <i className="fa-brands fa-aws"></i></h1>
+            <div className="rack-container-certification">
+                <Certification />
+            </div> */}
             <Footer />
         </div>
     );

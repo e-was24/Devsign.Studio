@@ -30,7 +30,7 @@ function Footer() {
                 <div className="footer-socials">
                     <h3>Hubungi Saya</h3>
                     <div className="social-icons">
-                        <a href="https://github.com/" target="_blank" rel="noopener noreferrer" title="GitHub">
+                        <a href="https://github.com/e-was24" target="_blank" rel="noopener noreferrer" title="GitHub">
                             <i className="fa-brands fa-github"></i>
                         </a>
                         <a href="https://linkedin.com/" target="_blank" rel="noopener noreferrer" title="LinkedIn">
@@ -39,7 +39,7 @@ function Footer() {
                         <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer" title="Instagram">
                             <i className="fa-brands fa-instagram"></i>
                         </a>
-                        <a href="mailto:emailmu@gmail.com" title="Email">
+                        <a href="mailto:satriaelan5@gmail.com" title="Email">
                             <i className="fa-solid fa-envelope"></i>
                         </a>
                     </div>
