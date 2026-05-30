@@ -63,6 +63,7 @@ si=QP4RL5b5TMiiHus_YkQXfA" target="__blank" rel="noopener norefferrer" title="Sp
                 </div>
             </div>
             <h1 className='text-border'><span style={{ fontSize: '.8em', fontWeight: '100' }}>Web</span>Project <i className="fa-solid fa-globe"></i></h1>
+            <p style={{color: 'orangered', fontWeight: '900', fontFamily: 'poppins', opacity: '.5', fontSize: '80%', width: '400px', margin: '0 auto'}}>jangan melakukan transaksi apapun, sistem masih dalam tahap pengembangan!</p>
             <div className="rack-container">
                 <Rack />
             </div>
