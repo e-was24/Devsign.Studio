@@ -14,6 +14,15 @@ function Home() {
                 </div>
                 <h2 className="title">Elan Satria Adi Widodo</h2>
                 {/* <h3 className="subtitle">Frontend Web Developer</h3> */}
+                <div className="follow-me">
+                    <a className="followme-btn" href="https://open.spotify.com/user/31i6jtk52lkjwpcbbdxwlw7qpzoy?
+si=QP4RL5b5TMiiHus_YkQXfA" target="__blank" rel="noopener norefferrer" title="Spotify">
+                        <i className="spotify fa-brands fa-spotify"></i>
+                    </a>&nbsp; | &nbsp;
+                    <a className="followme-btn" href="https://discord.gg/WH8azjEu" target="__blank" rel="noopener norefferrer" title="Discord">
+                        <i class="discord fa-brands fa-discord"></i>
+                    </a>
+                </div>
                 <div className="special-btn-section">
                     <Specialbutton />
                 </div>
@@ -53,7 +62,7 @@ function Home() {
                     </div>
                 </div>
             </div>
-            <h1 className='text-border'><span style={{fontSize: '.8em', fontWeight: '100'}}>Web</span>Project <i className="fa-solid fa-globe"></i></h1>
+            <h1 className='text-border'><span style={{ fontSize: '.8em', fontWeight: '100' }}>Web</span>Project <i className="fa-solid fa-globe"></i></h1>
             <div className="rack-container">
                 <Rack />
             </div>
@@ -86,7 +95,7 @@ function Home() {
                     </div>
                 </div>
             </div>
-            <h1 className='text-border'><span style={{fontSize: '.8em', fontWeight: '100'}}>IoT</span>Project <i className="fa-regular fa-cloud"></i></h1>
+            <h1 className='text-border'><span style={{ fontSize: '.8em', fontWeight: '100' }}>IoT</span>Project <i className="fa-regular fa-cloud"></i></h1>
             <div className="rack-container-microC">
                 <MicroController />
             </div>
