@@ -13,7 +13,7 @@ function Home() {
                     <i className="code fa-solid fa-code"></i>
                 </div>
                 <h2 className="title">Elan Satria Adi Widodo</h2>
-                <h3 className="subtitle">Frontend Web Developer</h3>
+                {/* <h3 className="subtitle">Frontend Web Developer</h3> */}
                 <div className="special-btn-section">
                     <Specialbutton />
                 </div>
