@@ -8,66 +8,76 @@ import { useGSAP } from '@gsap/react';
 function Home() {
     const container = useRef();
     const location = useLocation();
+    
+    // Deteksi lokasi untuk perubahan tema
     const isRiska = location.pathname === '/riska';
+    const isVisitor = location.pathname === '/visitor';
 
-    // Efek untuk mengubah class di body agar background global berubah
     useEffect(() => {
+        // Logika Ganti Class di Body untuk CSS Global
         if (isRiska) {
-            document.body.classList.add('theme-riska');
+            document.body.className = 'theme-riska';
+        } else if (isVisitor) {
+            document.body.className = 'theme-visitor';
         } else {
-            document.body.classList.remove('theme-riska');
+            document.body.className = 'theme-elan';
         }
-    }, [isRiska]);
+    }, [location.pathname]);
 
-    // Gunakan useGSAP untuk keamanan dan performa
     useGSAP(() => {
-        // Animasi masuk (Fade In + Slide Up sedikit)
-        // gsap.from(".Landing-Page", {
-        //     opacity: 0,
-        //     y: 20,
-        //     duration: 0.8,
-        //     ease: "power2.out"
-        // });
-
-        // Animasi stagger untuk ikon menu agar muncul satu per satu
+        // Animasi munculnya menu Navigasi
         gsap.from(".menu-link", {
             opacity: 0,
-            scale: 0.5,
-            duration: 0.5,
-            stagger: 0.2,
-            delay: 0.3,
-            ease: "back.out(1.7)"
+            scale: 0,
+            y: -20,
+            duration: 0.6,
+            stagger: 0.1,
+            ease: "back.out(1.7)",
+            delay: 0.5
         });
-    }, { scope: container }); // Scope membatasi GSAP hanya mencari elemen di dalam ref ini
+    }, { scope: container });
 
     return (
-        <div className={`Landing-Page ${isRiska ? 'theme-riska' : ''}`} ref={container}>
-            <div className="profile-menu">
-                <NavLink 
-                    to="/elan" 
-                    className="menu-link code-link" 
-                    title="Halaman Elan"
-                >
-                    <i className="code fa-solid fa-code"></i>
-                </NavLink>
+        <div className={`Landing-Page ${isRiska ? 'theme-riska' : ''} ${isVisitor ? 'theme-visitor' : ''}`} ref={container}>
+            
+            {/* Navigasi tetap muncul kecuali kamu ingin menyembunyikannya di halaman tamu */}
+            {!isVisitor && (
+                <div className="profile-menu">
+                    <NavLink 
+                        to="/elan" 
+                        className={({ isActive }) => `menu-link code-link ${isActive ? 'active' : ''}`}
+                        title="Halaman Elan"
+                    >
+                        <i className="code fa-solid fa-code"></i>
+                    </NavLink>
 
-                <NavLink 
-                    to="/riska" 
-                    className="menu-link dna-link" 
-                    title="Halaman Riska"
-                >
-                    <i className="dna fa-solid fa-dna"></i>
-                </NavLink>
-            </div>
+                    <NavLink 
+                        to="/visitor" 
+                        className={({ isActive }) => `menu-link visitor-link ${isActive ? 'active' : ''}`}
+                        title="Halaman Tamu"
+                    >
+                        <i className="heart fa-regular fa-heart"></i>
+                    </NavLink>
+
+                    <NavLink 
+                        to="/riska" 
+                        className={({ isActive }) => `menu-link dna-link ${isActive ? 'active' : ''}`}
+                        title="Halaman Riska"
+                    >
+                        <i className="dna fa-solid fa-dna"></i>
+                    </NavLink>
+                </div>
+            )}
 
             <div className="layout-cover">
+                {/* Tempat konten ElanPage, RiskaPage, atau GuestPage muncul */}
                 <Outlet />
             </div>
 
-            <Footer />
+            {/* Footer disembunyikan jika di halaman tamu agar fokus ke pilihan kanan/kiri */}
+            {!isVisitor && <Footer />}
         </div>
     );
 }
 
 export default Home;
-

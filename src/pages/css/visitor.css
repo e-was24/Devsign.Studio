@@ -1,0 +1,128 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+
+
+
+.visitor-cover {
+    display: flex;
+    flex-direction: column;
+    height: 95vh;
+    /* Full screen agar terlihat lebih megah */
+    width: 100%;
+    background-color: #000;
+}
+
+.side {
+    flex: 1;
+    position: relative;
+    cursor: pointer;
+    overflow: hidden;
+    transition: flex 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    /* Transisi lebih halus */
+}
+
+/* Efek saat salah satu di-hover */
+.visitor-cover:hover .side:not(:hover) {
+    flex: 0.7;
+    /* Sisi yang tidak di-hover mengecil */
+}
+
+.visitor-cover:hover .side:hover {
+    flex: 1.3;
+    /* Sisi yang di-hover membesar */
+}
+
+.elan-bg {
+    background-image: url('../../assets/elan-bg.jpeg');
+    background-position: center;
+    transform: scale(1.05);
+    
+}
+
+.riska-bg {
+    background-image: url('../../assets/riska-portfolio-img.jpeg');
+    background-position: center;
+    background-size: cover;
+    
+}
+
+.elan-bg,
+.riska-bg {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    /* Default: blur 0, brightness 40% */
+    filter: brightness(40%) blur(0px);
+    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Saat salah satu sisi di-hover, blur 2px ke sisi yang TIDAK di-hover */
+.visitor-cover:has(.side:hover) .side:not(:hover) .elan-bg,
+.visitor-cover:has(.side:hover) .side:not(:hover) .riska-bg {
+    filter: brightness(20%) blur(2px); /* Menjadi lebih gelap dan blur */
+    transform: scale(1);
+}
+
+/* Efek saat di-hover (Tetap terang dan scale 1.1) */
+.side:hover .elan-bg,
+.side:hover .riska-bg {
+    transform: scale(1.1);
+    filter: brightness(90%) blur(0px) ;
+}
+
+.content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    text-align: center;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.content h1 {
+    font-size: clamp(2rem, 8vw, 5rem);
+    /* Ukuran teks responsif */
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0;
+    opacity: 0.8;
+    transition: opacity 0.3s;
+    font-family: 'Montserrat' sans-serif;
+    font-weight: 900;
+    color: #ffffff94;
+}
+
+.content .more-info {
+    position: absolute;
+    top: 3rem;
+    
+}
+
+.content .more-info p {
+    font-family: 'poppins' sans-serif;
+    text-transform: uppercase;
+}
+
+
+.side:hover .content h1 {
+    opacity: 1;
+}
+
+/* Garis pemisah tipis yang elegan */
+.side::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 10%;
+    width: 80%;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.loading-cover {
+    overflow: hidden;
+}
