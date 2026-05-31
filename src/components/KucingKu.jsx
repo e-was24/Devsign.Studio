@@ -42,7 +42,7 @@ const KucingKu = () => {
     }, { scope: containerRef }); // Mengunci scope pada container utama
 
     return (
-        <div className="rack-container-microC" ref={containerRef}>
+        <div className="rack-container-pet" ref={containerRef}>
             <h1 className='text-border'>
                 <span style={{ fontSize: '.8em', fontWeight: '100' }}>My</span>
                 MedicalPet <i className="fa-solid fa-cat"></i>

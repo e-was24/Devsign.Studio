@@ -1,8 +1,4 @@
 import './css/riska-style.css';
-import Rack from './Rack';
-import MicroController from './MicroController';
-import Specialbutton from '../components/SpecialButton';
-import Certification from './Certification';
 import gsap from 'gsap';
 import React, { useRef } from "react";
 import { useGSAP } from "@gsap/react";
@@ -45,7 +41,7 @@ function RiskaPage() {
                 <div className="profile-riska"></div>
                 <h2 className="title title-riska"></h2>
                 {/* <h3 className="subtitle">Frontend Web Developer</h3> */}
-                <div className="follow-me">
+                <div className="follow-me-riska">
                     <a className="followme-btn" href="https://open.spotify.com/user/31utljy4n6ahzyg23zowfixjxfai?si=93ddd2d4e42a4728" target="__blank" rel="noopener norefferrer" title="Spotify">
                         <i className="spotify fa-brands fa-spotify"></i>
                     </a>&nbsp; | &nbsp;
@@ -53,7 +49,7 @@ function RiskaPage() {
                         <i className="instagram fa-brands fa-instagram"></i>
                     </a>
                 </div>
-                <div className="desCover">
+                <div className="desCover-riska">
                     <div className="deskrip">
                         Human Anatomy: &nbsp;
                         <i className='bone fa-solid fa-bone'></i>&nbsp; | &nbsp;

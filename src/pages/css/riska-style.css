@@ -1,24 +1,121 @@
 :root {
     --border: #6e6e6e;
     --code: #888888;
-    
-    
-    --bone: #F5F5DC;      /* Beige/Off-white khas warna tulang */
-    --brain: #FFB6C1;     /* Light Pink untuk jaringan saraf/otak */
-    --droplet: #EF4444;   /* Merah terang untuk darah/histologi */
-    
-    --dna: #4ADE80;       /* Hijau neon/bright untuk kesan genetik & kehidupan */
-    --virus: #A855F7;     /* Ungu gelap/magenta untuk virus/bakteri (kesan laboratorium) */
 
-    --tooth: #E2E8F0;     /* Putih kebiruan (Enamel white) yang sangat bersih */
-    --microscope: #64748B; /* Slate grey untuk alat-alat lab/logam */
 
-    --fkg-teal: #2DD4BF;  /* Warna Teal medis yang menenangkan */
-    --hospital-blue: #3B82F6; /* Biru klinis yang profesional */
-    --gusi-pink: #FDA4AF; /* Pink soft untuk estetika dental */
+    --bone: #F5F5DC;
+    /* Beige/Off-white khas warna tulang */
+    --brain: #FFB6C1;
+    /* Light Pink untuk jaringan saraf/otak */
+    --droplet: #EF4444;
+    /* Merah terang untuk darah/histologi */
+    --pink-bg: #f099a3;
+
+    --dna: #4ADE80;
+    /* Hijau neon/bright untuk kesan genetik & kehidupan */
+    --virus: #A855F7;
+    /* Ungu gelap/magenta untuk virus/bakteri (kesan laboratorium) */
+
+    --tooth: #E2E8F0;
+    /* Putih kebiruan (Enamel white) yang sangat bersih */
+    --microscope: #64748B;
+    /* Slate grey untuk alat-alat lab/logam */
+
+    --fkg-teal: #2DD4BF;
+    /* Warna Teal medis yang menenangkan */
+    --hospital-blue: #3B82F6;
+    /* Biru klinis yang profesional */
+    --gusi-pink: #FDA4AF;
+    /* Pink soft untuk estetika dental */
 
     --instagram: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+
+    /* Theme variables - Default (Dark) */
+    --app-bg: #16171d;
+    --card-bg: #1e1f27;
+    --card-item-bg: #1e1f27;
+    --card-shadow: #2d3436;
+    --card-border: #2e2d2d;
+    --text-primary: #ffffff;
+    --text-secondary: #818181;
+    --footer-bg: #1b1c24;
+    --footer-border: #2e2d2d;
+    --accent-glow: rgba(100, 221, 215, 0.3);
+
+    --btn-bg: #2563eb;
+    --btn-text: #ffffff;
+    --btn-hover: #1d4ed8;
 }
+
+.theme-riska {
+    --app-bg: #ffe4e1;
+    /* MistyRose - more visible pink */
+    --card-bg: #ffffff;
+    --card-item-bg: #ffffff;
+    --card-shadow: #fbc2eb;
+    --card-border: #ffd1dc;
+    --text-primary: #ff69b4;
+    /* HotPink */
+    --text-secondary: #ff1493;
+    /* DeepPink */
+    --footer-bg: #ffc0cb;
+    /* Pink */
+    --footer-border: #ffb6c1;
+    /* LightPink */
+    --accent-glow: rgba(255, 105, 180, 0.4);
+    --border: #ffb6c1;
+
+    --btn-bg: var(--text-primary);
+    --btn-text: #ffffff;
+    --btn-hover: var(--text-secondary);
+}
+
+.Landing-Page.theme-riska {
+    background: linear-gradient(135deg, #fff0f5 0%, #ffdeed 100%) !important;
+    color: var(--text-primary);
+}
+
+body.theme-riska {
+    background-color: #ffdeed !important;
+}
+
+.theme-riska .layout .headers .title {
+    font-family: 'montserrat', sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: 1.5em;
+    background-image: url('../../assets/background-pink.jpg');
+    background-position: center;
+    background-size: cover;
+    background-clip: text;
+    background-attachment: fixed;
+    -webkit-background-clip: text;
+    color: transparent;
+    opacity: .8;
+}
+
+.theme-riska .layout .headers .subtitle {
+    color: var(--text-secondary);
+    border-bottom: 2px solid var(--card-border);
+}
+
+.theme-riska .footer-bottom p {
+    color: var(--text-secondary);
+}
+
+.theme-riska .social-icons a {
+    background: var(--card-bg);
+    border-color: var(--card-border);
+    color: var(--text-primary);
+    box-shadow: 3px 3px 0px var(--card-border);
+}
+
+.theme-riska .social-icons a:hover {
+    background: var(--footer-bg);
+    color: white;
+    box-shadow: 5px 5px 0px var(--text-primary);
+}
+
 
 
 
@@ -53,9 +150,9 @@
     text-align: center;
 }
 
-.follow-me {
-    background: #1e2229;
-    box-shadow: 3px 3px 1px #2d3436;
+.follow-me-riska {
+    background: var(--btn-text);
+    box-shadow: 3px 3px 1px var(--pink-bg);
     border-radius: 10px;
     width: fit-content;
     padding: 10px 20px;
@@ -114,18 +211,23 @@
     border-bottom: 2px solid #81818154;
 }
 
-.layout .headers .desCover {
+.layout .headers .desCover-riska {
     display: flex;
     justify-content: center;
     align-items: start;
     flex-direction: column;
-    background: #1e1f27;
+    background: var(--pink-bg);
     padding: 10px;
     border-radius: 10px;
-    box-shadow: 5px 5px 0px #81818154;
+    box-shadow: 5px 5px 0px var(--card-border);
     margin-top: 2rem;
     animation: UpDownLoop 3s ease-in-out infinite;
     width: 100%;
+}
+
+.layout .headers .desCover-riska .deskrip {
+    color: var(--btn-text);
+    opacity: .7;
 }
 
 @keyframes UpDownLoop {
@@ -142,17 +244,38 @@
     }
 
 }
+
 /* Pastikan class ini ada di css kamu agar warna root terpanggil */
-.bone { color: var(--bone); }
-.brain { color: var(--brain); }
-.droplet { color: var(--droplet); }
-.dna { color: var(--dna); }
-.virus { color: var(--virus); }
-.tooth { color: var(--tooth); }
-.microscope { color: var(--microscope); }
+.bone {
+    color: var(--bone);
+}
+
+.brain {
+    color: var(--brain);
+}
+
+.droplet {
+    color: var(--droplet);
+}
+
+.dna {
+    color: var(--dna);
+}
+
+.virus {
+    color: var(--virus);
+}
+
+.tooth {
+    color: var(--tooth);
+}
+
+.microscope {
+    color: var(--microscope);
+}
 
 /* Tips: Tambahkan filter drop-shadow supaya ikonnya terasa "glow" */
-/* .desCover i {
+/* .desCover-riska i {
     filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.2));
     transition: transform 0.3s ease;
 }
@@ -169,7 +292,7 @@
     padding: 1rem;
     border: 1px solid var(--border);
     border-radius: 10px;
-    background: #1b1c24;
+    background: var(--app-bg);
     /* Background luar tetap gelap */
 }
 
@@ -204,19 +327,19 @@
 .rack-item {
     position: relative;
     /* WAJIB ditambahkan agar .status-badge posisinya absolut terhadap kartu ini */
-    background: #1e1f27;
+    background: var(--card-item-bg);
     /* Background kartu proyek */
     border-radius: 12px;
     padding: 16px;
     width: 300px;
     /* Lebar standar kotak project */
-    box-shadow: 5px 5px 1px #2e2d2d;
+    box-shadow: 5px 5px 1px var(--card-shadow);
     /* Style brutalist shadow milikmu */
     display: flex;
     flex-direction: column;
     align-items: center;
     transition: box-shadow 0.2s ease, transform 0.2s ease;
-    border: 1px solid #2e2d2d;
+    border: 1px solid var(--card-border);
     padding-top: 55px;
     /* Ruang di atas agar h3 tidak menabrak status-badge */
 }
@@ -231,7 +354,7 @@
 .rack-item h3 {
     margin-bottom: 12px;
     font-family: sans-serif;
-    color: whitesmoke;
+    color: var(--text-primary);
 }
 
 /* Wadah gambar thumbnail */
@@ -267,160 +390,16 @@
     width: 100%;
 }
 
-/* Warna Ikon Teknologi */
-.html {
-    color: #E34F26;
-}
-
-.css {
-    color: #1572B6;
-}
-
-.js {
-    color: #F7DF1E;
-}
-
-.php {
-    color: #777BB4;
-}
-
-.node-js {
-    color: #339933;
-}
-
-.react {
-    color: #61DAFB;
-}
-
-.bootstrap {
-    color: #7952B3;
-}
-
-.figma {
-    color: #F24E1E;
-}
-
-.git {
-    color: #F05032;
-}
-
-.github {
-    color: #ffffff;
-}
-
-.typescript {
-    color: #3178c6;
-}
-
-/* Diubah ke putih agar terlihat di background gelap */
-
-/* Ikon Kustom */
-.icon-nextjs,
-.icon-psql,
-.icon-typescript,
-.icon-vscode {
-    width: 18px;
-    height: 18px;
-    display: inline-block;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.icon-nextjs {
-    background-image: url('../assets/icon/nextJs-icon.png');
-    filter: brightness(0) invert(1);
-}
-
-/* Filter agar logonya jadi putih */
-.icon-psql {
-    background-image: url('../assets/icon/PSQL-icon.png');
-}
-
-.icon-typescript {
-    background-image: url('../assets/icon/typescript.png');
-}
-
-.icon-vscode {
-    background-image: url('../assets/icon/visual-studio-code-icons/vscode.png');
-}
-
-
-/* ==========================================================================
-   STYLING TOMBOL
-   ========================================================================== */
-.btn-item {
-    width: 100%;
-    padding: 10px;
-    border: none;
-    border-radius: 6px;
-    background-color: #2563eb;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    margin-top: auto;
-    /* Memaksa tombol selalu berada di paling bawah kartu */
-}
-
-.btn-item:hover {
-    background-color: #1d4ed8;
-}
-
-.btn-item a {
-    color: white;
-    text-decoration: none;
-    display: block;
-    width: 100%;
-    height: 100%;
-    font-weight: 600;
-}
-
-/* ==========================================================================
-   STATUS BADGE
-   ========================================================================== */
-.status-badge {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    font-size: 0.6rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    padding: 4px 8px;
-    border-radius: 20px;
-}
-
-/* Variasi Warna Berdasarkan Isi Status */
-.status-badge.production {
-    background-color: #dcfce7;
-    color: #15803d;
-}
-
-.status-badge.on-progress,
-.status-badge.development {
-    background-color: #fef9c3;
-    color: #a16207;
-}
-
-.status-badge.maintenance {
-    background-color: #dbeafe;
-    color: #1d4ed8;
-}
-
-.status-badge.build {
-    background-color: #f3f4f6;
-    color: #374151;
-}
-
-
 /* ==========================================================================
    STYLING FOOTER (DARK THEME & BRUTALIST ALIGNMENT)
    ========================================================================== */
 
 .footer-container {
-    background: #1b1c24;
-    border-top: 1px solid #2e2d2d;
+    background: var(--footer-bg);
+    border-top: 1px solid var(--footer-border);
     padding: 3rem 2rem 1.5rem 2rem;
     font-family: 'lato', sans-serif;
-    color: whitesmoke;
+    color: var(--text-primary);
     margin-top: 4rem;
 }
 
@@ -444,7 +423,7 @@
     font-weight: 900;
     text-transform: uppercase;
     font-size: 1.6rem;
-    color: white;
+    color: var(--text-primary);
     margin-bottom: 12px;
 }
 
@@ -454,7 +433,7 @@
 }
 
 .footer-brand p {
-    color: #818181;
+    color: var(--text-secondary);
     font-size: 0.9rem;
     line-height: 1.5;
     max-width: 320px;
@@ -539,7 +518,7 @@
     max-width: 1100px;
     margin: 3rem auto 0 auto;
     padding-top: 1.5rem;
-    border-top: 1px solid #2e2d2d;
+    border-top: 1px solid whitesmoke;
     text-align: center;
 }
 

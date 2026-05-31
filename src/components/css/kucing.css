@@ -1,5 +1,11 @@
-.rack-container-microC {
+:root {
+    --pink: #f099a3
+}
+
+
+.rack-container-pet {
     flex-direction: column;
+    background: var(--pink);
 }
 .cat-container {
     width: 100%;

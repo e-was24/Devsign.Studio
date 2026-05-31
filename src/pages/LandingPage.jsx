@@ -1,12 +1,23 @@
 import './css/style-page.css';
 import Footer from './Footer';
-import { NavLink, Outlet } from 'react-router-dom';
-import React, { useRef } from 'react';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import React, { useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 
 function Home() {
     const container = useRef();
+    const location = useLocation();
+    const isRiska = location.pathname === '/riska';
+
+    // Efek untuk mengubah class di body agar background global berubah
+    useEffect(() => {
+        if (isRiska) {
+            document.body.classList.add('theme-riska');
+        } else {
+            document.body.classList.remove('theme-riska');
+        }
+    }, [isRiska]);
 
     // Gunakan useGSAP untuk keamanan dan performa
     useGSAP(() => {
@@ -30,7 +41,7 @@ function Home() {
     }, { scope: container }); // Scope membatasi GSAP hanya mencari elemen di dalam ref ini
 
     return (
-        <div className='Landing-Page' ref={container}>
+        <div className={`Landing-Page ${isRiska ? 'theme-riska' : ''}`} ref={container}>
             <div className="profile-menu">
                 <NavLink 
                     to="/elan" 
@@ -59,3 +70,4 @@ function Home() {
 }
 
 export default Home;
+
