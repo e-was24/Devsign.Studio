@@ -84,7 +84,7 @@
     font-weight: 900;
     text-transform: uppercase;
     font-size: 1.5em;
-    background-image: url('../assets/background-awan.jpg');
+    background-image: url('../../assets/background-awan.jpg');
     background-position: center;
     background-size: cover;
     background-clip: text;
@@ -92,6 +92,10 @@
     -webkit-background-clip: text;
     color: transparent;
     opacity: .8;
+}
+
+.special-btn-section {
+    scale: .8;
 }
 
 .layout .headers .subtitle {
@@ -187,7 +191,7 @@
 .layout .headers .desCover .deskrip .typescript {
     width: 16px;
     height: 16px;
-    background-image: url('../assets/icon/typescript-icon.png');
+    background-image: url('../../assets/icon/typescript-icon.png');
     background-position: center;
     background-size: cover;
 }
@@ -195,7 +199,7 @@
 .layout .headers .desCover .deskrip .nextJs {
     width: 16px;
     height: 16px;
-    background-image: url('../assets/icon/nextJs-icon.png');
+    background-image: url('../../assets/icon/nextJs-icon.png');
     background-position: center;
     background-size: cover;
     filter: drop-shadow(0 0 1px white);
@@ -204,7 +208,7 @@
 .layout .headers .desCover .deskrip .PSQL {
     width: 16px;
     height: 16px;
-    background-image: url('../assets/icon/PSQL-icon.png');
+    background-image: url('../../assets/icon/PSQL-icon.png');
     background-position: center;
     background-size: cover;
 }
@@ -385,21 +389,21 @@
 }
 
 .icon-nextjs {
-    background-image: url('../assets/icon/nextJs-icon.png');
+    background-image: url('../../assets/icon/nextJs-icon.png');
     filter: brightness(0) invert(1);
 }
 
 /* Filter agar logonya jadi putih */
 .icon-psql {
-    background-image: url('../assets/icon/PSQL-icon.png');
+    background-image: url('../../assets/icon/PSQL-icon.png');
 }
 
 .icon-typescript {
-    background-image: url('../assets/icon/typescript.png');
+    background-image: url('../../assets/icon/typescript.png');
 }
 
 .icon-vscode {
-    background-image: url('../assets/icon/visual-studio-code-icons/vscode.png');
+    background-image: url('../../assets/icon/visual-studio-code-icons/vscode.png');
 }
 
 

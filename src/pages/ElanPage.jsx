@@ -1,17 +1,57 @@
 import './css/elan-style.css';
+import React, { useRef } from "react";
 import Rack from './Rack';
 import MicroController from './MicroController';
 import Specialbutton from '../components/SpecialButton';
 import Certification from './Certification';
-import Footer from './Footer';
+import gsap from 'gsap';
+import { useGSAP } from "@gsap/react";
+import { TextPlugin } from 'gsap/TextPlugin';
+gsap.registerPlugin(TextPlugin)
 
 
 function ElanPage() {
+    const container = useRef();
+
+    useGSAP(() => {
+
+        gsap.from(".follow-me .followme-btn", {
+            opacity: 0,
+            scale: 0.5,
+            duration: 0.5,
+            stagger: 0.2,
+            delay: 0.3,
+            ease: "back.out(1.7)"
+        })
+
+        gsap.from(".profile-elan", {
+            opacity: 0,
+            delay: .1,
+            duration: .5
+        })
+
+        gsap.to(".title-elan", {
+            duration: 1,
+            text: "Elan Satria Adi Widodo",
+            ease: "none"
+        })
+        gsap.from(".special-btn-section .btn", {
+            opacity: 0,
+            duration: .5,
+            onComplite: () => {
+                gsap.to(".special-btn-section .btn", {
+                    opacity: 1,
+                    scale: 1.1
+                })
+            }
+        })
+    }, { scope: container });
+
     return (
-        <div className="layout">
+        <div className="layout" ref={container}>
             <div className="headers">
                 <div className="profile-elan"></div>
-                <h2 className="title">Elan Satria Adi Widodo</h2>
+                <h2 className="title title-elan"></h2>
                 {/* <h3 className="subtitle">Frontend Web Developer</h3> */}
                 <div className="follow-me">
                     <a className="followme-btn" href="https://open.spotify.com/user/31i6jtk52lkjwpcbbdxwlw7qpzoy?

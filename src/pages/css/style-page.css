@@ -28,24 +28,26 @@ html {
     align-items: center;
     gap: 10px;
 }
-
-.Landing-Page .profile-menu i {
+/* Warna default ikon */
+.Landing-Page .profile-menu .menu-link i {
     color: gray;
+    transition: all 0.3s ease;
 }
-.Landing-Page .profile-menu .menu-link:nth-child(1) i:hover {
-    color: #007ACC;
-    filter: drop-shadow(0 0 5px #007ACC);
-}
-.Landing-Page .profile-menu .menu-link:nth-child(1):focus-within i {
+
+/* --- State untuk Elan (Link Pertama) --- */
+
+/* Hover & Active untuk link Elan */
+.Landing-Page .profile-menu .code-link:hover i,
+.Landing-Page .profile-menu .code-link.active i {
     color: #007ACC;
     filter: drop-shadow(0 0 5px #007ACC);
 }
 
-.Landing-Page .profile-menu .menu-link:nth-child(2) i:hover {
-    color: #64ddd7;
-    filter: drop-shadow(0 0 5px #64ddd7);
-}
-.Landing-Page .profile-menu .menu-link:nth-child(2):focus-within i {
+/* --- State untuk Riska (Link Kedua) --- */
+
+/* Hover & Active untuk link Riska */
+.Landing-Page .profile-menu .dna-link:hover i,
+.Landing-Page .profile-menu .dna-link.active i {
     color: #64ddd7;
     filter: drop-shadow(0 0 5px #64ddd7);
 }
