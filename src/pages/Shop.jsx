@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './shop-page.css';
+import './css/shop-page.css';
 import products from '../data/products.json';
 
 function Shop() {
