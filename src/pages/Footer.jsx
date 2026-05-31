@@ -1,5 +1,5 @@
 import React from 'react';
-import './style-page.css';
+import './css/style-page.css';
 
 function Footer() {
     // Mendapatkan tahun saat ini secara otomatis agar tidak perlu diedit manual setiap tahun

@@ -1,38 +1,6 @@
 /* ==========================================================================
    HALAMAN UTAMA SHOP
    ========================================================================== */
-.spotify {
-    color: #1ED760;
-}
-
-.discord {
-    color: #5865F2;
-}
-
-.followme-btn {
-    scale: 1.1;
-}
-
-.warning {
-    color: orangered;
-    font-weight: 900;
-    font-family: 'Poppins', sans-serif;
-    opacity: 0.5;
-    font-size: 0.8rem;
-    width: 90%;
-    max-width: 400px;
-    margin: 0 auto;
-}
-
-.follow-me {
-    background: #1e2229;
-    box-shadow: 3px 3px 1px #2d3436;
-    border-radius: 10px;
-    width: fit-content;
-    padding: 10px 20px;
-    margin-bottom: 2rem;
-}
-
 .shop-container {
     padding: 60px 20px;
     max-width: 1200px;

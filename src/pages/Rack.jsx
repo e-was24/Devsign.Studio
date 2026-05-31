@@ -1,4 +1,4 @@
-import './style-page.css';
+import './css/style-page.css';
 import img1 from '../assets/thumbnail/1.png';
 import img2 from '../assets/thumbnail/2.png';
 import img3 from '../assets/thumbnail/3.png';

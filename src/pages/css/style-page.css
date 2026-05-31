@@ -1,0 +1,51 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+
+*,
+html {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+.Landing-Page {
+    position: relative;
+    max-width: 476px;
+    margin: 0 auto;
+    border: 1px solid var(--border);
+    height: 100svh;
+    font-size: .9em;
+    text-align: center;
+    padding: 16px 0;
+    overflow-y: scroll;
+}
+
+.Landing-Page .profile-menu {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.Landing-Page .profile-menu i {
+    color: gray;
+}
+.Landing-Page .profile-menu .menu-link:nth-child(1) i:hover {
+    color: #007ACC;
+    filter: drop-shadow(0 0 5px #007ACC);
+}
+.Landing-Page .profile-menu .menu-link:nth-child(1):focus-within i {
+    color: #007ACC;
+    filter: drop-shadow(0 0 5px #007ACC);
+}
+
+.Landing-Page .profile-menu .menu-link:nth-child(2) i:hover {
+    color: #64ddd7;
+    filter: drop-shadow(0 0 5px #64ddd7);
+}
+.Landing-Page .profile-menu .menu-link:nth-child(2):focus-within i {
+    color: #64ddd7;
+    filter: drop-shadow(0 0 5px #64ddd7);
+}
