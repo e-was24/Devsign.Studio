@@ -8,7 +8,7 @@ import React, { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import { TextPlugin } from 'gsap/TextPlugin';
 gsap.registerPlugin(TextPlugin);
-
+import Kucingku from '../components/KucingKu'
 
 
 function RiskaPage() {
@@ -73,6 +73,10 @@ function RiskaPage() {
                         <i className='microscope fa-solid fa-microscope'></i>
                     </div>
                 </div>
+            </div>
+
+            <div className="pet-section">
+                <Kucingku />
             </div>
         </div>
     );

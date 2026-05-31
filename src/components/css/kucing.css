@@ -1,0 +1,33 @@
+.rack-container-microC {
+    flex-direction: column;
+}
+.cat-container {
+    width: 100%;
+    height: 100px;
+    position: relative;
+    overflow: hidden;
+    background: transparent;
+    border-bottom: 2px dashed rgba(255, 255, 255, 0.1); 
+    display: flex;
+    align-items: flex-end;
+}
+
+.vscode-style-cat {
+    width: 50px; 
+    height: auto;
+    position: absolute;
+    bottom: 0;
+    cursor: pointer;
+    
+    /* Pixel art tetap tajam original khas VS Code Pet */
+    image-rendering: pixelated; 
+    image-rendering: crisp-edges;
+    
+    /* Hapus transition transform agar tidak bentrok / delay dengan GSAP */
+    transition: none !important; 
+}
+
+.vscode-style-cat:hover {
+    filter: none !important;
+    outline: none;
+}

@@ -8,11 +8,13 @@ function Footer() {
     return (
         <footer className="footer-container">
             <div className="footer-content">
-                
+
                 {/* Bagian Kiri: Brand / Nama */}
                 <div className="footer-brand">
-                    <h2><span>My</span>Portfolio.</h2>
-                    <p>Membangun aplikasi web modern dan mengeksplorasi dunia IoT & Microcontroller.</p>
+                    <h2><span>Our</span>Portfolio.</h2>
+                    <p>
+                        Menjelajahi batas antara teknologi modern, dan keajaiban ilmu biologi kedokteran.
+                    </p>
                 </div>
 
                 {/* Bagian Tengah: Tautan Navigasi Cepat */}
