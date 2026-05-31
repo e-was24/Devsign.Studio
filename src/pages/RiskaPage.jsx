@@ -53,6 +53,26 @@ function RiskaPage() {
                         <i className="instagram fa-brands fa-instagram"></i>
                     </a>
                 </div>
+                <div className="desCover">
+                    <div className="deskrip">
+                        Human Anatomy: &nbsp;
+                        <i className='bone fa-solid fa-bone'></i>&nbsp; | &nbsp;
+                        <i className='brain fa-solid fa-brain'></i>&nbsp; | &nbsp;
+                        <i className='droplet fa-solid fa-droplet'></i>
+                    </div>
+
+                    <div className="deskrip">
+                        Biological Systems: &nbsp;
+                        <i className='dna fa-solid fa-dna'></i>&nbsp; | &nbsp;
+                        <i className='virus fa-solid fa-virus'></i>
+                    </div>
+
+                    <div className="deskrip">
+                        Dental Specialties: &nbsp;
+                        <i className='tooth fa-solid fa-tooth'></i>&nbsp; | &nbsp;
+                        <i className='microscope fa-solid fa-microscope'></i>
+                    </div>
+                </div>
             </div>
         </div>
     );

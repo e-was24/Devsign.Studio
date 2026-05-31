@@ -1,19 +1,24 @@
 :root {
     --border: #6e6e6e;
-    --html: #F16529;
-    --css: #264DE4;
-    --js: #F0DB4F;
-    --react: #61DBFB;
-    --php: #777BB3;
-    --nodeJs: #68A063;
     --code: #888888;
-    --figma-purple: #A259FF;
-    --git: #F05032;
-    --github: #333333;
-    --bootstrap: #563d7c;
+    
+    
+    --bone: #F5F5DC;      /* Beige/Off-white khas warna tulang */
+    --brain: #FFB6C1;     /* Light Pink untuk jaringan saraf/otak */
+    --droplet: #EF4444;   /* Merah terang untuk darah/histologi */
+    
+    --dna: #4ADE80;       /* Hijau neon/bright untuk kesan genetik & kehidupan */
+    --virus: #A855F7;     /* Ungu gelap/magenta untuk virus/bakteri (kesan laboratorium) */
+
+    --tooth: #E2E8F0;     /* Putih kebiruan (Enamel white) yang sangat bersih */
+    --microscope: #64748B; /* Slate grey untuk alat-alat lab/logam */
+
+    --fkg-teal: #2DD4BF;  /* Warna Teal medis yang menenangkan */
+    --hospital-blue: #3B82F6; /* Biru klinis yang profesional */
+    --gusi-pink: #FDA4AF; /* Pink soft untuk estetika dental */
+
     --instagram: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
 }
-
 
 
 
@@ -137,95 +142,26 @@
     }
 
 }
+/* Pastikan class ini ada di css kamu agar warna root terpanggil */
+.bone { color: var(--bone); }
+.brain { color: var(--brain); }
+.droplet { color: var(--droplet); }
+.dna { color: var(--dna); }
+.virus { color: var(--virus); }
+.tooth { color: var(--tooth); }
+.microscope { color: var(--microscope); }
 
-.layout .headers .desCover .deskrip {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: 'lato', sans-serif;
-    color: #494949;
+/* Tips: Tambahkan filter drop-shadow supaya ikonnya terasa "glow" */
+/* .desCover i {
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.2));
+    transition: transform 0.3s ease;
 }
 
-.layout .headers .desCover .deskrip .code {
-    color: var(--code);
-}
-
-.layout .headers .desCover .deskrip .html {
-    color: var(--html);
-}
-
-.layout .headers .desCover .deskrip .tailwind-css,
-.layout .headers .desCover .deskrip .css {
-    color: var(--css);
-}
-
-.layout .headers .desCover .deskrip .react {
-    color: var(--react);
-}
-
-.layout .headers .desCover .deskrip .js {
-    color: var(--js);
-}
-
-.layout .headers .desCover .deskrip .node-js {
-    color: var(--nodeJs);
-}
-
-.layout .headers .desCover .deskrip .php {
-    color: var(--php);
-}
-
-.layout .headers .desCover .deskrip .figma {
-    color: var(--figma-purple);
-}
-
-.layout .headers .desCover .deskrip .bootstrap {
-    color: var(--bootstrap);
-}
-
-.layout .headers .desCover .deskrip .vscode {
-    width: 16px;
-    height: 16px;
-    background-image: url('../assets/icon/visual-studio-code-icons/vscode.png');
-    background-position: center;
-    background-size: cover;
-}
-
-.layout .headers .desCover .deskrip .typescript {
-    width: 16px;
-    height: 16px;
-    background-image: url('../assets/icon/typescript-icon.png');
-    background-position: center;
-    background-size: cover;
-}
-
-.layout .headers .desCover .deskrip .nextJs {
-    width: 16px;
-    height: 16px;
-    background-image: url('../assets/icon/nextJs-icon.png');
-    background-position: center;
-    background-size: cover;
-    filter: drop-shadow(0 0 1px white);
-}
-
-.layout .headers .desCover .deskrip .PSQL {
-    width: 16px;
-    height: 16px;
-    background-image: url('../assets/icon/PSQL-icon.png');
-    background-position: center;
-    background-size: cover;
-}
-
-.layout .headers .desCover .deskrip .git {
-    color: var(--git);
-}
-
-.layout .headers .desCover .deskrip .github {
-    color: var(--github);
-}
-
+.desCover i:hover {
+    transform: scale(1.2);
+} */
 /* ==========================================================================
-   KONTEN UTAMA RAK (CONTAINER & GRID)
+    KONTEN UTAMA RAK (CONTAINER & GRID)
    ========================================================================== */
 
 .rack-container {
