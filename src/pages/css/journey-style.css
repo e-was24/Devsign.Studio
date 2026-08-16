@@ -1,16 +1,43 @@
+/* ================================
+   JOURNEY - VINTAGE AESTHETIC THEME
+   ================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Special+Elite&display=swap');
+
+/* Container Utama */
 .journey-loading-container {
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: #ede3d3;
 }
 
 .journey-loading-container img {
     scale: .5;
+    filter: sepia(0.3);
 }
 
 .layout {
     display: none;
+    min-height: 100vh;
+    background-color: #ede3d3;
+    background-image:
+        radial-gradient(circle at 20% 20%, rgba(120, 90, 60, 0.06) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(90, 70, 50, 0.08) 0%, transparent 50%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Vignette klasik di pinggiran layar */
+.layout::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    box-shadow: inset 0 0 180px rgba(40, 28, 15, 0.45);
+    z-index: 5;
 }
 
 .drop-line {
@@ -20,68 +47,84 @@
     justify-content: start;
     align-items: center;
     flex-direction: column;
+    position: relative;
+    z-index: 6;
 }
 
+/* Judul Tahun (Gaya Arsip Klasik) */
 .title-years {
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-    filter: drop-shadow(0 0 5px white);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: #3d2f22;
+    letter-spacing: 0.1em;
+    filter: drop-shadow(0 2px 4px rgba(60, 45, 25, 0.15));
+    border-bottom: 1px dashed #8a7355;
+    padding-bottom: 5px;
+    margin-bottom: 2rem;
 }
 
+/* Judul Bulan */
 .title-month {
     position: absolute;
-    left: -90px;
-    top: 20px;
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-    color: #ef7d90;
-    filter: drop-shadow(0 0 10px #ef7d90);
+    left: -110px;
+    top: 15px;
+    font-family: 'Special Elite', cursive;
+    font-size: 1.1rem;
+    color: #6b5842;
+    letter-spacing: 0.15em;
+    background: rgba(255, 250, 240, 0.6);
+    padding: 2px 8px;
+    border: 1px solid rgba(107, 88, 66, 0.3);
+    border-radius: 2px;
 }
 
+/* Garis Vertikal Timeline (Gaya Tinta Klasik / Benang Arsip) */
 .line-v {
     position: relative;
-    width: 5px;
-    height: 100px;
-    border-radius: 20px;
-    background: linear-gradient(to bottom, pink, #ef7d90, pink, #ef7d90);
-    box-shadow: 0 0 10px #ef7d90;
-    background-size: 100% 300%; 
-    animation: ambient 2.5s linear infinite;
-}
-
-@keyframes ambient {
-    0%   { background-position: 0% 0%; }
-    100% { background-position: 0% 100%; }
+    width: 3px;
+    height: 120px;
+    border-radius: 2px;
+    background: linear-gradient(to bottom, #8a7355, #c9b898, #8a7355);
+    box-shadow: 0 0 8px rgba(138, 115, 85, 0.3);
 }
 
 .line-v .link {
     cursor: pointer;
 }
 
+/* Garis Penghubung Horizontal */
 .line-h-1 {
     position: absolute;
     top: 50%;
-    width: 40px;
-    left: 5px;
-    height: 5px;
-    background: linear-gradient(to right, rgba(255, 192, 203, 0.458), pink);
-    border-radius: 0 20px 20px 0;
+    width: 45px;
+    left: 3px;
+    height: 2px;
+    background: #8a7355;
 }
 
+/* Lingkaran Kartu Preview / Polaroid Mini */
 .circle-1 {
     position: absolute;
-    width: 80px;
-    height: 80px;
-    background: url(../img/SOLO.png);
+    width: 85px;
+    height: 85px;
+    background-color: #fdf8ee;
+    background-image: url(../img/SOLO.png);
     background-position: center;
-    background-size: 90%;
-    border: 2px solid pink;
-    border-radius: 50px;
-    left: 45px;
-    top: 10px;
-    transition: ease-in-out .3s;
-    box-shadow: 0 0 20px #ef7d908f;
+    background-size: 80%;
+    background-repeat: no-repeat;
+    border: 1px solid #c9b898;
+    border-radius: 4px; /* Sedikit kotak ala polaroid kecil */
+    left: 48px;
+    top: 5px;
+    transition: all 0.35s ease;
+    box-shadow: 0 6px 15px rgba(60, 45, 25, 0.2);
+    transform: rotate(-2deg);
 }
 
 .line-v a:hover .circle-1 {
-    background-size: 120%;
-    transform: rotateZ(-5deg);
+    background-size: 95%;
+    transform: rotate(0deg) scale(1.08) translateY(-4px);
+    border-color: #8a7355;
+    box-shadow: 0 10px 25px rgba(60, 45, 25, 0.3);
 }
