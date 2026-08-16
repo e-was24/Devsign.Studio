@@ -43,7 +43,7 @@ export default function Journey() {
           <img src={catLoader} alt="Loading" />
         </div>
       )}
-      <div className="layout" ref={layoutRef}>
+      <div className="layout-journey" ref={layoutRef}>
         <div className="drop-line">
           <h2 className="title-years">2026</h2>
           <div className="line-v">

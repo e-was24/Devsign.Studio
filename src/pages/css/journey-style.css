@@ -18,7 +18,7 @@
     filter: sepia(0.3);
 }
 
-.layout {
+.layout-journey {
     display: none;
     min-height: 100vh;
     background-color: #ede3d3;
@@ -31,7 +31,7 @@
 }
 
 /* Vignette klasik di pinggiran layar */
-.layout::after {
+.layout-journey::after {
     content: "";
     position: fixed;
     inset: 0;
