@@ -2,7 +2,8 @@
 
 
 :root {
-    --pink: #f099a3
+    --pink: #f099a3;
+    --terakota-bg: #FFD124;
 }
 
 
@@ -55,6 +56,13 @@ html {
 .Landing-Page .profile-menu .dna-link.active i {
     color: var(--pink-bg);
     filter: drop-shadow(0 0 5px var(--pink-bg));
+}
+
+/* Hover & Active untuk link Riska */
+.Landing-Page .profile-menu .pwl-link:hover i,
+.Landing-Page .profile-menu .pwl-link.active i {
+    color: var(--terakota-bg);
+    filter: drop-shadow(0 0 5px var(--terakota-bg));
 }
 
 /* Container Utama */

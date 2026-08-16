@@ -1,0 +1,262 @@
+/* ================================
+   GALERY - VINTAGE AESTHETIC THEME
+   ================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Special+Elite&display=swap');
+
+.galery-container {
+    min-height: 100vh;
+    width: 100%;
+    padding: 60px 8vw 100px;
+    background-color: #ede3d3;
+    background-image:
+        radial-gradient(circle at 20% 20%, rgba(120, 90, 60, 0.06) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(90, 70, 50, 0.08) 0%, transparent 50%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    color: #4a3c2f;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* vignette biar makin dramatis */
+.galery-container::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    box-shadow: inset 0 0 180px rgba(40, 28, 15, 0.45);
+    z-index: 5;
+}
+
+/* ---------- back link ---------- */
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Special Elite', cursive;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #6b5842;
+    text-decoration: none;
+    padding: 8px 18px;
+    border: 1px solid rgba(107, 88, 66, 0.4);
+    border-radius: 2px;
+    background: rgba(255, 250, 240, 0.3);
+    transition: all 0.35s ease;
+}
+
+.back-link:hover {
+    background: rgba(107, 88, 66, 0.12);
+    border-color: #6b5842;
+    letter-spacing: 0.12em;
+}
+
+/* ---------- title ---------- */
+.galery-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    text-align: center;
+    margin: 50px 0 6px;
+    color: #3d2f22;
+    letter-spacing: 0.03em;
+    position: relative;
+}
+
+.galery-title::after {
+    content: "";
+    display: block;
+    width: 90px;
+    height: 1px;
+    margin: 18px auto 0;
+    background: linear-gradient(90deg, transparent, #8a7355, transparent);
+}
+
+.galery-subtitle {
+    text-align: center;
+    font-family: 'Special Elite', cursive;
+    font-size: 0.95rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #8a7355;
+    margin-bottom: 60px;
+}
+
+/* ---------- grid ---------- */
+.galery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 36px;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+}
+
+.galery-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.3rem;
+    color: #8a7355;
+    padding: 80px 0;
+}
+
+/* ---------- polaroid / photo card ---------- */
+.galery-item {
+    background: #fdf8ee;
+    padding: 14px 14px 46px;
+    box-shadow:
+        0 4px 6px rgba(60, 45, 25, 0.15),
+        0 10px 25px rgba(60, 45, 25, 0.2);
+    position: relative;
+    transform: rotate(var(--r, -1.5deg));
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    cursor: pointer;
+}
+
+.galery-item:nth-child(odd) {
+    --r: -2deg;
+}
+
+.galery-item:nth-child(even) {
+    --r: 1.8deg;
+}
+
+.galery-item:nth-child(3n) {
+    --r: -0.8deg;
+}
+
+.galery-item:hover {
+    transform: rotate(0deg) scale(1.04) translateY(-6px);
+    box-shadow:
+        0 8px 14px rgba(60, 45, 25, 0.22),
+        0 20px 40px rgba(60, 45, 25, 0.28);
+    z-index: 3;
+}
+
+/* Disesuaikan agar tag img dan video punya ukuran & efek filter yang sama */
+.galery-item img,
+.galery-item video {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+    display: block;
+    filter: sepia(0.35) contrast(1.05) brightness(0.97) saturate(0.85);
+    transition: filter 0.4s ease;
+}
+
+.galery-item:hover img,
+.galery-item:hover video {
+    filter: sepia(0.15) contrast(1.1) brightness(1) saturate(1);
+}
+
+/* caption ala polaroid, pakai attribut alt lewat data-caption kalau mau */
+.galery-item::after {
+    content: "";
+    position: absolute;
+    bottom: 14px;
+    left: 14px;
+    right: 14px;
+    height: 1px;
+    background: repeating-linear-gradient(90deg,
+            #c9b898 0,
+            #c9b898 4px,
+            transparent 4px,
+            transparent 8px);
+}
+
+/* ---------- modal / pop-up aesthetic vintage ---------- */
+.galery-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(40, 28, 15, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    padding: 20px;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+    position: relative;
+    max-width: 85vw;
+    max-height: 85vh;
+    background: #fdf8ee;
+    padding: 20px 20px 50px;
+    border-radius: 2px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+    transform: rotate(0.5deg);
+}
+
+.modal-content img,
+.modal-content video {
+    max-width: 100%;
+    max-height: 70vh;
+    display: block;
+    margin: 0 auto;
+    object-fit: contain;
+}
+
+.modal-close {
+    position: absolute;
+    top: 5px;
+    right: 12px;
+    background: transparent;
+    border: none;
+    color: #6b5842;
+    font-family: 'Special Elite', cursive;
+    font-size: 28px;
+    cursor: pointer;
+    z-index: 10;
+    line-height: 1;
+    transition: color 0.2s ease;
+}
+
+.modal-close:hover {
+    color: #3d2f22;
+}
+
+.modal-caption {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: #5a4734;
+    text-align: center;
+    padding-top: 15px;
+    margin: 0;
+    font-size: 1.1rem;
+    letter-spacing: 0.05em;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* ---------- responsive ---------- */
+@media (max-width: 600px) {
+    .galery-container {
+        padding: 40px 6vw 70px;
+    }
+
+    .galery-grid {
+        gap: 26px;
+    }
+
+    .galery-item img,
+    .galery-item video {
+        height: 220px;
+    }
+}
+
+.top-safety {
+    width: 100%;
+    height: 20px;
+    background: linear-gradient(to top, #ede3d3 60%, #c9b89800);
+}

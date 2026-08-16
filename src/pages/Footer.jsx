@@ -11,9 +11,9 @@ function Footer() {
 
                 {/* Bagian Kiri: Brand / Nama */}
                 <div className="footer-brand">
-                    <h2><span>Our</span>Portfolio.</h2>
+                    <h2><span>Our</span>Profile.</h2>
                     <p>
-                        Menjelajahi batas antara teknologi modern, dan keajaiban ilmu biologi kedokteran.
+                        Exploring the boundary between modern technology and the wonders of biomedical science.
                     </p>
                 </div>
 
@@ -30,7 +30,7 @@ function Footer() {
 
                 {/* Bagian Kanan: Sosial Media / Kontak */}
                 <div className="footer-socials">
-                    <h3>Hubungi Saya</h3>
+                    <h3>contact me</h3>
                     <div className="social-icons">
                         <a href="https://github.com/e-was24" target="_blank" rel="noopener noreferrer" title="GitHub">
                             <i className="fa-brands fa-github"></i>

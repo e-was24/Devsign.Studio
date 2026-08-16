@@ -12,6 +12,7 @@ function Home() {
     // Deteksi lokasi untuk perubahan tema
     const isRiska = location.pathname === '/riska';
     const isVisitor = location.pathname === '/visitor';
+    const isJourney = location.pathname === '/journey'
 
     useEffect(() => {
         // Logika Ganti Class di Body untuk CSS Global
@@ -19,6 +20,8 @@ function Home() {
             document.body.className = 'theme-riska';
         } else if (isVisitor) {
             document.body.className = 'theme-visitor';
+        } else if (isJourney) {
+            document.body.className = 'thame-journey';
         } else {
             document.body.className = 'theme-elan';
         }
@@ -46,7 +49,7 @@ function Home() {
                     <NavLink 
                         to="/elan" 
                         className={({ isActive }) => `menu-link code-link ${isActive ? 'active' : ''}`}
-                        title="Halaman Elan"
+                        title="Elan page"
                     >
                         <i className="code fa-solid fa-code"></i>
                     </NavLink>
@@ -54,7 +57,7 @@ function Home() {
                     <NavLink 
                         to="/visitor" 
                         className={({ isActive }) => `menu-link visitor-link ${isActive ? 'active' : ''}`}
-                        title="Halaman Tamu"
+                        title="guest page"
                     >
                         <i className="heart fa-regular fa-heart"></i>
                     </NavLink>
@@ -62,9 +65,17 @@ function Home() {
                     <NavLink 
                         to="/riska" 
                         className={({ isActive }) => `menu-link dna-link ${isActive ? 'active' : ''}`}
-                        title="Halaman Riska"
+                        title="Riska page"
                     >
                         <i className="dna fa-solid fa-dna"></i>
+                    </NavLink>
+
+                    <NavLink 
+                        to="/journey" 
+                        className={({ isActive }) => `menu-link pwl-link ${isActive ? 'active' : ''}`}
+                        title="our journey page"
+                    >
+                        <i className="pwl fa-solid fa-solid fa-person-walking-luggage"></i>
                     </NavLink>
                 </div>
             )}

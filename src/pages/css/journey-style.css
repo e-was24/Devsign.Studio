@@ -1,0 +1,87 @@
+.journey-loading-container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.journey-loading-container img {
+    scale: .5;
+}
+
+.layout {
+    display: none;
+}
+
+.drop-line {
+    height: 100vh;
+    margin-top: 2rem;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    flex-direction: column;
+}
+
+.title-years {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    filter: drop-shadow(0 0 5px white);
+}
+
+.title-month {
+    position: absolute;
+    left: -90px;
+    top: 20px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color: #ef7d90;
+    filter: drop-shadow(0 0 10px #ef7d90);
+}
+
+.line-v {
+    position: relative;
+    width: 5px;
+    height: 100px;
+    border-radius: 20px;
+    background: linear-gradient(to bottom, pink, #ef7d90, pink, #ef7d90);
+    box-shadow: 0 0 10px #ef7d90;
+    background-size: 100% 300%; 
+    animation: ambient 2.5s linear infinite;
+}
+
+@keyframes ambient {
+    0%   { background-position: 0% 0%; }
+    100% { background-position: 0% 100%; }
+}
+
+.line-v .link {
+    cursor: pointer;
+}
+
+.line-h-1 {
+    position: absolute;
+    top: 50%;
+    width: 40px;
+    left: 5px;
+    height: 5px;
+    background: linear-gradient(to right, rgba(255, 192, 203, 0.458), pink);
+    border-radius: 0 20px 20px 0;
+}
+
+.circle-1 {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    background: url(../img/SOLO.png);
+    background-position: center;
+    background-size: 90%;
+    border: 2px solid pink;
+    border-radius: 50px;
+    left: 45px;
+    top: 10px;
+    transition: ease-in-out .3s;
+    box-shadow: 0 0 20px #ef7d908f;
+}
+
+.line-v a:hover .circle-1 {
+    background-size: 120%;
+    transform: rotateZ(-5deg);
+}
