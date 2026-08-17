@@ -18,8 +18,8 @@ export default function Journey() {
     const loadingTl = gsap.timeline();
 
     loadingTl.to(".journey-loading-container", {
-      duration: 2.5, // Dibuat sedikit lebih pas untuk durasi loading
-      opacity: 0,
+      duration: 3.5, // Dibuat sedikit lebih pas untuk durasi loading
+      opacity: .5,
       onComplete: () => {
         setIsLoading(false);
         gsap.to(".layout", {

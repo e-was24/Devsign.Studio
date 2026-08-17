@@ -7,6 +7,7 @@ import redCardMp4 from './img/solo/RED-CARD.mp4'
 import soloCardGif from './img/solo/SOLO-CARD-GIF.mp4'
 import soloCardImg from './img/solo/SOLO-CARD-IMG.jpeg'
 import soloCardMp4 from './img/solo/SOLO-CARD.mp4'
+import photoshow from './img/solo/photoshow.jpeg'
 
 const journeyData = {
   solo: {
@@ -24,6 +25,7 @@ const journeyData = {
       { src: soloCardImg, alt: "SOLO 15 AGU 2026" },
       { src: soloCardGif, alt: "SOLO 15 AGU 2026" },
       { src: soloCardMp4, alt: "SOLO 15 AGU 2026" },
+      { src: photoshow, alt: "SOLO 15 AGU 2026" },
 
     ],
   },
