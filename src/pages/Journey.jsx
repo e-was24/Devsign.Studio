@@ -48,7 +48,7 @@ export default function Journey() {
           <h2 className="title-years">2026</h2>
           <div className="line-v">
             {/* Sesi Bulan */}
-            <h1 className="title-month">AGU</h1>
+            <h1 className="title-month">AUG</h1>
             <div className="line-h-1"></div>
             <Link to="/galery/solo" className="link">
               <div className="circle-1" title="solo"></div>
