@@ -4,6 +4,14 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Special+Elite&display=swap');
 
+/* ============ 1. LAYOUT DASAR ============ */
+
+.top-safety {
+    width: 100%;
+    height: 20px;
+    background: linear-gradient(to top, #ede3d3 60%, #c9b89800);
+}
+
 .galery-container {
     min-height: 100vh;
     width: 100%;
@@ -28,7 +36,9 @@
     z-index: 5;
 }
 
-/* ---------- back link ---------- */
+
+/* ============ 2. NAVIGASI & HEADER ============ */
+
 .back-link {
     display: inline-flex;
     align-items: center;
@@ -52,7 +62,6 @@
     letter-spacing: 0.12em;
 }
 
-/* ---------- title ---------- */
 .galery-title {
     font-family: 'Cormorant Garamond', serif;
     font-weight: 600;
@@ -83,7 +92,36 @@
     margin-bottom: 60px;
 }
 
-/* ---------- grid ---------- */
+.galery-loading {
+    text-align: center;
+    padding: 100px 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.3rem;
+    color: #8a7355;
+}
+
+.galery-tips {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+    font-family: 'Special Elite', cursive;
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    color: #a3703f;
+    font-style: italic;
+    margin-bottom: 30px;
+}
+
+.galery-tips svg {
+    filter: drop-shadow(0 0 10px #c68307);
+}
+
+
+/* ============ 3. GRID GALERI ============ */
+
 .galery-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -104,7 +142,9 @@
     padding: 80px 0;
 }
 
-/* ---------- polaroid / photo card ---------- */
+
+/* ============ 4. KARTU POLAROID (item galeri) ============ */
+
 .galery-item {
     background: #fdf8ee;
     padding: 14px 14px 46px;
@@ -112,9 +152,13 @@
         0 4px 6px rgba(60, 45, 25, 0.15),
         0 10px 25px rgba(60, 45, 25, 0.2);
     position: relative;
+    cursor: grab;
     transform: rotate(var(--r, -1.5deg));
     transition: transform 0.4s ease, box-shadow 0.4s ease;
-    cursor: pointer;
+}
+
+.galery-item:active {
+    cursor: grabbing;
 }
 
 .galery-item:nth-child(odd) {
@@ -137,7 +181,6 @@
     z-index: 3;
 }
 
-/* Disesuaikan agar tag img dan video punya ukuran & efek filter yang sama */
 .galery-item img,
 .galery-item video {
     width: 100%;
@@ -153,7 +196,7 @@
     filter: sepia(0.15) contrast(1.1) brightness(1) saturate(1);
 }
 
-/* caption ala polaroid, pakai attribut alt lewat data-caption kalau mau */
+/* garis putus-putus dekoratif ala caption polaroid */
 .galery-item::after {
     content: "";
     position: absolute;
@@ -168,59 +211,116 @@
             transparent 8px);
 }
 
-/* ---------- modal / pop-up aesthetic vintage ---------- */
+/* badge nomor urut, muncul saat hover */
+.galery-item-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(40, 28, 15, 0.65);
+    color: #fdf8ee;
+    font-family: 'Special Elite', cursive;
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 20px;
+    z-index: 10;
+    opacity: 0.75;
+    transition: opacity 0.3s ease;
+}
+
+.galery-item:hover .galery-item-badge {
+    opacity: 1;
+}
+
+
+/* ============ 5. MODAL / LIGHTBOX ============ */
+
 .galery-modal {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(40, 28, 15, 0.85);
+    background-color: rgba(30, 22, 12, 0.82);
+    backdrop-filter: blur(3px);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 9999;
-    padding: 20px;
+    padding: 24px;
     animation: fadeIn 0.3s ease;
 }
 
 .modal-content {
     position: relative;
     max-width: 85vw;
-    max-height: 85vh;
-    background: #fdf8ee;
-    padding: 20px 20px 50px;
+    /* max-height: 88vh; */
+    max-height: 95vh;
+    background-color: #fdf8ee;
+    background-image:
+        radial-gradient(circle at 15% 10%, rgba(120, 90, 60, 0.06) 0%, transparent 55%),
+        radial-gradient(circle at 85% 85%, rgba(90, 70, 50, 0.07) 0%, transparent 55%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    padding: 20px 20px 32px;
+    border: 1px solid #c9b898;
     border-radius: 2px;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
-    transform: rotate(0.5deg);
+    box-shadow:
+        0 20px 50px rgba(20, 14, 8, 0.5),
+        0 4px 12px rgba(20, 14, 8, 0.3);
+    transform: rotate(-0.6deg);
+    animation: popIn 0.35s ease;
+
+    /* PENTING: biar konten (caption) gak overflow keluar card */
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+}
+
+.modal-content::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    box-shadow: inset 0 0 70px rgba(40, 28, 15, 0.15);
+    border-radius: 2px;
 }
 
 .modal-content img,
 .modal-content video {
     max-width: 100%;
-    max-height: 70vh;
+    max-height: 65vh;
     display: block;
     margin: 0 auto;
     object-fit: contain;
+    filter: sepia(0.2) contrast(1.05) saturate(0.9);
+    box-shadow: 0 2px 10px rgba(40, 28, 15, 0.2);
 }
 
+/* --- CLOSE: coretan tinta tangan, bukan tombol lingkaran --- */
 .modal-close {
     position: absolute;
-    top: 5px;
-    right: 12px;
+    top: 0px;
+    right: 0px;
+    width: 28px;
+    height: 28px;
     background: transparent;
     border: none;
-    color: #6b5842;
-    font-family: 'Special Elite', cursive;
-    font-size: 28px;
+    padding: 0;
     cursor: pointer;
     z-index: 10;
+
+    font-family: 'Special Elite', cursive;
+    font-size: 26px;
     line-height: 1;
-    transition: color 0.2s ease;
+    color: #3d2f22;
+
+    transform: rotate(-8deg);
+    text-shadow: 0.5px 0.5px 0 rgba(61, 47, 34, 0.3);
+    transition: transform 0.25s ease, color 0.25s ease;
 }
 
 .modal-close:hover {
-    color: #3d2f22;
+    color: #6b2c2c;
+    /* transform: rotate(4deg) scale(1.15); */
 }
 
 .modal-caption {
@@ -228,35 +328,371 @@
     font-style: italic;
     color: #5a4734;
     text-align: center;
-    padding-top: 15px;
-    margin: 0;
-    font-size: 1.1rem;
-    letter-spacing: 0.05em;
+    padding-top: 14px;
+    margin-top: 12px;
+    margin-bottom: 0;
+    font-size: 1.05rem;
+    letter-spacing: 0.04em;
+    border-top: 2px dashed rgba(138, 115, 85, 0.35);
+
+    /* biar teks panjang gak keluar card, wrap otomatis */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
 }
+
+
+/* ============ 6. ANIMASI ============ */
 
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
 }
 
-/* ---------- responsive ---------- */
+@keyframes popIn {
+    from { opacity: 0; transform: rotate(-0.6deg) scale(0.94); }
+    to   { opacity: 1; transform: rotate(-0.6deg) scale(1); }
+}
+
+
+/* ============ 7. RESPONSIVE ============ */
+
 @media (max-width: 600px) {
-    .galery-container {
-        padding: 40px 6vw 70px;
-    }
-
-    .galery-grid {
-        gap: 26px;
-    }
-
-    .galery-item img,
-    .galery-item video {
-        height: 220px;
+    .modal-close {
+        top: 0px;
+        right: 0px;
+        width: 26px;
+        height: 26px;
+        font-size: 22px;
     }
 }
 
-.top-safety {
+/* ---------- aksi hapus, gaya teks natural (bukan tombol) ---------- */
+.modal-actions {
+    margin-top: 14px;
+    text-align: right;
+}
+
+.modal-delete-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+
+    font-family: 'Special Elite', cursive;
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+    text-transform: lowercase;
+    color: #8a4a2e;
+
+    opacity: 0.7;
+    transition: opacity 0.25s ease, color 0.25s ease, transform 0.2s ease;
+}
+
+.modal-delete-btn svg {
+    width: 16px;
+    height: 16px;
+    fill: #8a4a2e;
+    opacity: 0.85;
+    transition: fill 0.25s ease;
+}
+
+.modal-delete-btn:hover {
+    opacity: 1;
+    color: #6b2c0a;
+    transform: translateX(-2px);
+}
+
+.modal-delete-btn:hover svg {
+    fill: #6b2c0a;
+}
+
+/* ============ 8. POPUP KONFIRMASI HAPUS ============ */
+
+.confirm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(30, 22, 12, 0.78);
+    backdrop-filter: blur(3px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10001;
+    padding: 20px;
+    animation: fadeIn 0.25s ease;
+}
+
+.confirm-box {
+    background-color: #fdf8ee;
+    background-image:
+        radial-gradient(circle at 15% 10%, rgba(120, 90, 60, 0.06) 0%, transparent 55%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    border: 1px solid #c9b898;
+    border-radius: 3px;
+    padding: 28px 26px 22px;
+    max-width: 340px;
     width: 100%;
-    height: 20px;
-    background: linear-gradient(to top, #ede3d3 60%, #c9b89800);
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(20, 14, 8, 0.5);
+    transform: rotate(-0.4deg);
+    animation: popIn 0.3s ease;
+}
+
+.confirm-icon {
+    font-size: 2rem;
+    margin: 0 0 6px;
+    filter: sepia(0.3);
+}
+
+.confirm-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: 1.35rem;
+    color: #3d2f22;
+    margin: 0 0 10px;
+    letter-spacing: 0.02em;
+}
+
+.confirm-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    color: #6b5842;
+    margin: 0 0 22px;
+    line-height: 1.5;
+}
+
+.confirm-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.confirm-btn-cancel,
+.confirm-btn-delete {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+    padding: 8px 18px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.confirm-btn-cancel {
+    background: #e4d9c4;
+    color: #3d2f22;
+    border: 1px solid #c9b898;
+}
+
+.confirm-btn-cancel:hover:not(:disabled) {
+    background: #d8cab0;
+}
+
+.confirm-btn-delete {
+    background: linear-gradient(135deg, #8a2e0f, #5c1f0a);
+    color: #fdf8ee;
+    border: 1px solid #3d2f22;
+    box-shadow: 0 3px 8px rgba(40, 28, 15, 0.35);
+}
+
+.confirm-btn-delete:hover:not(:disabled) {
+    background: linear-gradient(135deg, #a8380f, #6b2c0a);
+    transform: translateY(-1px);
+}
+
+.confirm-btn-cancel:disabled,
+.confirm-btn-delete:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
+/* ============ 9. TOAST NOTIFIKASI ============ */
+
+
+.journey-toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #fdf8ee;
+    border: 1px solid #c9b898;
+    border-radius: 3px;
+    padding: 12px 22px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    color: #3d2f22;
+    box-shadow: 0 12px 30px rgba(20, 14, 8, 0.35);
+    z-index: 10002;
+    animation: toastIn 0.35s ease;
+}
+
+.journey-toast-error {
+    border-color: #8a2e0f;
+    color: #6b2c0a;
+}
+
+@keyframes toastIn {
+    from { opacity: 0; transform: translate(-50%, 12px); }
+    to   { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* ============ 10. ANIMASI BAKAR ============ */
+
+.modal-media-wrap {
+    position: relative;
+    overflow: hidden;
+}
+
+.modal-content.burning {
+    pointer-events: none;
+    animation: shakeSubtle 0.4s ease-in-out infinite;
+}
+
+@keyframes shakeSubtle {
+    0%, 100% { transform: rotate(-0.6deg) translateX(0); }
+    50% { transform: rotate(-0.4deg) translateX(1px); }
+}
+
+/* foto sendiri menghitam & mengerut dari bawah ke atas */
+.modal-content.burning .modal-media-wrap img,
+.modal-content.burning .modal-media-wrap video {
+    animation: charAndShrink 1.4s ease-in forwards;
+    transform-origin: bottom center;
+}
+
+@keyframes charAndShrink {
+    0% {
+        filter: sepia(0.2) brightness(1) contrast(1);
+        clip-path: inset(0 0 0 0);
+        opacity: 1;
+    }
+    40% {
+        filter: sepia(0.5) brightness(0.8) contrast(1.2) saturate(0.7);
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 92% 78%, 84% 92%, 76% 74%, 68% 88%, 60% 76%, 52% 90%, 44% 78%, 36% 86%, 28% 76%, 20% 90%, 12% 78%, 0 88%);
+    }
+    70% {
+        filter: sepia(0.8) brightness(0.5) contrast(1.4) saturate(0.4);
+        clip-path: polygon(0 0, 100% 0, 100% 45%, 90% 38%, 82% 48%, 74% 34%, 66% 46%, 58% 36%, 50% 48%, 42% 34%, 34% 46%, 26% 36%, 18% 48%, 10% 34%, 0 44%);
+        opacity: 0.9;
+    }
+    100% {
+        filter: sepia(1) brightness(0.1) contrast(1.6) saturate(0.2);
+        clip-path: polygon(0 0, 100% 0, 100% 4%, 90% 2%, 80% 5%, 70% 1%, 60% 4%, 50% 2%, 40% 5%, 30% 1%, 20% 4%, 10% 2%, 0 3%);
+        opacity: 0;
+    }
+}
+
+/* overlay api & asap */
+.burn-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.burn-flame {
+    position: absolute;
+    bottom: 0;
+    width: 60px;
+    height: 90px;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    background: radial-gradient(circle at 50% 80%,
+            #fff2b0 0%,
+            #ffb347 30%,
+            #ff6a1f 55%,
+            #c62b0f 75%,
+            transparent 90%);
+    filter: blur(1px);
+    opacity: 0;
+    animation: flameRise 1.4s ease-in forwards;
+    mix-blend-mode: screen;
+}
+
+.flame-1 {
+    left: 15%;
+    animation-delay: 0s;
+}
+
+.flame-2 {
+    left: 45%;
+    width: 75px;
+    height: 110px;
+    animation-delay: 0.15s;
+}
+
+.flame-3 {
+    left: 70%;
+    width: 55px;
+    height: 85px;
+    animation-delay: 0.3s;
+}
+
+
+@keyframes flameRise {
+    0% {
+        transform: translateY(20%) scaleY(0.3) scaleX(0.8);
+        opacity: 0;
+    }
+    15% {
+        opacity: 1;
+    }
+    50% {
+        transform: translateY(-40%) scaleY(1.1) scaleX(1);
+        opacity: 0.95;
+    }
+    75% {
+        transform: translateY(-75%) scaleY(1.3) scaleX(0.9);
+        opacity: 0.7;
+    }
+    100% {
+        transform: translateY(-115%) scaleY(1.4) scaleX(0.7);
+        opacity: 0;
+    }
+}
+
+.burn-smoke {
+    position: absolute;
+    bottom: 30%;
+    width: 50px;
+    height: 50px;
+    background: radial-gradient(circle, rgba(80, 70, 60, 0.5) 0%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(6px);
+    opacity: 0;
+    animation: smokeRise 1.6s ease-out forwards;
+}
+
+.smoke-1 {
+    left: 25%;
+    animation-delay: 0.3s;
+}
+
+.smoke-2 {
+    left: 60%;
+    width: 65px;
+    height: 65px;
+    animation-delay: 0.5s;
+}
+
+@keyframes smokeRise {
+    0% {
+        transform: translateY(0) scale(0.6);
+        opacity: 0;
+    }
+    20% {
+        opacity: 0.5;
+    }
+    100% {
+        transform: translateY(-160%) scale(1.6);
+        opacity: 0;
+    }
 }
