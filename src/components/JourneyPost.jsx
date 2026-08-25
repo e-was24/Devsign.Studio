@@ -2,21 +2,25 @@ import { useState } from "react";
 import { supabase } from "../supabaseClient";
 import "./css/post.css";
 
+// Daftar bulan tetap, biar grouping di timeline selalu konsisten
+const MONTH_OPTIONS = [
+  "JAN", "FEB", "MAR", "APR", "MEI", "JUN",
+  "JUL", "AUG", "SEP", "OKT", "NOV", "DES",
+];
+
 export default function Post({ onJourneyAdded }) {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // State untuk data journey utama
   const [formData, setFormData] = useState({
     year: "2026",
-    month_label: "",
+    month_label: MONTH_OPTIONS[0], // default: JAN
     title: "",
     order_index: 1,
   });
 
-  const [coverFile, setCoverFile] = useState(null); // Hanya 1 foto cover utama
+  const [coverFile, setCoverFile] = useState(null);
 
-  // Fungsi enkripsi & rename file agar aman & unik
   const encryptAndRename = (file) => {
     const ext = file.name.split(".").pop();
     const randomStr = Math.random().toString(36).substring(2, 10);
@@ -29,7 +33,6 @@ export default function Post({ onJourneyAdded }) {
 
     setLoading(true);
     try {
-      // 1. Upload Cover Utama ke Supabase Storage
       const safeCoverName = encryptAndRename(coverFile);
       const coverPath = `covers/${safeCoverName}`;
 
@@ -42,36 +45,32 @@ export default function Post({ onJourneyAdded }) {
         data: { publicUrl: coverUrl },
       } = supabase.storage.from("galeri").getPublicUrl(coverPath);
 
-      // 2. Simpan data Journey ke tabel 'journeys'
-      const { error: journeyErr } = await supabase
-        .from("journeys")
-        .insert([
-          {
-            year: parseInt(formData.year),
-            month_label: formData.month_label.toUpperCase(),
-            title: formData.title.toUpperCase(),
-            cover_url: coverUrl,
-            order_index: parseInt(formData.order_index),
-          },
-        ]);
+      // month_label sudah pasti seragam karena dari dropdown (tidak perlu .toUpperCase() manual lagi,
+      // tapi tetap dijaga untuk keamanan kalau ada whitespace)
+      const { error: journeyErr } = await supabase.from("journeys").insert([
+        {
+          year: parseInt(formData.year),
+          month_label: formData.month_label.trim().toUpperCase(),
+          title: formData.title.trim().toUpperCase(),
+          cover_url: coverUrl,
+          order_index: parseInt(formData.order_index),
+        },
+      ]);
 
       if (journeyErr) throw journeyErr;
 
       alert("Journey baru berhasil ditambahkan! 🎉");
       setIsOpen(false);
-      
-      // Reset Form
+
       setFormData({
         year: "2026",
-        month_label: "",
+        month_label: MONTH_OPTIONS[0],
         title: "",
         order_index: 1,
       });
       setCoverFile(null);
 
-      // Refresh data di halaman utama jika fungsi props tersedia
       if (onJourneyAdded) onJourneyAdded();
-      
     } catch (err) {
       console.error(err);
       alert("Gagal mengupload journey.");
@@ -105,39 +104,36 @@ export default function Post({ onJourneyAdded }) {
                 <input
                   type="number"
                   value={formData.year}
-                  onChange={(e) =>
-                    setFormData({ ...formData, year: e.target.value })
-                  }
+                  onChange={(e) => setFormData({ ...formData, year: e.target.value })}
                   className="journey-input"
                   required
                 />
               </div>
 
+              {/* --- DROPDOWN BULAN (fix: sebelumnya teks bebas -> rawan typo -> gagal grouping) --- */}
               <div className="journey-form-group">
-                <label className="journey-label">Bulan (Contoh: AUG)</label>
-                <input
-                  type="text"
-                  placeholder="AUG"
+                <label className="journey-label">Bulan</label>
+                <select
                   value={formData.month_label}
-                  onChange={(e) =>
-                    setFormData({ ...formData, month_label: e.target.value })
-                  }
+                  onChange={(e) => setFormData({ ...formData, month_label: e.target.value })}
                   className="journey-input"
                   required
-                />
+                >
+                  {MONTH_OPTIONS.map((m) => (
+                    <option key={m} value={m}>
+                      {m}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="journey-form-group">
-                <label className="journey-label">
-                  Judul Kota (Contoh: SOLO)
-                </label>
+                <label className="journey-label">Judul Kota (Contoh: SOLO)</label>
                 <input
                   type="text"
                   placeholder="SOLO"
                   value={formData.title}
-                  onChange={(e) =>
-                    setFormData({ ...formData, title: e.target.value })
-                  }
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   className="journey-input"
                   required
                 />
@@ -148,9 +144,7 @@ export default function Post({ onJourneyAdded }) {
                 <input
                   type="number"
                   value={formData.order_index}
-                  onChange={(e) =>
-                    setFormData({ ...formData, order_index: e.target.value })
-                  }
+                  onChange={(e) => setFormData({ ...formData, order_index: e.target.value })}
                   className="journey-input"
                   required
                 />
@@ -168,18 +162,10 @@ export default function Post({ onJourneyAdded }) {
               </div>
 
               <div className="journey-popup-actions">
-                <button
-                  type="button"
-                  onClick={() => setIsOpen(false)}
-                  className="journey-btn-cancel"
-                >
+                <button type="button" onClick={() => setIsOpen(false)} className="journey-btn-cancel">
                   Batal
                 </button>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="journey-btn-submit"
-                >
+                <button type="submit" disabled={loading} className="journey-btn-submit">
                   {loading ? "Mengupload..." : "Simpan Journey"}
                 </button>
               </div>

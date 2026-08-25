@@ -2,9 +2,10 @@
    JOURNEY - VINTAGE AESTHETIC THEME
    ================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Special+Elite&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400&family=Special+Elite&display=swap');
 
-/* Container Utama */
+/* ============ LOADING ============ */
+
 .journey-loading-container {
     height: 100vh;
     display: flex;
@@ -30,7 +31,6 @@
     overflow-x: hidden;
 }
 
-/* Vignette klasik di pinggiran layar */
 .layout-journey::after {
     content: "";
     position: fixed;
@@ -40,18 +40,19 @@
     z-index: 5;
 }
 
+/* ============ HEADER TAHUN ============ */
+
 .drop-line {
-    height: 100vh;
-    margin-top: 2rem;
+    min-height: 100vh;
+    padding: 4rem 0 6rem;
     display: flex;
-    justify-content: start;
+    justify-content: flex-start;
     align-items: center;
     flex-direction: column;
     position: relative;
     z-index: 6;
 }
 
-/* Judul Tahun (Gaya Arsip Klasik) */
 .title-years {
     font-family: 'Cormorant Garamond', serif;
     font-size: 2.2rem;
@@ -61,65 +62,156 @@
     filter: drop-shadow(0 2px 4px rgba(60, 45, 25, 0.15));
     border-bottom: 1px dashed #8a7355;
     padding-bottom: 5px;
-    margin-bottom: 2rem;
+    margin-bottom: 3rem;
 }
 
-/* Judul Bulan */
-.title-month {
-    position: absolute;
-    left: -110px;
-    top: 15px;
-    font-family: 'Special Elite', cursive;
-    font-size: 1.1rem;
-    color: #6b5842;
-    letter-spacing: 0.15em;
-    background: rgba(255, 250, 240, 0.6);
-    padding: 2px 8px;
-    border: 1px solid rgba(107, 88, 66, 0.3);
-    border-radius: 2px;
-}
+/* ============ TIMELINE (garis tumbuh sesuai jumlah GRUP BULAN) ============ */
 
-/* Garis Vertikal Timeline (Gaya Tinta Klasik / Benang Arsip) */
 .line-v {
     position: relative;
+    width: 100%;
+    max-width: 460px;
+    margin: 0 auto;
+    padding: 10px 0 20px;
+}
+
+.line-v::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
     width: 3px;
-    height: 120px;
+    transform: translateX(-50%);
     border-radius: 2px;
     background: linear-gradient(to bottom, #8a7355, #c9b898, #8a7355);
     box-shadow: 0 0 8px rgba(138, 115, 85, 0.3);
+    z-index: 0;
 }
 
-.line-v .link {
-    cursor: pointer;
+/* ============ TIMELINE (garis tumbuh sesuai jumlah GRUP BULAN) ============ */
+
+.journey-month-group {
+    position: relative;
+    width: 100%;
+    min-height: 130px;
+    z-index: 1;
 }
 
-/* Garis Penghubung Horizontal */
+.journey-month-group::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 48px;
+    width: 11px;
+    height: 11px;
+    background: #3d2f22;
+    border: 2px solid #fdf8ee;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 0 4px rgba(138, 115, 85, 0.22);
+    z-index: 3;
+}
+
+/* Label bulan */
+.title-month {
+    position: absolute;
+    top: 40px;
+    font-family: 'Special Elite', cursive;
+    font-size: 1.05rem;
+    color: #6b5842;
+    letter-spacing: 0.15em;
+    background: rgba(255, 250, 240, 0.7);
+    padding: 3px 10px;
+    border: 1px solid rgba(107, 88, 66, 0.3);
+    border-radius: 2px;
+    z-index: 2;
+    white-space: nowrap;
+}
+
 .line-h-1 {
     position: absolute;
-    top: 50%;
-    width: 45px;
-    left: 3px;
+    top: 48px;
     height: 2px;
+    width: 45px;
     background: #8a7355;
+    z-index: 2;
 }
 
-/* Lingkaran Kartu Preview / Polaroid Mini */
-.circle-1 {
+.journey-cards-stack {
     position: absolute;
+    top: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    z-index: 2;
+}
+
+/* --- GRUP GANJIL: kartu di KANAN -> label bulan di KIRI --- */
+.journey-month-group:nth-child(odd) .line-h-1 {
+    left: 50%;
+}
+.journey-month-group:nth-child(odd) .journey-cards-stack {
+    left: calc(50% + 45px);
+}
+.journey-month-group:nth-child(odd) .title-month {
+    left: calc(50% - 150px);
+}
+
+/* --- GRUP GENAP: kartu di KIRI -> label bulan di KANAN (fix: sebelumnya selalu kiri, nabrak kartu) --- */
+.journey-month-group:nth-child(even) .line-h-1 {
+    right: 50%;
+}
+.journey-month-group:nth-child(even) .journey-cards-stack {
+    right: calc(50% + 45px);
+}
+.journey-month-group:nth-child(even) .title-month {
+    right: calc(50% - 150px);
+    left: auto;
+}
+
+/* ============ GARIS PENGHUBUNG ANTAR KARTU DALAM 1 BULAN ============ */
+
+/* Garis kecil tegak lurus menghubungkan tiap kartu berurutan di stack yang sama */
+.journey-item-circle-wrap {
+    position: relative;
+}
+
+.journey-item-circle-wrap:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    width: 2px;
+    height: 16px; /* samain dengan gap: 16px di .journey-cards-stack */
+    transform: translateX(-50%);
+    background: repeating-linear-gradient(
+        to bottom,
+        #8a7355 0,
+        #8a7355 3px,
+        transparent 3px,
+        transparent 6px
+    );
+    z-index: 1;
+}
+
+/* Wrapper kartu individual */
+.circle-1 {
     width: 85px;
     height: 85px;
     background-color: #fdf8ee;
-    background-image: url(../img/SOLO.png);
     background-position: center;
     background-size: 80%;
     background-repeat: no-repeat;
     border: 1px solid #c9b898;
-    border-radius: 4px; /* Sedikit kotak ala polaroid kecil */
-    left: 48px;
-    top: 5px;
+    border-radius: 4px;
     transition: all 0.35s ease;
     box-shadow: 0 6px 15px rgba(60, 45, 25, 0.2);
     transform: rotate(-2deg);
+}
+
+.journey-month-group:nth-child(even) .circle-1 {
+    transform: rotate(2deg);
 }
 
 .line-v a:hover .circle-1 {
@@ -129,5 +221,58 @@
     box-shadow: 0 10px 25px rgba(60, 45, 25, 0.3);
 }
 
-/* add fitur */
+.journey-delete-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #6b2c2c;
+    color: #fdf8ee;
+    border: 1px solid #fdf8ee;
+    font-size: 13px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(40, 28, 15, 0.4);
+    opacity: 0;
+    transition: opacity 0.25s ease, background 0.25s ease, transform 0.2s ease;
+    z-index: 4;
+}
 
+.journey-item-circle-wrap:hover .journey-delete-btn {
+    opacity: 1;
+}
+
+.journey-delete-btn:hover {
+    background: #4a1f1f;
+    transform: scale(1.12);
+}
+
+/* ============ RESPONSIVE ============ */
+
+@media (max-width: 560px) {
+    .line-v {
+        max-width: 320px;
+    }
+    .title-month {
+        left: calc(50% - 100px);
+        font-size: 0.85rem;
+    }
+    .line-h-1 {
+        width: 28px;
+    }
+    .journey-month-group:nth-child(odd) .journey-cards-stack {
+        left: calc(50% + 28px);
+    }
+    .journey-month-group:nth-child(even) .journey-cards-stack {
+        right: calc(50% + 28px);
+    }
+    .circle-1 {
+        width: 65px;
+        height: 65px;
+    }
+}
