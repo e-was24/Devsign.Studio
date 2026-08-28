@@ -52,7 +52,7 @@ function Home() {
         <div className={`Landing-Page ${isRiska ? 'theme-riska' : ''} ${isVisitor ? 'theme-visitor' : ''}`} ref={container}>
             
             {/* Navigasi tetap muncul kecuali kamu ingin menyembunyikannya di halaman tamu */}
-            {!isVisitor && visible && !isHome && !expired && (
+            {!isVisitor && visible && !expired && (
                 <div className="profile-menu">
                     <NavLink 
                         to="/elan" 
