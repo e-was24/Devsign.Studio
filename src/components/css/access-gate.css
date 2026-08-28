@@ -1,0 +1,176 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400&family=Special+Elite&display=swap');
+
+.gate-loading-screen {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Special Elite', cursive;
+    color: #6b5842;
+    background-color: #ede3d3;
+}
+
+.gate-overlay {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ede3d3;
+    background-image:
+        radial-gradient(circle at 20% 20%, rgba(120, 90, 60, 0.06) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(90, 70, 50, 0.08) 0%, transparent 50%);
+}
+
+.gate-box {
+    background: #fdf8ee;
+    border: 1px solid #c9b898;
+    border-radius: 4px;
+    padding: 2.5rem 2rem;
+    max-width: 340px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(40, 28, 15, 0.3);
+    position: relative;
+}
+
+.gate-box::before {
+    content: "";
+    position: absolute;
+    inset: 8px;
+    border: 1px dashed rgba(138, 115, 85, 0.4);
+    border-radius: 2px;
+    pointer-events: none;
+}
+
+.gate-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.7rem;
+    color: #3d2f22;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.4rem;
+}
+
+.gate-subtitle {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.85rem;
+    color: #6b5842;
+    margin-bottom: 1.5rem;
+}
+
+.gate-input {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #c9b898;
+    border-radius: 3px;
+    background: #fffdf7;
+    color: #3d2f22;
+    font-family: 'Special Elite', cursive;
+    margin-bottom: 0.8rem;
+    box-sizing: border-box;
+}
+
+.gate-input:focus {
+    outline: none;
+    border-color: #8a7355;
+}
+
+.gate-error {
+    color: #6b2c2c;
+    font-size: 0.85rem;
+    margin-bottom: 0.8rem;
+    font-family: 'Cormorant Garamond', serif;
+}
+
+.gate-btn {
+    width: 100%;
+    padding: 0.6rem;
+    background: #3d2f22;
+    color: #fdf8ee;
+    border: none;
+    border-radius: 3px;
+    font-family: 'Special Elite', cursive;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: background 0.25s ease;
+}
+
+.gate-btn:hover {
+    background: #6b5842;
+}
+
+.gate-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ============ PIN DOTS ============ */
+
+.gate-pin-dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 0.5rem 0 1.2rem;
+    flex-wrap: wrap;
+}
+
+.gate-pin-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1.5px solid #8a7355;
+    background: transparent;
+    transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.gate-pin-dot.filled {
+    background: #3d2f22;
+    transform: scale(1.1);
+}
+
+/* ============ CUSTOM NUMPAD ============ */
+
+.gate-keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 1rem;
+}
+
+.gate-key {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    padding: 0.75rem 0;
+    background: #fffdf7;
+    border: 1px solid #c9b898;
+    border-radius: 6px;
+    color: #3d2f22;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.gate-key:hover {
+    background: #f0e6d2;
+}
+
+.gate-key:active {
+    transform: scale(0.95);
+    background: #e3d5b8;
+}
+
+.gate-key:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.gate-key-action {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.9rem;
+    background: #3d2f22;
+    color: #fdf8ee;
+    border-color: #3d2f22;
+}
+
+.gate-key-action:hover {
+    background: #6b5842;
+}
