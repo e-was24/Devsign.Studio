@@ -276,3 +276,81 @@
         height: 65px;
     }
 }
+
+/* ============ POPUP NOTIFIKASI (pengganti alert) ============ */
+
+.journey-alert-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(40, 28, 15, 0.55);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    animation: journeyFadeIn 0.2s ease;
+}
+
+.journey-alert-box {
+    background: #fdf8ee;
+    border: 1px solid #c9b898;
+    border-radius: 4px;
+    padding: 1.8rem 1.6rem;
+    max-width: 340px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(40, 28, 15, 0.35);
+    position: relative;
+    animation: journeyPopIn 0.25s ease;
+}
+
+.journey-alert-box::before {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    border: 1px dashed rgba(138, 115, 85, 0.4);
+    border-radius: 2px;
+    pointer-events: none;
+}
+
+.journey-alert-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    color: #3d2f22;
+    line-height: 1.5;
+    margin-bottom: 1.2rem;
+}
+
+.journey-alert-btn {
+    font-family: 'Special Elite', cursive;
+    letter-spacing: 0.05em;
+    background: #3d2f22;
+    color: #fdf8ee;
+    border: none;
+    padding: 0.5rem 1.6rem;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.25s ease, transform 0.2s ease;
+}
+
+.journey-alert-btn:hover {
+    background: #6b5842;
+    transform: translateY(-2px);
+}
+
+/* Warna aksen beda per tipe notifikasi */
+.journey-alert-success .journey-alert-text {
+    color: #3d5a2f;
+}
+.journey-alert-error .journey-alert-text {
+    color: #6b2c2c;
+}
+
+@keyframes journeyFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes journeyPopIn {
+    from { opacity: 0; transform: scale(0.92); }
+    to { opacity: 1; transform: scale(1); }
+}

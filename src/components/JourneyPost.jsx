@@ -2,7 +2,6 @@ import { useState } from "react";
 import { supabase } from "../supabaseClient";
 import "./css/post.css";
 
-// Daftar bulan tetap, biar grouping di timeline selalu konsisten
 const MONTH_OPTIONS = [
   "JAN", "FEB", "MAR", "APR", "MEI", "JUN",
   "JUL", "AUG", "SEP", "OKT", "NOV", "DES",
@@ -14,12 +13,21 @@ export default function Post({ onJourneyAdded }) {
 
   const [formData, setFormData] = useState({
     year: "2026",
-    month_label: MONTH_OPTIONS[0], // default: JAN
+    month_label: MONTH_OPTIONS[0],
     title: "",
     order_index: 1,
   });
 
   const [coverFile, setCoverFile] = useState(null);
+
+  // --- state popup notifikasi (pengganti alert) ---
+  const [notice, setNotice] = useState({ show: false, message: "", type: "info" });
+
+  const showNotice = (message, type = "info") => {
+    setNotice({ show: true, message, type });
+  };
+
+  const closeNotice = () => setNotice((n) => ({ ...n, show: false }));
 
   const encryptAndRename = (file) => {
     const ext = file.name.split(".").pop();
@@ -29,10 +37,31 @@ export default function Post({ onJourneyAdded }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!coverFile) return alert("Pilih foto cover dulu!");
+    if (!coverFile) {
+      showNotice("Pilih foto cover dulu!", "error");
+      return;
+    }
+
+    const formattedTitle = formData.title.trim().toUpperCase();
 
     setLoading(true);
     try {
+      const { data: existingJourneys, error: checkErr } = await supabase
+        .from("journeys")
+        .select("id")
+        .ilike("title", formattedTitle);
+
+      if (checkErr) throw checkErr;
+
+      if (existingJourneys && existingJourneys.length > 0) {
+        showNotice(
+          `Judul "${formattedTitle}" sudah ada. Gunakan nama lain atau tambahkan simbol unik (pt. 2)`,
+          "error"
+        );
+        setLoading(false);
+        return;
+      }
+
       const safeCoverName = encryptAndRename(coverFile);
       const coverPath = `covers/${safeCoverName}`;
 
@@ -45,13 +74,11 @@ export default function Post({ onJourneyAdded }) {
         data: { publicUrl: coverUrl },
       } = supabase.storage.from("galeri").getPublicUrl(coverPath);
 
-      // month_label sudah pasti seragam karena dari dropdown (tidak perlu .toUpperCase() manual lagi,
-      // tapi tetap dijaga untuk keamanan kalau ada whitespace)
       const { error: journeyErr } = await supabase.from("journeys").insert([
         {
           year: parseInt(formData.year),
           month_label: formData.month_label.trim().toUpperCase(),
-          title: formData.title.trim().toUpperCase(),
+          title: formattedTitle,
           cover_url: coverUrl,
           order_index: parseInt(formData.order_index),
         },
@@ -59,8 +86,8 @@ export default function Post({ onJourneyAdded }) {
 
       if (journeyErr) throw journeyErr;
 
-      alert("Journey baru berhasil ditambahkan! 🎉");
       setIsOpen(false);
+      showNotice("Journey baru berhasil ditambahkan! 🎉", "success");
 
       setFormData({
         year: "2026",
@@ -73,7 +100,7 @@ export default function Post({ onJourneyAdded }) {
       if (onJourneyAdded) onJourneyAdded();
     } catch (err) {
       console.error(err);
-      alert("Gagal mengupload journey.");
+      showNotice("Gagal mengupload journey.", "error");
     } finally {
       setLoading(false);
     }
@@ -82,13 +109,7 @@ export default function Post({ onJourneyAdded }) {
   return (
     <>
       <button className="btn-post" onClick={() => setIsOpen(true)}>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          height="24px"
-          viewBox="0 -960 960 960"
-          width="24px"
-          fill="#e3e3e3"
-        >
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
           <path d="M260-160q-91 0-155.5-63T40-377q0-78 47-139t123-78q25-92 100-149t170-57q117 0 198.5 81.5T760-520q69 8 114.5 59.5T920-340q0 75-52.5 127.5T740-160H520q-33 0-56.5-23.5T440-240v-206l-64 62-56-56 160-160 160 160-56 56-64-62v206h220q42 0 71-29t29-71q0-42-29-71t-71-29h-60v-80q0-83-58.5-141.5T480-720q-83 0-141.5 58.5T280-520h-20q-58 0-99 41t-41 99q0 58 41 99t99 41h100v80H260Zm220-280Z" />
         </svg>
       </button>
@@ -110,7 +131,6 @@ export default function Post({ onJourneyAdded }) {
                 />
               </div>
 
-              {/* --- DROPDOWN BULAN (fix: sebelumnya teks bebas -> rawan typo -> gagal grouping) --- */}
               <div className="journey-form-group">
                 <label className="journey-label">Bulan</label>
                 <select
@@ -120,9 +140,7 @@ export default function Post({ onJourneyAdded }) {
                   required
                 >
                   {MONTH_OPTIONS.map((m) => (
-                    <option key={m} value={m}>
-                      {m}
-                    </option>
+                    <option key={m} value={m}>{m}</option>
                   ))}
                 </select>
               </div>
@@ -170,6 +188,21 @@ export default function Post({ onJourneyAdded }) {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* --- POPUP NOTIFIKASI (pengganti alert) --- */}
+      {notice.show && (
+        <div className="journey-alert-overlay" onClick={closeNotice}>
+          <div
+            className={`journey-alert-box journey-alert-${notice.type}`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <p className="journey-alert-text">{notice.message}</p>
+            <button className="journey-alert-btn" onClick={closeNotice}>
+              Oke
+            </button>
           </div>
         </div>
       )}
