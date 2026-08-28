@@ -1,13 +1,15 @@
 import './css/style-page.css';
 import Footer from './Footer';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
+import { isGuestSession } from '../components/AccessGate';
 
 function Home() {
     const container = useRef();
     const location = useLocation();
+    const [visible, setVisible] = useState(false)
     
     // Deteksi lokasi untuk perubahan tema
     const isRiska = location.pathname === '/riska';
@@ -40,11 +42,15 @@ function Home() {
         });
     }, { scope: container });
 
+    useEffect(() => {
+        setVisible(!isGuestSession())
+    })
+
     return (
         <div className={`Landing-Page ${isRiska ? 'theme-riska' : ''} ${isVisitor ? 'theme-visitor' : ''}`} ref={container}>
             
             {/* Navigasi tetap muncul kecuali kamu ingin menyembunyikannya di halaman tamu */}
-            {!isVisitor && (
+            {!isVisitor && visible && (
                 <div className="profile-menu">
                     <NavLink 
                         to="/elan" 

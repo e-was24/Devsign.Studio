@@ -23,7 +23,7 @@ export default function GuestInviteButton() {
       });
       if (error) throw error;
 
-      const link = `${window.location.origin}${window.location.pathname}?guest=${code}`;
+      const link = `${window.location.origin}${window.location.pathname}journey?guest=${code}`;
       setInviteInfo({ code, link });
     } catch (err) {
       console.error("Gagal buat kode tamu:", err);
