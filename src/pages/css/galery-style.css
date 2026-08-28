@@ -65,7 +65,7 @@
 .galery-title {
     font-family: 'Cormorant Garamond', serif;
     font-weight: 600;
-    font-size: clamp(2.8rem, 6vw, 5rem);
+    font-size: 2em;
     text-align: center;
     margin: 50px 0 6px;
     color: #3d2f22;
