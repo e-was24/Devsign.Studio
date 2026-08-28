@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import catLoader from "../components/catLoader.gif";
 import JourneyPost from "../components/JourneyPost";
 import { supabase } from "../supabaseClient";
+import { isGuestSession } from "../components/AccessGate";
 
 import "./css/journey-style.css";
 
@@ -20,6 +21,7 @@ export default function Journey() {
   const CARD_GAP = 16;
   const STACK_TOP_OFFSET = 5;
   const GROUP_BOTTOM_SPACING = 55;
+  const [visible, setVisible] = useState(false);
 
   async function fetchJourneys() {
     const { data, error } = await supabase
@@ -60,6 +62,10 @@ export default function Journey() {
       alert("Terjadi kesalahan saat menghapus journey.");
     }
   };
+
+  useEffect(() => {
+    setVisible(!isGuestSession());
+  });
 
   // --- BARU: kelompokkan journeys bertingkat -> per TAHUN, lalu per BULAN ---
   // Hasil: [ [year, [ [month, items[]], [month, items[]] ]], [year, [...]] ]
@@ -173,15 +179,17 @@ export default function Journey() {
                               ></div>
                             </Link>
 
-                            <button
-                              onClick={() =>
-                                handleDeleteJourney(item.id, item.title)
-                              }
-                              className="journey-delete-btn"
-                              title="Hapus Journey"
-                            >
-                              &times;
-                            </button>
+                            {visible && (
+                              <button
+                                onClick={() =>
+                                  handleDeleteJourney(item.id, item.title)
+                                }
+                                className="journey-delete-btn"
+                                title="Hapus Journey"
+                              >
+                                &times;
+                              </button>
+                            )}
                           </div>
 
                           {/* --- BARU: label judul di samping card --- */}
