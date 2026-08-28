@@ -4,6 +4,7 @@ import React, { useRef, useState, useEffect, useCallback } from "react";
 import { useParams, Link, Navigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import ImgPost from "../components/imagePost";
+import { isGuestSession } from "../components/AccessGate";
 
 import "./css/galery-style.css";
 
@@ -16,12 +17,17 @@ export default function Galery() {
   const [loading, setLoading] = useState(true);
   const [selectedItem, setSelectedItem] = useState(null);
   const [draggedItemIndex, setDraggedItemIndex] = useState(null);
+  const [visible, setVisible] = useState(false)
 
   // --- STATE BARU: popup konfirmasi & notifikasi custom ---
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [notification, setNotification] = useState(null); // { type: 'success' | 'error', message: string }
   const [isBurning, setIsBurning] = useState(false);
+
+  useEffect(() => {
+    setVisible(!isGuestSession());
+  })
 
   const fetchGaleryData = useCallback(async () => {
     setLoading(true);
@@ -296,7 +302,7 @@ export default function Galery() {
               <p className="modal-caption">{selectedItem.date_label} ( {selectedItem.alt_text} ) </p>
             )}
 
-            {!isBurning && (
+            {!isBurning && visible && (
               <div className="modal-actions">
                 <button onClick={requestDelete} className="modal-delete-btn">
                   <svg
