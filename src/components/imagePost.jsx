@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import "./css/imgPost.css";
+import { isGuestSession } from "./AccessGate";
 
 export default function ImgPost({ journeyId, onUploadSuccess }) {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState([]);
   const [previews, setPreviews] = useState([]);
+  const [visible, setVisible] = useState(false)
 
   // --- STATE BARU: notifikasi custom ---
   const [notification, setNotification] = useState(null); // { type: 'success' | 'error' | 'warning', message: string }
@@ -32,6 +34,10 @@ export default function ImgPost({ journeyId, onUploadSuccess }) {
     const timer = setTimeout(() => setNotification(null), 3200);
     return () => clearTimeout(timer);
   }, [notification]);
+
+  useEffect(() => {
+    setVisible(!isGuestSession())
+  })
 
   const handleFileChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
@@ -109,6 +115,8 @@ export default function ImgPost({ journeyId, onUploadSuccess }) {
       setLoading(false);
     }
   };
+
+    if (!visible) return null
 
   return (
     <>

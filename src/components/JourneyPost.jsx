@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import "./css/post.css";
+import { isGuestSession } from "./AccessGate";
 
 const MONTH_OPTIONS = [
   "JAN", "FEB", "MAR", "APR", "MEI", "JUN",
@@ -21,9 +22,14 @@ export default function Post({ onJourneyAdded }) {
 
   const [coverFile, setCoverFile] = useState(null);
   const [notice, setNotice] = useState({ show: false, message: "", type: "info" });
+  const [visible, setVisible] = useState(false)
 
   const showNotice = (message, type = "info") => setNotice({ show: true, message, type });
   const closeNotice = () => setNotice((n) => ({ ...n, show: false }));
+  
+  useEffect(() => {
+    setVisible(!isGuestSession())
+  })
 
   // --- Ambil order_index tertinggi dari DB lalu +1 ---
   const fetchNextOrderIndex = async () => {
@@ -129,6 +135,8 @@ export default function Post({ onJourneyAdded }) {
       setLoading(false);
     }
   };
+
+  if (!visible) return null
 
   return (
     <>
