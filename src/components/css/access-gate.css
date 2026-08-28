@@ -174,3 +174,15 @@
 .gate-key-action:hover {
     background: #6b5842;
 }
+
+.gate-switch-mode {
+    margin-top: 1rem;
+    background: none;
+    border: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: #6b5842;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 0.9rem;
+}

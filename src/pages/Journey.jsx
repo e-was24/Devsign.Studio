@@ -135,7 +135,10 @@ export default function Journey() {
         <JourneyPost onJourneyAdded={fetchJourneys} />
 
         <div className="drop-line">
-          <p className="post-info">💡Tip: Select or create a cover below → Upload a photo into that cover.</p>
+          <p className="post-info">
+            💡Tip: Select or create a cover below → Upload a photo into that
+            cover.
+          </p>
           <br />
 
           {yearGroups.map(([year, monthGroups]) => (
@@ -153,37 +156,41 @@ export default function Journey() {
                     <div className="line-h-1"></div>
 
                     <div className="journey-cards-stack">
-  {items.map((item) => (
-    <div key={item.id} className="journey-item-circle-wrap">
-      <div className="journey-item-anchor">
-        <Link
-          to={`/galery/${item.title.toLowerCase()}`}
-          className="link"
-        >
-          <div
-            className="circle-1"
-            title={item.title}
-            style={{
-              backgroundImage: `url(${item.cover_url})`,
-              backgroundSize: "cover",
-            }}
-          ></div>
-        </Link>
+                      {items.map((item) => (
+                        <div key={item.id} className="journey-item-circle-wrap">
+                          <div className="journey-item-anchor">
+                            <Link
+                              to={`/galery/${item.title.toLowerCase()}`}
+                              className="link"
+                            >
+                              <div
+                                className="circle-1"
+                                title={item.title}
+                                style={{
+                                  backgroundImage: `url(${item.cover_url})`,
+                                  backgroundSize: "cover",
+                                }}
+                              ></div>
+                            </Link>
 
-        <button
-          onClick={() => handleDeleteJourney(item.id, item.title)}
-          className="journey-delete-btn"
-          title="Hapus Journey"
-        >
-          &times;
-        </button>
-      </div>
+                            <button
+                              onClick={() =>
+                                handleDeleteJourney(item.id, item.title)
+                              }
+                              className="journey-delete-btn"
+                              title="Hapus Journey"
+                            >
+                              &times;
+                            </button>
+                          </div>
 
-      {/* --- BARU: label judul di samping card --- */}
-      <span className="journey-item-title">{item.title}</span>
-    </div>
-  ))}
-</div>
+                          {/* --- BARU: label judul di samping card --- */}
+                          <span className="journey-item-title">
+                            {item.title}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 ))}
               </div>

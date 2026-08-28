@@ -7,12 +7,14 @@ import Shop from './pages/Shop';
 import Journey from './pages/Journey';
 import Galery from './pages/Galery';
 import AccessGate from './components/AccessGate';
+import GuestInviteButton from './components/GuestInviteButton';
 import './App.css';
 
 function App() {
   return (
     <AccessGate>
       <Router>
+        <GuestInviteButton />
         <Routes>
           <Route path="/" element={<Home />}>
             <Route index element={<Visitior />} /> 

@@ -1,0 +1,176 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400&family=Special+Elite&display=swap');
+
+.guest-invite-float {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+/* ============ TOMBOL UTAMA - GAYA PRANGKO ============ */
+
+.guest-invite-fab {
+    position: relative;
+    width: 58px;
+    height: 58px;
+    background: #f2e8d5;
+    color: #3d2f22;
+    border: 2px solid #fdf8ee;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: rotate(-4deg);
+    box-shadow:
+        0 6px 14px rgba(40, 28, 15, 0.35),
+        0 0 0 2px #8a7355;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+
+.guest-invite-fab::before {
+    content: "";
+    position: absolute;
+    inset: 5px;
+    border: 1px dashed #8a7355;
+    border-radius: 3px;
+    pointer-events: none;
+}
+
+.guest-invite-fab svg {
+    position: relative;
+    z-index: 1;
+}
+
+.guest-invite-fab:hover {
+    background: #ece0c8;
+    transform: rotate(0deg) scale(1.06);
+    box-shadow:
+        0 10px 22px rgba(40, 28, 15, 0.45),
+        0 0 0 2px #6b5842;
+}
+
+/* ============ PANEL - KERTAS TUA GAYA PRANGKO ============ */
+
+.guest-invite-panel {
+    position: relative;
+    --dot-color: #8a7355;
+    background-color: #fdf8ee;
+    background-image:
+        radial-gradient(circle at 15% 25%, rgba(120, 90, 60, 0.05) 0%, transparent 45%),
+        radial-gradient(circle at 85% 75%, rgba(90, 70, 50, 0.06) 0%, transparent 45%),
+        repeating-linear-gradient(to right, var(--dot-color) 0 3px, transparent 3px 9px),
+        repeating-linear-gradient(to right, var(--dot-color) 0 3px, transparent 3px 9px),
+        repeating-linear-gradient(to bottom, var(--dot-color) 0 3px, transparent 3px 9px),
+        repeating-linear-gradient(to bottom, var(--dot-color) 0 3px, transparent 3px 9px);
+    background-repeat: no-repeat;
+    background-size:
+        auto, auto,
+        100% 1px, 100% 1px,
+        1px 100%, 1px 100%;
+    background-position:
+        0 0, 0 0,
+        0 0, 0 100%,
+        0 0, 100% 0;
+    border: 2px solid #f2e8d5;
+    border-radius: 6px;
+    padding: 1.1rem 1.3rem;
+    width: 230px;
+    box-shadow:
+        0 10px 25px rgba(40, 28, 15, 0.3),
+        0 0 0 2px #8a7355;
+    text-align: center;
+    transform: rotate(-1deg);
+}
+
+.guest-invite-panel::before {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    border: 1px dashed rgba(138, 115, 85, 0.5);
+    border-radius: 3px;
+    pointer-events: none;
+}
+
+.guest-invite-title {
+    font-family: 'Special Elite', cursive;
+    font-weight: normal;
+    color: #6b2c2c;
+    margin-bottom: 0.8rem;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.guest-invite-btn {
+    font-family: 'Special Elite', cursive;
+    background: #6b5842;
+    color: #fdf8ee;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 2px;
+    cursor: pointer;
+    width: 100%;
+    transition: background 0.25s ease;
+}
+
+.guest-invite-btn:hover {
+    background: #3d2f22;
+}
+
+.guest-invite-result {
+    font-family: 'Cormorant Garamond', serif;
+    color: #3d2f22;
+}
+
+.guest-invite-note {
+    font-size: 0.78rem;
+    margin-bottom: 0.5rem;
+    color: #6b5842;
+    font-style: italic;
+}
+
+.guest-invite-code {
+    display: block;
+    font-family: 'Special Elite', cursive;
+    font-size: 1.25rem;
+    letter-spacing: 0.25rem;
+    margin: 0.3rem 0 0.7rem;
+    background: #fffdf7;
+    border: 1px dashed #8a7355;
+    padding: 0.35rem 0.5rem;
+    border-radius: 2px;
+    color: #3d2f22;
+}
+
+.guest-invite-copy {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.78rem;
+    background: none;
+    border: 1px solid #8a7355;
+    color: #6b5842;
+    padding: 0.35rem 0.8rem;
+    border-radius: 2px;
+    cursor: pointer;
+    width: 100%;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.guest-invite-copy:hover {
+    background: #8a7355;
+    color: #fdf8ee;
+}
+
+@media (max-width: 480px) {
+    .guest-invite-float {
+        bottom: 16px;
+        left: 16px;
+    }
+    .guest-invite-panel {
+        width: 195px;
+    }
+}
