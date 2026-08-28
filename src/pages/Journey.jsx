@@ -127,7 +127,8 @@ export default function Journey() {
 
         <div className="drop-line">
           <h2 className="title-years">2026</h2>
-
+          <p className="post-info">💡Tip: Select or create a cover below → Upload a photo into that cover.</p>
+          <br />
           <div className="line-v">
             {monthGroups.map(([month, items]) => (
               <div
