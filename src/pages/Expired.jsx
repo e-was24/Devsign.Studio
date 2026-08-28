@@ -7,8 +7,8 @@ const VIDEO_EXTENSIONS = ["mp4", "webm", "mov", "ogg", "m4v"];
 
 // Ganti dengan alamat email masing-masing
 const CONTACTS = [
-  { label: "Contact 1 ( elan )", email: "satriaelan5@gmail.com" },
-  { label: "not found", email: "there isn't any yet" },
+  { label: "Contact 1 ( elan )", email: "satriaelan5@gmail.com", status: "" },
+  { label: "not found", email: "there isn't any yet", status: "disabled" },
 ];
 
 function isVideoUrl(url = "") {
@@ -263,6 +263,7 @@ export default function Expired() {
                       type="button"
                       className="mikir-contact-action"
                       onClick={() => handleGmailClick(c.email)}
+                        disabled={c.status === "disabled"}
                     >
                       Gmail
                     </button>
@@ -270,6 +271,7 @@ export default function Expired() {
                       type="button"
                       className="mikir-contact-action mikir-contact-action--ghost"
                       onClick={() => handleMailtoClick(c.email)}
+                        disabled={c.status === "disabled"}
                     >
                       Mail App
                     </button>

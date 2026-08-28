@@ -344,3 +344,27 @@
 .mikir-contact-action--ghost:hover {
   background: #FBE3EC;
 }
+
+.mikir-contact-action:disabled,
+.mikir-contact-action--ghost:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  background: #E3B9C8;
+  border-color: #E3B9C8;
+  color: #FFF6F3;
+}
+
+.mikir-contact-action--ghost:disabled {
+  background: transparent;
+  border-color: #E7CBD6;
+  color: #C89AAB;
+}
+
+.mikir-contact-action:disabled:hover {
+     background: #E3B9C8;
+}
+.mikir-contact-action--ghost:disabled:hover {
+  background: transparent;
+  transform: none;
+}
