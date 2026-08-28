@@ -110,3 +110,11 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+/* Mencegah menu pop-up "Save Image" / "Download" saat gambar atau video ditahan (hold) di HP */
+img, video {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none; /* Mencegah gambar bisa ditarik/drag secara default */
+}
