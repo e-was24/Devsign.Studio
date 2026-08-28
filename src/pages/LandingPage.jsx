@@ -15,6 +15,8 @@ function Home() {
     const isRiska = location.pathname === '/riska';
     const isVisitor = location.pathname === '/visitor';
     const isJourney = location.pathname === '/journey'
+    const isHome = location.pathname === '/home';
+    const expired = location.pathname === '/token-expired';
 
     useEffect(() => {
         // Logika Ganti Class di Body untuk CSS Global
@@ -50,7 +52,7 @@ function Home() {
         <div className={`Landing-Page ${isRiska ? 'theme-riska' : ''} ${isVisitor ? 'theme-visitor' : ''}`} ref={container}>
             
             {/* Navigasi tetap muncul kecuali kamu ingin menyembunyikannya di halaman tamu */}
-            {!isVisitor && visible && (
+            {!isVisitor && visible && !isHome && !expired && (
                 <div className="profile-menu">
                     <NavLink 
                         to="/elan" 

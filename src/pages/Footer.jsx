@@ -1,9 +1,13 @@
 import React from 'react';
 import './css/style-page.css';
 
+const expired = location.pathname === '/token-expired'
+
 function Footer() {
     // Mendapatkan tahun saat ini secara otomatis agar tidak perlu diedit manual setiap tahun
     const currentYear = new Date().getFullYear();
+
+    if (expired) return null
 
     return (
         <footer className="footer-container">

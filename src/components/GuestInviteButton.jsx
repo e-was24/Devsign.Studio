@@ -10,6 +10,8 @@ export default function GuestInviteButton() {
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
 
+  const expired = location.pathname === "/token-expired";
+
   useEffect(() => {
     setVisible(!isGuestSession());
   }, []);
@@ -23,7 +25,7 @@ export default function GuestInviteButton() {
       });
       if (error) throw error;
 
-      const link = `${window.location.origin}${window.location.pathname}journey?guest=${code}`;
+      const link = `${window.location.origin}${window.location.pathname}?guest=${code}`;
       setInviteInfo({ code, link });
     } catch (err) {
       console.error("Gagal buat kode tamu:", err);
@@ -49,6 +51,7 @@ export default function GuestInviteButton() {
   };
 
   if (!visible) return null;
+  if (expired) return null;
 
   return (
     <div className="guest-invite-float">
@@ -85,12 +88,18 @@ export default function GuestInviteButton() {
           <p className="guest-invite-title">Bagikan Akses Tamu</p>
 
           {!inviteInfo ? (
-            <button className="guest-invite-btn" onClick={generateInvite} disabled={loading}>
+            <button
+              className="guest-invite-btn"
+              onClick={generateInvite}
+              disabled={loading}
+            >
               {loading ? "Membuat..." : "Buat Kode Tamu"}
             </button>
           ) : (
             <div className="guest-invite-result">
-              <p className="guest-invite-note">Berlaku 1 jam & hanya sekali pakai:</p>
+              <p className="guest-invite-note">
+                Berlaku 1 jam & hanya sekali pakai:
+              </p>
               <code className="guest-invite-code">{inviteInfo.code}</code>
               <button className="guest-invite-copy" onClick={copyLink}>
                 {copied ? "Tersalin! ✓" : "Salin Link"}

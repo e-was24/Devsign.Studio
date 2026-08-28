@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import "./css/access-gate.css";
+import { useNavigate } from "react-router-dom";
 
 const OWNER_SESSION_KEY = "journey_session_token";
 const GUEST_SESSION_KEY = "journey_guest_token"; // beda key, beda storage
@@ -8,7 +9,20 @@ const ROLE_KEY = "journey_session_role";
 const PIN_LENGTH = 8;
 const GUEST_CODE_LENGTH = 8;
 
-const NUMPAD_KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "clear", "0", "back"];
+const NUMPAD_KEYS = [
+  "1",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
+  "8",
+  "9",
+  "clear",
+  "0",
+  "back",
+];
 
 export default function AccessGate({ children }) {
   const [status, setStatus] = useState("checking");
@@ -16,6 +30,7 @@ export default function AccessGate({ children }) {
   const [value, setValue] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const currentLength = mode === "pin" ? PIN_LENGTH : GUEST_CODE_LENGTH;
 
@@ -63,9 +78,12 @@ export default function AccessGate({ children }) {
         setStatus("granted");
       } else {
         // token invalid/expired di DB, bersihin storage yang relevan
-        if (isGuest) sessionStorage.removeItem(GUEST_SESSION_KEY);
-        else localStorage.removeItem(OWNER_SESSION_KEY);
+        if (isGuest) {
+          sessionStorage.removeItem(GUEST_SESSION_KEY);
+          navigate("token-expired");
+        } else localStorage.removeItem(OWNER_SESSION_KEY);
         localStorage.removeItem(ROLE_KEY);
+
         setStatus("locked");
       }
     } catch (err) {
@@ -99,7 +117,7 @@ export default function AccessGate({ children }) {
       if (mode === "pin") {
         const { data: isValid, error: verifyErr } = await supabase.rpc(
           "verify_app_password",
-          { input_password: value }
+          { input_password: value },
         );
         if (verifyErr) throw verifyErr;
 
@@ -110,9 +128,8 @@ export default function AccessGate({ children }) {
           return;
         }
 
-        const { data: newToken, error: sessionErr } = await supabase.rpc(
-          "create_app_session"
-        );
+        const { data: newToken, error: sessionErr } =
+          await supabase.rpc("create_app_session");
         if (sessionErr) throw sessionErr;
 
         // OWNER -> localStorage, tetap keinget walau app ditutup
@@ -176,7 +193,9 @@ export default function AccessGate({ children }) {
         <div className="gate-box">
           <h2 className="gate-title">Journey Pribadi</h2>
           <p className="gate-subtitle">
-            {mode === "pin" ? "Masukkan PIN untuk melanjutkan" : "Masukkan kode tamu"}
+            {mode === "pin"
+              ? "Masukkan PIN untuk melanjutkan"
+              : "Masukkan kode tamu"}
           </p>
 
           <div className="gate-pin-dots">
@@ -195,23 +214,38 @@ export default function AccessGate({ children }) {
             {NUMPAD_KEYS.map((key) => {
               if (key === "clear") {
                 return (
-                  <button key={key} type="button" className="gate-key gate-key-action"
-                    onClick={() => handleKeyPress("clear")} disabled={loading}>
+                  <button
+                    key={key}
+                    type="button"
+                    className="gate-key gate-key-action"
+                    onClick={() => handleKeyPress("clear")}
+                    disabled={loading}
+                  >
                     Hapus
                   </button>
                 );
               }
               if (key === "back") {
                 return (
-                  <button key={key} type="button" className="gate-key gate-key-action"
-                    onClick={() => handleKeyPress("back")} disabled={loading}>
+                  <button
+                    key={key}
+                    type="button"
+                    className="gate-key gate-key-action"
+                    onClick={() => handleKeyPress("back")}
+                    disabled={loading}
+                  >
                     ⌫
                   </button>
                 );
               }
               return (
-                <button key={key} type="button" className="gate-key"
-                  onClick={() => handleKeyPress(key)} disabled={loading}>
+                <button
+                  key={key}
+                  type="button"
+                  className="gate-key"
+                  onClick={() => handleKeyPress(key)}
+                  disabled={loading}
+                >
                   {key}
                 </button>
               );
