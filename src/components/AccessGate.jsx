@@ -6,7 +6,7 @@ const OWNER_SESSION_KEY = "journey_session_token";
 const GUEST_SESSION_KEY = "journey_guest_token"; // beda key, beda storage
 const ROLE_KEY = "journey_session_role";
 const PIN_LENGTH = 8;
-const GUEST_CODE_LENGTH = 6;
+const GUEST_CODE_LENGTH = 8;
 
 const NUMPAD_KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "clear", "0", "back"];
 
