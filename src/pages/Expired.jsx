@@ -202,8 +202,8 @@ export default function Expired() {
         <h1 className="mikir-title">This page has expired.</h1>
 
         <p className="mikir-desc">
-          The moments on this page are safely tucked away in the journey. This
-          link is now at rest—return to the homepage to continue the story.
+          The moments on this page were safely captured during that trip. This
+          link is no longer active—Request access to view the story.
         </p>
 
         <button className="mikir-card-btn" onClick={openPopup}>
