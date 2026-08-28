@@ -184,23 +184,6 @@
     position: relative;
 }
 
-.journey-item-circle-wrap:not(:last-child)::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 100%;
-    width: 2px;
-    height: 16px; /* samain dengan gap: 16px di .journey-cards-stack */
-    transform: translateX(-50%);
-    background: repeating-linear-gradient(
-        to bottom,
-        #8a7355 0,
-        #8a7355 3px,
-        transparent 3px,
-        transparent 6px
-    );
-    z-index: 1;
-}
 
 /* Wrapper kartu individual */
 .circle-1 {
@@ -360,4 +343,89 @@
 @keyframes journeyPopIn {
     from { opacity: 0; transform: scale(0.92); }
     to { opacity: 1; transform: scale(1); }
+}
+
+/* ============ PEMISAH ANTAR TAHUN ============ */
+
+.journey-year-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 3rem;
+}
+
+.journey-year-section .title-years {
+    margin-top: 1rem;
+}
+
+/* garis vertikal tiap tahun berdiri sendiri, jadi otomatis "terpotong" saat ganti tahun */
+.journey-year-section .line-v {
+    padding-top: 10px;
+}
+
+/* ============ LABEL JUDUL DI SAMPING CARD ============ */
+
+.journey-item-circle-wrap {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: relative;
+}
+
+/* wrapper khusus buat foto + tombol delete, dipisah dari wrap
+   supaya garis putus-putus tetap presisi walau ada label teks */
+.journey-item-anchor {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.journey-item-title {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.95rem;
+    color: #6b2c2c;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    text-transform: uppercase;
+    transform: rotate(-2deg);
+    text-shadow: 0 1px 2px rgba(60, 45, 25, 0.15);
+}
+
+/* --- GRUP GANJIL: card di kanan garis -> label nempel di KANAN card --- */
+.journey-month-group:nth-child(odd) .journey-item-circle-wrap {
+    flex-direction: row;
+}
+
+/* --- GRUP GENAP: card di kiri garis -> label nempel di KIRI card --- */
+.journey-month-group:nth-child(even) .journey-item-circle-wrap {
+    flex-direction: row-reverse;
+}
+.journey-month-group:nth-child(even) .journey-item-title {
+    transform: rotate(2deg);
+}
+
+/* garis putus-putus penghubung antar card sekarang nempel ke anchor,
+   bukan ke wrap (biar ga kegeser gara-gara ada label teks) */
+.journey-item-circle-wrap:not(:last-child) .journey-item-anchor::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    width: 2px;
+    height: 16px;
+    transform: translateX(-50%);
+    background: repeating-linear-gradient(
+        to bottom,
+        #8a7355 0,
+        #8a7355 3px,
+        transparent 3px,
+        transparent 6px
+    );
+    z-index: 1;
+}
+
+@media (max-width: 560px) {
+    .journey-item-title {
+        font-size: 0.8rem;
+    }
 }
