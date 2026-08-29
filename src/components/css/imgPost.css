@@ -72,3 +72,82 @@
 .journey-popup-box::-webkit-scrollbar {
     width: 0;
 }
+
+/* ================================
+   PREVIEW FOTO/VIDEO - VINTAGE
+   ================================ */
+
+.journey-preview-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 12px;
+    padding: 10px;
+    border: 2px dashed #8a7355;
+    border-radius: 4px;
+    background: #c9b89a;
+}
+
+.journey-preview-item {
+    position: relative;
+    width: 90px;
+    height: 90px;
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: #ede3d3;
+    box-shadow:
+        0 4px 10px rgba(40, 28, 15, 0.25),
+        inset 0 0 0 3px #fdf8ee;
+    border: 1px solid #c9b89a;
+    transform: rotate(-1deg);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.journey-preview-item:nth-child(even) {
+    transform: rotate(1.5deg);
+}
+
+.journey-preview-item:hover {
+    transform: rotate(0deg) scale(1.04);
+    box-shadow:
+        0 8px 16px rgba(40, 28, 15, 0.35),
+        inset 0 0 0 3px #fdf8ee;
+}
+
+.journey-preview-media {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: sepia(0.25) saturate(0.9) contrast(1.05);
+    display: block;
+}
+
+.journey-preview-remove {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 20px;
+    height: 20px;
+    border: none;
+    border-radius: 50%;
+    background-color: #6b5842;
+    color: #fdf8ee;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(40, 28, 15, 0.4);
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.journey-preview-remove:hover {
+    background-color: #8a7355;
+    transform: scale(1.15);
+}
+
+.journey-preview-remove:active {
+    transform: scale(0.9);
+}

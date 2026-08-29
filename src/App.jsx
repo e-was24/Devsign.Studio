@@ -13,6 +13,7 @@ import Journey from "./pages/Journey";
 import Galery from "./pages/Galery";
 import AccessGate from "./components/AccessGate";
 import ExpiredPage from "./pages/Expired";
+
 import "./App.css";
 
 function App() {
