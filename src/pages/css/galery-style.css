@@ -543,7 +543,7 @@
     font-size: 1rem;
     color: #3d2f22;
     box-shadow: 0 12px 30px rgba(20, 14, 8, 0.35);
-    z-index: 10002;
+    z-index: 40;
     animation: toastIn 0.35s ease;
 }
 
@@ -978,16 +978,38 @@
    ISI MODAL NOTE (tanggal, judul, isi)
    ================================ */
 
+/* ================================
+   FIX: KUNCI TINGGI MODAL NOTE
+   ================================ */
+
+/* override overflow:visible dari .modal-content (itu buat foto+caption,
+   note gak butuh itu karena scrollnya sudah dihandle .note-modal-body) */
+.modal-content-note {
+    overflow: hidden;
+    max-height: 90vh; /* kasih sedikit jarak dari tepi layar */
+    display: flex;
+    flex-direction: column;
+}
+
+.note-modal-wrap {
+    display: flex;
+    flex-direction: column;
+    min-height: 0; /* penting: biar flex child bisa nyusut & scroll, bukan malah dorong parent */
+    overflow: visible; /* tetap dibutuhkan buat animasi sobek keluar batas */
+}
+
 .note-modal-body {
-    max-height: 68vh;
+    /* ganti max-height fixed jadi flexible, biar otomatis pas sisa ruang modal */
+    max-height: none;
+    flex: 1;
+    min-height: 0; /* wajib biar overflow-y:auto beneran kerja di dalam flex */
     overflow-y: auto;
     overflow-x: hidden;
     position: relative;
     z-index: 2;
-    padding-right: 6px; /* jaga jarak dari scrollbar biar teks gak ketutup */
+    padding-right: 6px;
 }
 
-/* scrollbar ditema, senada sama .journey-preview-container */
 .note-modal-body::-webkit-scrollbar {
     width: 6px;
 }
