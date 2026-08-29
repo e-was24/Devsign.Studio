@@ -30,6 +30,7 @@ function App() {
               <Route path="shop" element={<Shop />} />
               <Route path="journey" element={<Journey />} />
               <Route path="token-expired" element={<ExpiredPage />} />
+              
             </Route>
           </Route>
         </Routes>
