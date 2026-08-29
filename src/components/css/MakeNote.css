@@ -1,73 +1,215 @@
 /* ================================
-   TOMBOL BUAT CATATAN - VINTAGE
+   POPUP BUAT CATATAN - KERTAS VINTAGE
    ================================ */
-.btnMakeNote {
+
+.note-popup-overlay {
     position: fixed;
-    bottom: 24px;
-    right: 100px; /* di sebelah kiri .imgPost biar gak numpuk */
-    width: 58px;
-    height: 58px;
-    padding: 6px;
-    border: 2px dashed #8a7355;
-    cursor: pointer;
-    z-index: 40;
-    border-radius: 4px;
-
-    -webkit-mask-image:
-        radial-gradient(circle at 0 0, transparent 4px, black 4.5px),
-        radial-gradient(circle at 100% 0, transparent 4px, black 4.5px),
-        radial-gradient(circle at 0 100%, transparent 4px, black 4.5px),
-        radial-gradient(circle at 100% 100%, transparent 4px, black 4.5px);
-    mask-image:
-        radial-gradient(circle at 0 0, transparent 4px, black 4.5px),
-        radial-gradient(circle at 100% 0, transparent 4px, black 4.5px),
-        radial-gradient(circle at 0 100%, transparent 4px, black 4.5px),
-        radial-gradient(circle at 100% 100%, transparent 4px, black 4.5px);
-    -webkit-mask-repeat: repeat-x, repeat-x, repeat-x, repeat-x;
-
-    background-image:
-        radial-gradient(circle, #ede3d3 45%, transparent 46%);
-    background-size: 9px 9px;
-    background-position: -4px -4px;
-    background-repeat: round;
-    background-color: #fdf8ee;
-
-    box-shadow:
-        0 6px 14px rgba(40, 28, 15, 0.35),
-        inset 0 0 0 3px #fdf8ee;
-
-    transform: rotate(5deg);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-
+    inset: 0;
+    background-color: rgba(30, 22, 12, 0.82);
+    backdrop-filter: blur(3px);
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    padding: 24px;
+    animation: notePopupFadeIn 0.3s ease;
 }
 
-.btnMakeNote svg {
-    fill: #6b5842 !important;
-    filter: sepia(0.4);
-}
+.note-popup-box {
+    position: relative;
+    width: 100%;
+    max-width: 440px;
+    max-height: 90vh;
+    overflow-y: auto;
 
-.btnMakeNote:hover {
-    transform: rotate(0deg) scale(1.08) translateY(-3px);
+    background-color: #fdf6e8;
+    background-image:
+        /* garis notebook horizontal */
+        repeating-linear-gradient(to bottom,
+            transparent 0,
+            transparent 31px,
+            rgba(138, 115, 85, 0.2) 31px,
+            rgba(138, 115, 85, 0.2) 32px),
+        /* garis margin merah ala buku catatan lama */
+        linear-gradient(to right,
+            transparent 0,
+            transparent 38px,
+            rgba(139, 46, 46, 0.25) 38px,
+            rgba(139, 46, 46, 0.25) 39px,
+            transparent 39px),
+        radial-gradient(circle at 15% 10%, rgba(120, 90, 60, 0.06) 0%, transparent 55%),
+        radial-gradient(circle at 85% 85%, rgba(90, 70, 50, 0.07) 0%, transparent 55%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+    background-position: 0 6px, 0 0, 0 0, 0 0, 0 0;
+
+    border: 1px solid #d8c7a3;
+    border-radius: 1px;
+    padding: 38px 28px 28px 42px;
+
     box-shadow:
-        0 10px 22px rgba(40, 28, 15, 0.4),
-        inset 0 0 0 3px #fdf8ee;
+        0 20px 50px rgba(20, 14, 8, 0.5),
+        0 4px 12px rgba(20, 14, 8, 0.3),
+        inset 0 0 60px rgba(40, 28, 15, 0.08);
+
+    transform: rotate(-0.5deg);
+    animation: notePopupPopIn 0.35s ease;
 }
 
-.btnMakeNote:active {
-    transform: rotate(3deg) scale(0.96);
-}
-
-/* Textarea sesuai tema journey-input */
-.journey-textarea {
-    resize: vertical;
-    min-height: 120px;
-    font-family: 'Cormorant Garamond', serif;
-    line-height: 1.2;
-}
-
-.journey-popup-box::-webkit-scrollbar {
+.note-popup-box::-webkit-scrollbar {
     width: 0;
+}
+
+/* washi tape nempel di atas kertas */
+.note-popup-box::before {
+    content: "";
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%) rotate(-2deg);
+    width: 90px;
+    height: 26px;
+    background: rgba(201, 184, 152, 0.6);
+    border: 1px solid rgba(138, 115, 85, 0.4);
+    box-shadow: 0 3px 6px rgba(40, 28, 15, 0.25);
+    z-index: 5;
+}
+
+@keyframes notePopupFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes notePopupPopIn {
+    from { opacity: 0; transform: rotate(-0.5deg) scale(0.94); }
+    to   { opacity: 1; transform: rotate(-0.5deg) scale(1); }
+}
+
+.note-popup-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: #3d2f22;
+    letter-spacing: 0.02em;
+    margin: 0 0 22px;
+    position: relative;
+    display: inline-block;
+}
+
+.note-popup-title::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 1px;
+    margin-top: 8px;
+    background: linear-gradient(90deg, #8a7355, transparent 85%);
+    opacity: 0.5;
+}
+
+/* --- form group, disamakan gaya "tulisan di atas kertas" --- */
+.note-form-group {
+    margin-bottom: 16px;
+}
+
+.note-label {
+    display: block;
+    font-family: 'Special Elite', cursive;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #8a7355;
+    margin-bottom: 6px;
+    opacity: 0.9;
+}
+
+.note-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed rgba(138, 115, 85, 0.45);
+    padding: 4px 2px 6px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: #3d2f22;
+    outline: none;
+    transition: border-color 0.25s ease;
+}
+
+.note-input::placeholder {
+    color: rgba(107, 88, 66, 0.45);
+}
+
+.note-input:focus {
+    border-bottom-color: #8a4a2e;
+}
+
+.note-textarea {
+    resize: vertical;
+    min-height: 130px;
+    line-height: 26px; /* nyambung ke garis notebook background (25px+1px area teks) */
+    border: none;
+    border-bottom: 1px dashed rgba(138, 115, 85, 0.45);
+}
+
+/* baris tanggal/bulan/tahun sejajar biar hemat tempat */
+.note-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr 1fr;
+    gap: 12px;
+}
+
+.note-popup-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+.note-btn-cancel,
+.note-btn-submit {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+    padding: 9px 20px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    border: 1px solid transparent;
+}
+
+.note-btn-cancel {
+    background: #e4d9c4;
+    color: #3d2f22;
+    border-color: #c9b898;
+}
+
+.note-btn-cancel:hover {
+    background: #d8cab0;
+}
+
+.note-btn-submit {
+    background: linear-gradient(135deg, #6b5842, #3d2f22);
+    color: #fdf8ee;
+    border-color: #3d2f22;
+    box-shadow: 0 3px 8px rgba(40, 28, 15, 0.35);
+}
+
+.note-btn-submit:hover:not(:disabled) {
+    background: linear-gradient(135deg, #7d6850, #4a3b2a);
+    transform: translateY(-1px);
+}
+
+.note-btn-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+    .note-popup-box {
+        padding: 34px 20px 24px 32px;
+    }
+
+    .note-form-row {
+        grid-template-columns: 1fr;
+    }
 }

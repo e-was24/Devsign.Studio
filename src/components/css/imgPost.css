@@ -1,19 +1,19 @@
-.imgPost {
+
+/* ================================
+   TOMBOL BUAT CATATAN - VINTAGE
+   ================================ */
+.btnMakeNote {
     position: fixed;
     bottom: 24px;
-    right: 30px;
+    right: 100px; /* di sebelah kiri .imgPost biar gak numpuk */
     width: 58px;
     height: 58px;
     padding: 6px;
-    border: none;
-    cursor: pointer;
-    z-index: 40; /* diturunkan dari 998 → di bawah popup form (.journey-popup-overlay) */
-
-    background-color: #fdf8ee;
     border: 2px dashed #8a7355;
+    cursor: pointer;
+    z-index: 40;
     border-radius: 4px;
 
-    /* sisanya tetap sama, tidak berubah */
     -webkit-mask-image:
         radial-gradient(circle at 0 0, transparent 4px, black 4.5px),
         radial-gradient(circle at 100% 0, transparent 4px, black 4.5px),
@@ -24,7 +24,6 @@
         radial-gradient(circle at 100% 0, transparent 4px, black 4.5px),
         radial-gradient(circle at 0 100%, transparent 4px, black 4.5px),
         radial-gradient(circle at 100% 100%, transparent 4px, black 4.5px);
-
     -webkit-mask-repeat: repeat-x, repeat-x, repeat-x, repeat-x;
 
     background-image:
@@ -38,159 +37,38 @@
         0 6px 14px rgba(40, 28, 15, 0.35),
         inset 0 0 0 3px #fdf8ee;
 
-    transform: rotate(-6deg);
+    transform: rotate(5deg);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 
     display: flex;
     align-items: center;
     justify-content: center;
 }
-.imgPost svg {
+
+.btnMakeNote svg {
     fill: #6b5842 !important;
-    width: 22px;
-    height: 22px;
     filter: sepia(0.4);
 }
 
-.imgPost:hover {
+.btnMakeNote:hover {
     transform: rotate(0deg) scale(1.08) translateY(-3px);
     box-shadow:
         0 10px 22px rgba(40, 28, 15, 0.4),
         inset 0 0 0 3px #fdf8ee;
 }
 
-.imgPost:active {
-    transform: rotate(-3deg) scale(0.96);
+.btnMakeNote:active {
+    transform: rotate(3deg) scale(0.96);
 }
 
-/* ================================
-   PREVIEW GAMBAR - MINI POLAROID VINTAGE
-   ================================ */
-
-.journey-preview-container {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    margin-top: 0.85rem;
-    max-height: 180px;
-    overflow-y: auto;
-    padding: 12px;
-    border: 1px dashed #8a7355;
-    border-radius: 4px;
-    background-color: #f3ead9;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
-}
-
-.journey-preview-item {
-    position: relative;
-    aspect-ratio: 1 / 1;
-    background: #fdf8ee;
-    padding: 4px 4px 10px 4px;
-    border: 1px solid #c9b898;
-    border-radius: 2px;
-    box-shadow: 0 3px 8px rgba(40, 28, 15, 0.25);
-    transform: rotate(var(--tilt, -2deg));
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.journey-preview-item:nth-child(3n+1) { --tilt: -3deg; }
-.journey-preview-item:nth-child(3n+2) { --tilt: 2deg; }
-.journey-preview-item:nth-child(3n+3) { --tilt: -1deg; }
-
-.journey-preview-item:hover {
-    transform: rotate(0deg) scale(1.06);
-    box-shadow: 0 6px 14px rgba(40, 28, 15, 0.35);
-    z-index: 2;
-}
-
-.journey-preview-media {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 1px;
-    filter: sepia(0.15) contrast(1.02);
-    display: block;
-}
-
-.journey-preview-remove {
-    position: absolute;
-    top: -6px;
-    right: -6px;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: #6b2c2c;
-    color: #fdf8ee;
-    border: 1px solid #fdf8ee;
-    font-size: 11px;
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(40, 28, 15, 0.4);
-    transition: background 0.2s ease, transform 0.2s ease;
-}
-
-.journey-preview-remove:hover {
-    background: #4a1f1f;
-    transform: scale(1.15);
-}
-
-/* Scrollbar tipis biar tetap vintage-friendly */
-.journey-preview-container::-webkit-scrollbar {
-    width: 6px;
-}
-.journey-preview-container::-webkit-scrollbar-thumb {
-    background: #8a7355;
-    border-radius: 3px;
-}
-.journey-preview-container::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-/* ================================
-   TOAST NOTIFIKASI - IMGPOST
-   ================================ */
-
-.imgpost-toast {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background-color: #fdf8ee;
-    border: 1px solid #c9b898;
-    border-radius: 3px;
-    padding: 12px 22px;
+/* Textarea sesuai tema journey-input */
+.journey-textarea {
+    resize: vertical;
+    min-height: 120px;
     font-family: 'Cormorant Garamond', serif;
-    font-size: 1rem;
-    color: #3d2f22;
-    box-shadow: 0 12px 30px rgba(20, 14, 8, 0.35);
-    z-index: 10002;
-    animation: imgpostToastIn 0.35s ease;
-    max-width: 90vw;
-    text-align: center;
+    line-height: 1.2;
 }
 
-.imgpost-toast-success {
-    border-color: #6b8a4a;
-    color: #3d2f22;
-}
-
-.imgpost-toast-error {
-    border-color: #8a2e0f;
-    color: #6b2c0a;
-}
-
-.imgpost-toast-warning {
-    border-color: #c68307;
-    color: #6b5842;
-}
-
-@keyframes imgpostToastIn {
-    from { opacity: 0; transform: translate(-50%, 12px); }
-    to   { opacity: 1; transform: translate(-50%, 0); }
+.journey-popup-box::-webkit-scrollbar {
+    width: 0;
 }
