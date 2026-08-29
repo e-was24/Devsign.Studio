@@ -19,6 +19,40 @@ function shuffleArray(arr) {
   return a;
 }
 
+// --- helper: kunci unik tiap item, dan penyimpanan urutan ke localStorage ---
+const itemKey = (it) => `${it._type}-${it.id}`;
+const getOrderStorageKey = (journeyId) => `galery-order-${journeyId}`;
+
+function loadStoredOrder(journeyId) {
+  try {
+    const raw = localStorage.getItem(getOrderStorageKey(journeyId));
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function saveStoredOrder(journeyId, items) {
+  try {
+    localStorage.setItem(
+      getOrderStorageKey(journeyId),
+      JSON.stringify(items.map(itemKey)),
+    );
+  } catch {
+    // localStorage penuh/diblokir - abaikan, gak fatal
+  }
+}
+
+// sisipkan item baru ke posisi acak di antara item lama (bukan numpuk di akhir)
+function insertItemsRandomly(existing, newItems) {
+  const result = [...existing];
+  for (const item of newItems) {
+    const pos = Math.floor(Math.random() * (result.length + 1));
+    result.splice(pos, 0, item);
+  }
+  return result;
+}
+
 export default function Galery() {
   const { slug } = useParams();
   const container = useRef();
@@ -26,7 +60,7 @@ export default function Galery() {
   const [journey, setJourney] = useState(null);
   const [galleryItems, setGalleryItems] = useState([]);
   const [notes, setNotes] = useState([]);
-  const [displayItems, setDisplayItems] = useState([]); // gabungan acak: media + note
+  const [displayItems, setDisplayItems] = useState([]); // gabungan: media + note, urutan persist
   const [loading, setLoading] = useState(true);
   const [selectedItem, setSelectedItem] = useState(null); // bisa media / note
   const [draggedItemIndex, setDraggedItemIndex] = useState(null);
@@ -36,7 +70,6 @@ export default function Galery() {
   const [deleting, setDeleting] = useState(false);
   const [notification, setNotification] = useState(null);
   const [isBurning, setIsBurning] = useState(false);
-  // tambahkan state baru
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
@@ -79,12 +112,31 @@ export default function Galery() {
     if (!itemsError) setGalleryItems(media);
     if (!notesError) setNotes(noteList);
 
-    // gabung & acak posisinya biar berbaur kayak koleksi tempel
-    const combined = shuffleArray([
+    const allItems = [
       ...media.map((m) => ({ ...m, _type: "media" })),
       ...noteList.map((n) => ({ ...n, _type: "note" })),
-    ]);
-    setDisplayItems(combined);
+    ];
+
+    const storedOrder = loadStoredOrder(journeyData.id);
+
+    let finalOrder;
+    if (storedOrder && storedOrder.length > 0) {
+      const itemMap = new Map(allItems.map((it) => [itemKey(it), it]));
+      const orderedKeys = new Set(storedOrder);
+
+      // urutan lama; item yang sudah kehapus otomatis ter-filter (gak ketemu di map)
+      const ordered = storedOrder.map((k) => itemMap.get(k)).filter(Boolean);
+
+      // item baru (belum pernah tersimpan urutannya) -> sisipkan acak
+      const newItems = allItems.filter((it) => !orderedKeys.has(itemKey(it)));
+      finalOrder = insertItemsRandomly(ordered, shuffleArray(newItems));
+    } else {
+      // pertama kali - acak sekali aja
+      finalOrder = shuffleArray(allItems);
+    }
+
+    saveStoredOrder(journeyData.id, finalOrder);
+    setDisplayItems(finalOrder);
 
     setLoading(false);
   }, [slug]);
@@ -126,6 +178,9 @@ export default function Galery() {
     updatedDisplay.splice(targetIndex, 0, movedItem);
     setDisplayItems(updatedDisplay);
     setDraggedItemIndex(null);
+
+    // simpan urutan gabungan (media+note) biar konsisten walau refresh
+    saveStoredOrder(journey.id, updatedDisplay);
 
     try {
       const mediaOnly = updatedDisplay.filter((it) => it._type === "media");
@@ -345,7 +400,9 @@ export default function Galery() {
                       alt={item.alt_text || journey.title}
                     />
                   )}
-                  <p className="pic-location">{item.date_label} ( {item.alt_text} )</p>
+                  <p className="pic-location">
+                    {item.date_label} ( {item.alt_text} )
+                  </p>
                 </div>
               );
             })
