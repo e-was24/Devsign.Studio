@@ -222,7 +222,7 @@ export default function Galery() {
 
           setNotification({
             type: "success",
-            message: "Catatan berhasil dibakar 📝🔥",
+            message: "Catatan berhasil dihilangkan 📝🔥",
           });
         } else {
           const urlParts = selectedItem.media_url.split("/galeri/");
