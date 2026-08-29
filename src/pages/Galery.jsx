@@ -345,6 +345,7 @@ export default function Galery() {
                       alt={item.alt_text || journey.title}
                     />
                   )}
+                  <p className="pic-location">{item.date_label} ( {item.alt_text} )</p>
                 </div>
               );
             })

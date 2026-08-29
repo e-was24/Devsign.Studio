@@ -1151,8 +1151,23 @@
    ================================ */
 
 /* biar pin lama di note card gak dobel sama sistem baru ini */
-.note-card-pin {
-    display: none;
+
+
+.galery-item {
+    font-family: 'Special Elite', cursive;
+}
+
+.galery-note-card .note-card-title{
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+.galery-note-card .note-card-content{
+    color: #806b53;
+}
+
+.pic-location {
+    margin-top: 1rem;
+    margin-bottom: -.5rem;
 }
 
 .galery-item::before {
