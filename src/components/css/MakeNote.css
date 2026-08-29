@@ -1,0 +1,73 @@
+/* ================================
+   TOMBOL BUAT CATATAN - VINTAGE
+   ================================ */
+.btnMakeNote {
+    position: fixed;
+    bottom: 24px;
+    right: 100px; /* di sebelah kiri .imgPost biar gak numpuk */
+    width: 58px;
+    height: 58px;
+    padding: 6px;
+    border: 2px dashed #8a7355;
+    cursor: pointer;
+    z-index: 40;
+    border-radius: 4px;
+
+    -webkit-mask-image:
+        radial-gradient(circle at 0 0, transparent 4px, black 4.5px),
+        radial-gradient(circle at 100% 0, transparent 4px, black 4.5px),
+        radial-gradient(circle at 0 100%, transparent 4px, black 4.5px),
+        radial-gradient(circle at 100% 100%, transparent 4px, black 4.5px);
+    mask-image:
+        radial-gradient(circle at 0 0, transparent 4px, black 4.5px),
+        radial-gradient(circle at 100% 0, transparent 4px, black 4.5px),
+        radial-gradient(circle at 0 100%, transparent 4px, black 4.5px),
+        radial-gradient(circle at 100% 100%, transparent 4px, black 4.5px);
+    -webkit-mask-repeat: repeat-x, repeat-x, repeat-x, repeat-x;
+
+    background-image:
+        radial-gradient(circle, #ede3d3 45%, transparent 46%);
+    background-size: 9px 9px;
+    background-position: -4px -4px;
+    background-repeat: round;
+    background-color: #fdf8ee;
+
+    box-shadow:
+        0 6px 14px rgba(40, 28, 15, 0.35),
+        inset 0 0 0 3px #fdf8ee;
+
+    transform: rotate(5deg);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btnMakeNote svg {
+    fill: #6b5842 !important;
+    filter: sepia(0.4);
+}
+
+.btnMakeNote:hover {
+    transform: rotate(0deg) scale(1.08) translateY(-3px);
+    box-shadow:
+        0 10px 22px rgba(40, 28, 15, 0.4),
+        inset 0 0 0 3px #fdf8ee;
+}
+
+.btnMakeNote:active {
+    transform: rotate(3deg) scale(0.96);
+}
+
+/* Textarea sesuai tema journey-input */
+.journey-textarea {
+    resize: vertical;
+    min-height: 120px;
+    font-family: 'Cormorant Garamond', serif;
+    line-height: 1.2;
+}
+
+.journey-popup-box::-webkit-scrollbar {
+    width: 0;
+}

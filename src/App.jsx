@@ -12,7 +12,6 @@ import Shop from "./pages/Shop";
 import Journey from "./pages/Journey";
 import Galery from "./pages/Galery";
 import AccessGate from "./components/AccessGate";
-import GuestInviteButton from "./components/GuestInviteButton";
 import ExpiredPage from "./pages/Expired";
 import "./App.css";
 
@@ -20,7 +19,6 @@ function App() {
   return (
     <Router>
       <AccessGate>
-        <GuestInviteButton />
         <Routes>
           <Route>
             <Route path="/" element={<Home />}>

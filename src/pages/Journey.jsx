@@ -7,6 +7,7 @@ import catLoader from "../components/catLoader.gif";
 import JourneyPost from "../components/JourneyPost";
 import { supabase } from "../supabaseClient";
 import { isGuestSession } from "../components/AccessGate";
+import GuestInviteButton from "../components/GuestInviteButton";
 
 import "./css/journey-style.css";
 
@@ -139,7 +140,7 @@ export default function Journey() {
 
       <div className="layout-journey" ref={layoutRef}>
         <JourneyPost onJourneyAdded={fetchJourneys} />
-
+        <GuestInviteButton />
         <div className="drop-line">
           <p className="post-info">
             💡Tip: Select or create a cover below → Upload a photo into that

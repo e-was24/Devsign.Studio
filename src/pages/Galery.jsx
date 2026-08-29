@@ -4,9 +4,20 @@ import React, { useRef, useState, useEffect, useCallback } from "react";
 import { useParams, Link, Navigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import ImgPost from "../components/imagePost";
+import BtnMakeNote from "../components/MakeNote";
 import { isGuestSession } from "../components/AccessGate";
 
 import "./css/galery-style.css";
+
+// Fisher-Yates shuffle
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
 export default function Galery() {
   const { slug } = useParams();
@@ -14,20 +25,23 @@ export default function Galery() {
 
   const [journey, setJourney] = useState(null);
   const [galleryItems, setGalleryItems] = useState([]);
+  const [notes, setNotes] = useState([]);
+  const [displayItems, setDisplayItems] = useState([]); // gabungan acak: media + note
   const [loading, setLoading] = useState(true);
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(null); // bisa media / note
   const [draggedItemIndex, setDraggedItemIndex] = useState(null);
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(false);
 
-  // --- STATE BARU: popup konfirmasi & notifikasi custom ---
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [notification, setNotification] = useState(null); // { type: 'success' | 'error', message: string }
+  const [notification, setNotification] = useState(null);
   const [isBurning, setIsBurning] = useState(false);
+  // tambahkan state baru
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     setVisible(!isGuestSession());
-  })
+  });
 
   const fetchGaleryData = useCallback(async () => {
     setLoading(true);
@@ -53,9 +67,24 @@ export default function Galery() {
       .eq("journey_id", journeyData.id)
       .order("order_index", { ascending: true, nullsFirst: false });
 
-    if (!itemsError) {
-      setGalleryItems(itemsData);
-    }
+    const { data: notesData, error: notesError } = await supabase
+      .from("journal_notes")
+      .select("*")
+      .eq("journey_id", journeyData.id)
+      .order("created_at", { ascending: false });
+
+    const media = !itemsError ? itemsData : [];
+    const noteList = !notesError ? notesData : [];
+
+    if (!itemsError) setGalleryItems(media);
+    if (!notesError) setNotes(noteList);
+
+    // gabung & acak posisinya biar berbaur kayak koleksi tempel
+    const combined = shuffleArray([
+      ...media.map((m) => ({ ...m, _type: "media" })),
+      ...noteList.map((n) => ({ ...n, _type: "note" })),
+    ]);
+    setDisplayItems(combined);
 
     setLoading(false);
   }, [slug]);
@@ -64,36 +93,43 @@ export default function Galery() {
     fetchGaleryData();
   }, [fetchGaleryData]);
 
-  // Auto-dismiss notifikasi setelah beberapa detik
   useEffect(() => {
     if (!notification) return;
     const timer = setTimeout(() => setNotification(null), 3500);
     return () => clearTimeout(timer);
   }, [notification]);
 
+  // --- Drag & drop hanya berlaku untuk item media (note belum ikut re-order) ---
   const handleDragStart = (e, index) => {
+    if (displayItems[index]._type !== "media") return;
     setDraggedItemIndex(index);
     e.dataTransfer.effectAllowed = "move";
   };
 
   const handleDragOver = (e, index) => {
+    if (displayItems[index]._type !== "media") return;
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
   };
 
   const handleDrop = async (e, targetIndex) => {
     e.preventDefault();
-    if (draggedItemIndex === null || draggedItemIndex === targetIndex) return;
+    if (
+      draggedItemIndex === null ||
+      draggedItemIndex === targetIndex ||
+      displayItems[targetIndex]._type !== "media"
+    )
+      return;
 
-    const updatedItems = [...galleryItems];
-    const [movedItem] = updatedItems.splice(draggedItemIndex, 1);
-    updatedItems.splice(targetIndex, 0, movedItem);
-
-    setGalleryItems(updatedItems);
+    const updatedDisplay = [...displayItems];
+    const [movedItem] = updatedDisplay.splice(draggedItemIndex, 1);
+    updatedDisplay.splice(targetIndex, 0, movedItem);
+    setDisplayItems(updatedDisplay);
     setDraggedItemIndex(null);
 
     try {
-      const updates = updatedItems.map((item, idx) =>
+      const mediaOnly = updatedDisplay.filter((it) => it._type === "media");
+      const updates = mediaOnly.map((item, idx) =>
         supabase
           .from("gallery_items")
           .update({ order_index: idx })
@@ -110,60 +146,75 @@ export default function Galery() {
     }
   };
 
-  // Trigger dari tombol "burn" -> buka popup konfirmasi
   const requestDelete = () => {
     setShowDeleteConfirm(true);
   };
 
-  // Eksekusi setelah user konfirmasi di popup
   const confirmDelete = () => {
     setShowDeleteConfirm(false);
     setIsBurning(true);
 
-    // biarkan animasi jalan dulu, baru eksekusi hapus data asli
     setTimeout(async () => {
       setDeleting(true);
       try {
-        const urlParts = selectedItem.media_url.split("/galeri/");
-        if (urlParts.length > 1) {
-          const filePath = urlParts[1];
-          await supabase.storage.from("galeri").remove([filePath]);
+        if (selectedItem._type === "note") {
+          const { error } = await supabase
+            .from("journal_notes")
+            .delete()
+            .eq("id", selectedItem.id);
+
+          if (error) throw error;
+
+          setNotification({
+            type: "success",
+            message: "Catatan berhasil dibakar 📝🔥",
+          });
+        } else {
+          const urlParts = selectedItem.media_url.split("/galeri/");
+          if (urlParts.length > 1) {
+            const filePath = urlParts[1];
+            await supabase.storage.from("galeri").remove([filePath]);
+          }
+
+          const { error } = await supabase
+            .from("gallery_items")
+            .delete()
+            .eq("id", selectedItem.id);
+
+          if (error) throw error;
+
+          setNotification({
+            type: "success",
+            message: "Foto/video berhasil dibakar 🔥",
+          });
         }
 
-        const { error } = await supabase
-          .from("gallery_items")
-          .delete()
-          .eq("id", selectedItem.id);
-
-        if (error) throw error;
-
-        setNotification({
-          type: "success",
-          message: "Foto/video berhasil dibakar 🔥",
-        });
         setSelectedItem(null);
         fetchGaleryData();
       } catch (err) {
         console.error("Gagal menghapus:", err);
         setNotification({
           type: "error",
-          message: "Terjadi kesalahan saat menghapus file.",
+          message:
+            selectedItem._type === "note"
+              ? "Terjadi kesalahan saat menghapus catatan."
+              : "Terjadi kesalahan saat menghapus file.",
         });
       } finally {
         setDeleting(false);
         setIsBurning(false);
       }
-    }, 1400); // durasi animasi bakar, samain sama durasi CSS-nya
+    }, 1400);
   };
 
   useGSAP(() => {
-    if (galleryItems.length === 0) return;
+    if (displayItems.length === 0) return;
     gsap.fromTo(
       ".galery-item",
       { opacity: 0, y: 20 },
       { opacity: 1, y: 0, duration: 0.6, stagger: 0.08 },
     );
-  }, [galleryItems]);
+  }, [displayItems]);
 
   if (loading) {
     return <div className="galery-loading">Memuat galeri...</div>;
@@ -173,11 +224,49 @@ export default function Galery() {
     return <Navigate to="/journey" replace />;
   }
 
-    return (
+  return (
     <>
       <div className="top-safety"></div>
       <div className="galery-container" ref={container}>
-        <ImgPost className="imgpost" journeyId={journey.id} onUploadSuccess={fetchGaleryData} />
+        {visible && (
+          <button
+            className={`sidebar-toggle-btn ${sidebarOpen ? "is-open" : ""}`}
+            onClick={() => setSidebarOpen((prev) => !prev)}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 -960 960 960"
+              width="24px"
+              fill="#e3e3e3"
+            >
+              <path d="M507-480 384-357l56 57 180-180-180-180-56 57 123 123ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
+            </svg>
+          </button>
+        )}
+
+        {visible && (
+          <>
+            <div
+              className={`sidebar-overlay ${sidebarOpen ? "is-open" : ""}`}
+              onClick={() => setSidebarOpen(false)}
+            />
+            <div className={`galery-sidebar ${sidebarOpen ? "is-open" : ""}`}>
+              <div className="sidebar-actions">
+                <ImgPost
+                  journeyId={journey.id}
+                  onUploadSuccess={fetchGaleryData}
+                  onOpen={() => setSidebarOpen(false)}
+                />
+                <BtnMakeNote
+                  journeyId={journey.id}
+                  onNoteSuccess={fetchGaleryData}
+                  onOpen={() => setSidebarOpen(false)}
+                />
+              </div>
+            </div>
+          </>
+        )}
 
         <Link to="/journey" className="back-link">
           ← Kembali
@@ -201,17 +290,35 @@ export default function Galery() {
         </p>
 
         <div className="galery-grid">
-          {galleryItems.length === 0 ? (
-            <p className="galery-empty">Belum ada foto/video di galeri ini.</p>
+          {displayItems.length === 0 ? (
+            <p className="galery-empty">
+              Belum ada foto/video/catatan di galeri ini.
+            </p>
           ) : (
-            galleryItems.map((item, index) => {
+            displayItems.map((item, index) => {
+              if (item._type === "note") {
+                return (
+                  <div
+                    className="galery-item galery-note-card"
+                    key={`note-${item.id}`}
+                    onClick={() => setSelectedItem(item)}
+                    title="Klik untuk baca catatan"
+                  >
+                    <p className="note-card-date">{item.date_label}</p>
+                    <h3 className="note-card-title">{item.title}</h3>
+                    <p className="note-card-content">{item.content}</p>
+                    <span className="note-card-pin" />
+                  </div>
+                );
+              }
+
               const isVideo =
                 item.media_type === "video" || item.media_url.endsWith(".mp4");
 
               return (
                 <div
                   className="galery-item"
-                  key={item.id}
+                  key={`media-${item.id}`}
                   draggable
                   onDragStart={(e) => handleDragStart(e, index)}
                   onDragOver={(e) => handleDragOver(e, index)}
@@ -245,14 +352,16 @@ export default function Galery() {
         </div>
       </div>
 
-      {/* --- LIGHTBOX / MODAL POP-UP (satu-satunya, tidak diduplikasi) --- */}
+      {/* --- MODAL: media ATAU note, dibedakan lewat selectedItem._type --- */}
       {selectedItem && (
         <div
           className="galery-modal"
           onClick={() => !isBurning && setSelectedItem(null)}
         >
           <div
-            className={`modal-content ${isBurning ? "burning" : ""}`}
+            className={`modal-content ${isBurning ? "burning" : ""} ${
+              selectedItem._type === "note" ? "modal-content-note" : ""
+            }`}
             onClick={(e) => e.stopPropagation()}
           >
             {!isBurning && (
@@ -264,43 +373,61 @@ export default function Galery() {
               </button>
             )}
 
-            <div className="modal-media-wrap">
-              {selectedItem.media_type === "video" ||
-              selectedItem.media_url.endsWith(".mp4") ? (
-                <video
-                  src={selectedItem.media_url}
-                  autoPlay
-                  playsInline
-                  loop
-                  style={{ width: "100%", maxHeight: "80vh", display: "block" }}
-                />
-              ) : (
-                <img
-                  src={selectedItem.media_url}
-                  alt={selectedItem.alt_text || "Dokumentasi"}
-                  style={{
-                    width: "100%",
-                    maxHeight: "80vh",
-                    objectFit: "contain",
-                    display: "block",
-                  }}
-                />
-              )}
-
-              {isBurning && (
-                <div className="burn-overlay">
-                  <div className="burn-flame flame-1" />
-                  <div className="burn-flame flame-2" />
-                  <div className="burn-flame flame-3" />
-                  <div className="burn-smoke smoke-1" />
-                  <div className="burn-smoke smoke-2" />
+            {selectedItem._type === "note" ? (
+              <div className="note-modal-wrap">
+                <div className="note-modal-body">
+                  <p className="note-modal-date">{selectedItem.date_label}</p>
+                  <h2 className="note-modal-title">{selectedItem.title}</h2>
+                  <p className="note-modal-content">{selectedItem.content}</p>
                 </div>
-              )}
-            </div>
+              </div>
+            ) : (
+              <div className="modal-media-wrap">
+                {selectedItem.media_type === "video" ||
+                selectedItem.media_url.endsWith(".mp4") ? (
+                  <video
+                    src={selectedItem.media_url}
+                    autoPlay
+                    playsInline
+                    loop
+                    style={{
+                      width: "100%",
+                      maxHeight: "80vh",
+                      display: "block",
+                    }}
+                  />
+                ) : (
+                  <img
+                    src={selectedItem.media_url}
+                    alt={selectedItem.alt_text || "Dokumentasi"}
+                    style={{
+                      width: "100%",
+                      maxHeight: "80vh",
+                      objectFit: "contain",
+                      display: "block",
+                    }}
+                  />
+                )}
 
-            {selectedItem.alt_text && !isBurning && (
-              <p className="modal-caption">{selectedItem.date_label} ( {selectedItem.alt_text} ) </p>
+                {isBurning && (
+                  <div className="burn-overlay">
+                    <div className="burn-flame flame-1" />
+                    <div className="burn-flame flame-2" />
+                    <div className="burn-flame flame-3" />
+                    <div className="burn-smoke smoke-1" />
+                    <div className="burn-smoke smoke-2" />
+                  </div>
+                )}
+              </div>
             )}
+
+            {selectedItem._type === "media" &&
+              selectedItem.alt_text &&
+              !isBurning && (
+                <p className="modal-caption">
+                  {selectedItem.date_label} ( {selectedItem.alt_text} )
+                </p>
+              )}
 
             {!isBurning && visible && (
               <div className="modal-actions">
@@ -313,7 +440,9 @@ export default function Galery() {
                   >
                     <path d="M240-400q0 52 21 98.5t60 81.5q-1-5-1-9v-9q0-32 12-60t35-51l113-111 113 111q23 23 35 51t12 60v9q0 4-1 9 39-35 60-81.5t21-98.5q0-50-18.5-94.5T648-574q-20 13-42 19.5t-45 6.5q-62 0-107.5-41T401-690q-39 33-69 68.5t-50.5 72Q261-513 250.5-475T240-400Zm240 52-57 56q-11 11-17 25t-6 29q0 32 23.5 55t56.5 23q33 0 56.5-23t23.5-55q0-16-6-29.5T537-292l-57-56Zm0-492v132q0 34 23.5 57t57.5 23q18 0 33.5-7.5T622-658l18-22q74 42 117 117t43 163q0 134-93 227T480-80q-134 0-227-93t-93-227q0-129 86.5-245T480-840Z" />
                   </svg>
-                  burn (Hapus)
+                  {selectedItem._type === "note"
+                    ? "sobek (Hapus)"
+                    : "burn (Hapus)"}
                 </button>
               </div>
             )}
@@ -321,7 +450,7 @@ export default function Galery() {
         </div>
       )}
 
-      {/* --- POPUP KONFIRMASI HAPUS (dipisah, bukan duplikat modal lightbox) --- */}
+      {/* --- POPUP KONFIRMASI HAPUS --- */}
       {showDeleteConfirm && (
         <div
           className="confirm-overlay"
@@ -329,9 +458,15 @@ export default function Galery() {
         >
           <div className="confirm-box" onClick={(e) => e.stopPropagation()}>
             <p className="confirm-icon">🔥</p>
-            <h3 className="confirm-title">Bakar dokumentasi ini?</h3>
+            <h3 className="confirm-title">
+              {selectedItem?._type === "note"
+                ? "Sobek catatan ini?"
+                : "Bakar dokumentasi ini?"}
+            </h3>
             <p className="confirm-text">
-              Foto/video ini akan hilang permanen dan tidak bisa dikembalikan.
+              {selectedItem?._type === "note"
+                ? "Catatan ini akan hilang permanen dan tidak bisa dikembalikan."
+                : "Foto/video ini akan hilang permanen dan tidak bisa dikembalikan."}
             </p>
             <div className="confirm-actions">
               <button
@@ -353,7 +488,6 @@ export default function Galery() {
         </div>
       )}
 
-      {/* --- NOTIFIKASI TOAST --- */}
       {notification && (
         <div className={`journey-toast journey-toast-${notification.type}`}>
           <span>{notification.type === "success" ? "🔥" : "⚠"}</span>
@@ -363,4 +497,3 @@ export default function Galery() {
     </>
   );
 }
-
