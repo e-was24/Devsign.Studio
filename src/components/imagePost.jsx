@@ -115,7 +115,7 @@ export default function ImgPost({ journeyId, onUploadSuccess, onOpen }) {
       setFormData({
         year: "2026",
         month_label: "Agustus",
-        date_number: "15",
+        date_number: today,
         title: "",
       });
       setIsOpen(false);
