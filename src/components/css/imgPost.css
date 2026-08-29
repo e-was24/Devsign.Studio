@@ -86,12 +86,18 @@
     border: 2px dashed #8a7355;
     border-radius: 4px;
     background: #c9b89a;
+    max-height: 20vh;
+    overflow-y: scroll;
+}
+
+.journey-preview-container::-webkit-scrollbar {
+    width: 0;
 }
 
 .journey-preview-item {
     position: relative;
-    width: 90px;
-    height: 90px;
+    width: 60px;
+    height: 60px;
     border-radius: 6px;
     overflow: hidden;
     background-color: #ede3d3;
