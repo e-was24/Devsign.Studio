@@ -13,7 +13,6 @@
     box-shadow: 0 0 10px var(--sec-color);
     cursor: pointer;
     transition: .3s ease-in-out;
-    position: fixed;
     bottom: 20px;
     right: 30px;
     z-index: 40;
@@ -29,7 +28,6 @@
    ================================ */
 
 .journey-popup-overlay {
-    position: fixed;
     inset: 0;
     background: rgba(30, 22, 12, 0.65);
     backdrop-filter: blur(2px);

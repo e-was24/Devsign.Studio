@@ -432,3 +432,147 @@
         font-size: 0.6rem;
     }
 }
+
+/* ================================
+   SIDEBAR AKSI (Add Journey & Invite)
+   — sama persis polanya dengan galery-style.css
+   ================================ */
+
+.sidebar-toggle-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 30px;
+    width: 58px;
+    height: 58px;
+    border: 2px dashed #8a7355;
+    border-radius: 50px;
+    cursor: pointer;
+    z-index: 40;
+
+    background-image: radial-gradient(circle, #ede3d3 45%, transparent 46%);
+    background-size: 9px 9px;
+    background-position: -4px -4px;
+    background-repeat: round;
+    background-color: #fdf8ee;
+
+    box-shadow:
+        0 6px 14px rgba(40, 28, 15, 0.35),
+        inset 0 0 0 3px #fdf8ee;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: rotate(-6deg);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sidebar-toggle-btn.is-open {
+    z-index: 999;
+}
+
+.sidebar-toggle-btn svg {
+    fill: #6b5842 !important;
+    filter: sepia(0.4);
+    transform: rotate(180deg);
+    transition: transform 0.3s ease;
+}
+
+.sidebar-toggle-btn:hover {
+    transform: rotate(0deg) scale(1.08) translateY(-3px);
+    box-shadow:
+        0 10px 22px rgba(40, 28, 15, 0.4),
+        inset 0 0 0 3px #fdf8ee;
+}
+
+.sidebar-toggle-btn.is-open svg {
+    transform: rotate(0deg);
+}
+
+.sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 14, 8, 0);
+    pointer-events: none;
+    transition: background 0.35s ease;
+    z-index: 900;
+}
+
+.sidebar-overlay.is-open {
+    background: rgba(20, 14, 8, 0.45);
+    pointer-events: auto;
+}
+
+.journey-sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 140px;
+    background-color: #fdf8ee;
+    border-left: 2px dashed #8a7355;
+    box-shadow: -8px 0 24px rgba(40, 28, 15, 0.35);
+    z-index: 950;
+
+    transform: translateX(100%);
+    transition: transform 0.35s ease;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.journey-sidebar.is-open {
+    transform: translateX(0);
+}
+
+.sidebar-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    align-items: center;
+}
+
+/* reset tombol JourneyPost & GuestInviteButton biar gak fixed sendiri-sendiri */
+.sidebar-action-btn {
+    position: static !important;
+    width: 58px;
+    height: 58px;
+    padding: 6px;
+    border: 2px dashed #8a7355;
+    cursor: pointer;
+    border-radius: 4px;
+
+    background-image: radial-gradient(circle, #ede3d3 45%, transparent 46%);
+    background-size: 9px 9px;
+    background-position: -4px -4px;
+    background-repeat: round;
+    background-color: #fdf8ee;
+
+    box-shadow:
+        0 6px 14px rgba(40, 28, 15, 0.35),
+        inset 0 0 0 3px #fdf8ee;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sidebar-action-btn svg {
+    fill: #6b5842 !important;
+    filter: sepia(0.4);
+}
+
+.sidebar-action-btn:hover {
+    transform: scale(1.08) translateY(-2px);
+}
+
+.sidebar-action-btn:active {
+    transform: scale(0.96);
+}
+
+@media (max-width: 480px) {
+    .journey-sidebar {
+        width: 110px;
+    }
+}

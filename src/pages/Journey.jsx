@@ -8,6 +8,7 @@ import JourneyPost from "../components/JourneyPost";
 import { supabase } from "../supabaseClient";
 import { isGuestSession } from "../components/AccessGate";
 import GuestInviteButton from "../components/GuestInviteButton";
+import OpenMusikArea from "../components/OpenMusikArea";
 
 import "./css/journey-style.css";
 
@@ -23,6 +24,7 @@ export default function Journey() {
   const STACK_TOP_OFFSET = 5;
   const GROUP_BOTTOM_SPACING = 55;
   const [visible, setVisible] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   async function fetchJourneys() {
     const { data, error } = await supabase
@@ -68,10 +70,6 @@ export default function Journey() {
     setVisible(!isGuestSession());
   });
 
-  // --- BARU: kelompokkan journeys bertingkat -> per TAHUN, lalu per BULAN ---
-  // Hasil: [ [year, [ [month, items[]], [month, items[]] ]], [year, [...]] ]
-  // Urutan tahun & bulan mengikuti kemunculan pertama di array `journeys`
-  // (yang sudah terurut berdasarkan order_index dari query Supabase).
   const yearGroups = React.useMemo(() => {
     const yearMap = new Map();
 
@@ -113,7 +111,6 @@ export default function Journey() {
     });
   }, []);
 
-  // Animasi progresif: tiap GRUP BULAN muncul menyusul ke bawah (lintas tahun sekalipun)
   useGSAP(() => {
     if (yearGroups.length === 0) return;
     gsap.fromTo(
@@ -139,8 +136,42 @@ export default function Journey() {
       )}
 
       <div className="layout-journey" ref={layoutRef}>
-        <JourneyPost onJourneyAdded={fetchJourneys} />
-        <GuestInviteButton />
+        {visible && (
+          <button
+            className={`sidebar-toggle-btn ${sidebarOpen ? "is-open" : ""}`}
+            onClick={() => setSidebarOpen((prev) => !prev)}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 -960 960 960"
+              width="24px"
+              fill="#e3e3e3"
+            >
+              <path d="M507-480 384-357l56 57 180-180-180-180-56 57 123 123ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
+            </svg>
+          </button>
+        )}
+
+        {visible && (
+          <>
+            <div
+              className={`sidebar-overlay ${sidebarOpen ? "is-open" : ""}`}
+              onClick={() => setSidebarOpen(false)}
+            />
+            <div className={`journey-sidebar ${sidebarOpen ? "is-open" : ""}`}>
+              <div className="sidebar-actions">
+                <JourneyPost
+                  onJourneyAdded={fetchJourneys}
+                  onOpen={() => setSidebarOpen(false)}
+                />
+                <GuestInviteButton onOpen={() => setSidebarOpen(false)} />
+                <OpenMusikArea onOpen={() => setSidebarOpen(false)} />
+              </div>
+            </div>
+          </>
+        )}
+
         <div className="drop-line">
           <p className="post-info">
             💡Tip: Select or create a cover below → Upload a photo into that
@@ -193,7 +224,6 @@ export default function Journey() {
                             )}
                           </div>
 
-                          {/* --- BARU: label judul di samping card --- */}
                           <span className="journey-item-title">
                             {item.title}
                           </span>
