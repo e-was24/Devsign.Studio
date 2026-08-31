@@ -13,7 +13,8 @@ import Journey from "./pages/Journey";
 import Galery from "./pages/Galery";
 import AccessGate from "./components/AccessGate";
 import ExpiredPage from "./pages/Expired";
-
+import Mei from "./next-gen/mei";
+import Rewind from "./next-gen/rewind"
 import "./App.css";
 
 function App() {
@@ -31,7 +32,11 @@ function App() {
               <Route path="shop" element={<Shop />} />
               <Route path="journey" element={<Journey />} />
               <Route path="token-expired" element={<ExpiredPage />} />
-              
+              <Route path="/unrelease-page">
+                <Route index element={<Mei />} />
+
+                <Route path="rewind" element={<Rewind />}/>
+              </Route>
             </Route>
           </Route>
         </Routes>
