@@ -159,13 +159,13 @@ export default function Journey() {
               className={`sidebar-overlay ${sidebarOpen ? "is-open" : ""}`}
               onClick={() => setSidebarOpen(false)}
             />
+            <GuestInviteButton onOpen={() => setSidebarOpen(false)} />
             <div className={`journey-sidebar ${sidebarOpen ? "is-open" : ""}`}>
               <div className="sidebar-actions">
                 <JourneyPost
                   onJourneyAdded={fetchJourneys}
                   onOpen={() => setSidebarOpen(false)}
                 />
-                <GuestInviteButton onOpen={() => setSidebarOpen(false)} />
                 <OpenMusikArea onOpen={() => setSidebarOpen(false)} />
               </div>
             </div>

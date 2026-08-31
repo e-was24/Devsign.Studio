@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400&family=Special+Elite&display=swap');
 
 .guest-invite-float {
+    position: fixed;
     bottom: 20px;
     left: 20px;
     z-index: 20;

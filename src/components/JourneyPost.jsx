@@ -1,12 +1,23 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
+import { createPortal } from "react-dom";
 import "./css/post.css";
 import "./css/floating-fab.css";
 import { isGuestSession } from "./AccessGate";
 
 const MONTH_OPTIONS = [
-  "JAN", "FEB", "MAR", "APR", "MEI", "JUN",
-  "JUL", "AUG", "SEP", "OKT", "NOV", "DES",
+  "JAN",
+  "FEB",
+  "MAR",
+  "APR",
+  "MEI",
+  "JUN",
+  "JUL",
+  "AUG",
+  "SEP",
+  "OKT",
+  "NOV",
+  "DES",
 ];
 
 export default function JourneyPost({ onJourneyAdded, onOpen }) {
@@ -22,10 +33,15 @@ export default function JourneyPost({ onJourneyAdded, onOpen }) {
   });
 
   const [coverFile, setCoverFile] = useState(null);
-  const [notice, setNotice] = useState({ show: false, message: "", type: "info" });
+  const [notice, setNotice] = useState({
+    show: false,
+    message: "",
+    type: "info",
+  });
   const [visible, setVisible] = useState(false);
 
-  const showNotice = (message, type = "info") => setNotice({ show: true, message, type });
+  const showNotice = (message, type = "info") =>
+    setNotice({ show: true, message, type });
   const closeNotice = () => setNotice((n) => ({ ...n, show: false }));
 
   useEffect(() => {
@@ -96,7 +112,7 @@ export default function JourneyPost({ onJourneyAdded, onOpen }) {
       if (existingJourneys && existingJourneys.length > 0) {
         showNotice(
           `Judul "${formattedTitle}" sudah ada. Gunakan nama lain atau tambahkan simbol unik (pt. 2)`,
-          "error"
+          "error",
         );
         setLoading(false);
         return;
@@ -142,6 +158,7 @@ export default function JourneyPost({ onJourneyAdded, onOpen }) {
 
   return (
     <>
+      {/* Tombol tetap berada di dalam Sidebar secara normal */}
       <div className="fab-float journeypost-float">
         <button
           title="Tambah Perjalanan Baru"
@@ -159,100 +176,129 @@ export default function JourneyPost({ onJourneyAdded, onOpen }) {
         </button>
       </div>
 
-      {isOpen && (
-        <div className="journey-popup-overlay">
-          <div className="journey-popup-box">
-            <h2 className="journey-popup-title">Tambah Perjalanan Baru</h2>
+      {/* Render Popup ke luar DOM Sidebar (langsung ke body) */}
+      {isOpen &&
+        createPortal(
+          <div className="journey-popup-overlay">
+            <div className="journey-popup-box">
+              <h2 className="journey-popup-title">Tambah Perjalanan Baru</h2>
 
-            <form onSubmit={handleSubmit}>
-              <div className="journey-form-group">
-                <label className="journey-label">Tahun</label>
-                <input
-                  type="number"
-                  value={formData.year}
-                  onChange={(e) => setFormData({ ...formData, year: e.target.value })}
-                  className="journey-input"
-                  required
-                />
-              </div>
+              <form onSubmit={handleSubmit}>
+                {/* Form fields Anda tetap sama */}
+                <div className="journey-form-group">
+                  <label className="journey-label">Tahun</label>
+                  <input
+                    type="number"
+                    value={formData.year}
+                    onChange={(e) =>
+                      setFormData({ ...formData, year: e.target.value })
+                    }
+                    className="journey-input"
+                    required
+                  />
+                </div>
 
-              <div className="journey-form-group">
-                <label className="journey-label">Bulan</label>
-                <select
-                  value={formData.month_label}
-                  onChange={(e) => setFormData({ ...formData, month_label: e.target.value })}
-                  className="journey-input"
-                  required
-                >
-                  {MONTH_OPTIONS.map((m) => (
-                    <option key={m} value={m}>{m}</option>
-                  ))}
-                </select>
-              </div>
+                <div className="journey-form-group">
+                  <label className="journey-label">Bulan</label>
+                  <select
+                    value={formData.month_label}
+                    onChange={(e) =>
+                      setFormData({ ...formData, month_label: e.target.value })
+                    }
+                    className="journey-input"
+                    required
+                  >
+                    {MONTH_OPTIONS.map((m) => (
+                      <option key={m} value={m}>
+                        {m}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-              <div className="journey-form-group">
-                <label className="journey-label">Judul Kota (Contoh: SOLO)</label>
-                <input
-                  type="text"
-                  placeholder="SOLO"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="journey-input"
-                  required
-                />
-              </div>
+                <div className="journey-form-group">
+                  <label className="journey-label">
+                    Judul Kota (Contoh: SOLO)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="SOLO"
+                    value={formData.title}
+                    onChange={(e) =>
+                      setFormData({ ...formData, title: e.target.value })
+                    }
+                    className="journey-input"
+                    required
+                  />
+                </div>
 
-              <div className="journey-form-group">
-                <label className="journey-label">
-                  Urutan Timeline (Index) {indexLoading && "— menghitung..."}
-                </label>
-                <input
-                  type="number"
-                  value={formData.order_index}
-                  onChange={(e) => setFormData({ ...formData, order_index: e.target.value })}
-                  className="journey-input"
-                  disabled={indexLoading}
-                  required
-                />
-              </div>
+                <div className="journey-form-group">
+                  <label className="journey-label">
+                    Urutan Timeline (Index) {indexLoading && "— menghitung..."}
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.order_index}
+                    onChange={(e) =>
+                      setFormData({ ...formData, order_index: e.target.value })
+                    }
+                    className="journey-input"
+                    disabled={indexLoading}
+                    required
+                  />
+                </div>
 
-              <div className="journey-form-group">
-                <label className="journey-label">Foto Cover Card (Utama)</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setCoverFile(e.target.files[0])}
-                  className="journey-input"
-                  required
-                />
-              </div>
+                <div className="journey-form-group">
+                  <label className="journey-label">
+                    Foto Cover Card (Utama)
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setCoverFile(e.target.files[0])}
+                    className="journey-input"
+                    required
+                  />
+                </div>
 
-              <div className="journey-popup-actions">
-                <button type="button" onClick={closePopup} className="journey-btn-cancel">
-                  Batal
-                </button>
-                <button type="submit" disabled={loading} className="journey-btn-submit">
-                  {loading ? "Mengupload..." : "Simpan Journey"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+                <div className="journey-popup-actions">
+                  <button
+                    type="button"
+                    onClick={closePopup}
+                    className="journey-btn-cancel"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="journey-btn-submit"
+                  >
+                    {loading ? "Mengupload..." : "Simpan Journey"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>,
+          document.body,
+        )}
 
-      {notice.show && (
-        <div className="journey-alert-overlay" onClick={closeNotice}>
-          <div
-            className={`journey-alert-box journey-alert-${notice.type}`}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <p className="journey-alert-text">{notice.message}</p>
-            <button className="journey-alert-btn" onClick={closeNotice}>
-              Oke
-            </button>
-          </div>
-        </div>
-      )}
+      {/* Render Alert Notice juga ke luar DOM Sidebar */}
+      {notice.show &&
+        createPortal(
+          <div className="journey-alert-overlay" onClick={closeNotice}>
+            <div
+              className={`journey-alert-box journey-alert-${notice.type}`}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <p className="journey-alert-text">{notice.message}</p>
+              <button className="journey-alert-btn" onClick={closeNotice}>
+                Oke
+              </button>
+            </div>
+          </div>,
+          document.body,
+        )}
     </>
   );
 }
