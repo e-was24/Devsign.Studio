@@ -59,6 +59,10 @@ body {
   -webkit-user-drag: none;
 }
 
+::-webkit-scrollbar{
+  width: 0;
+}
+
 /* #root {
   width: 1126px;
   max-width: 100%;

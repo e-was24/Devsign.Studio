@@ -24,7 +24,7 @@
         radial-gradient(circle at 100% 0, transparent 4px, black 4.5px),
         radial-gradient(circle at 0 100%, transparent 4px, black 4.5px),
         radial-gradient(circle at 100% 100%, transparent 4px, black 4.5px);
-    -webkit-mask-repeat: repeat-x, repeat-x, repeat-x, repeat-x;
+        -webkit-mask-repeat: repeat-x, repeat-x, repeat-x, repeat-x;
 
     background-image:
         radial-gradient(circle, #ede3d3 45%, transparent 46%);

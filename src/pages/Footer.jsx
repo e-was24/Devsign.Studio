@@ -6,12 +6,17 @@ function Footer() {
   // Mendapatkan tahun saat ini secara otomatis agar tidak perlu diedit manual setiap tahun
   const currentYear = new Date().getFullYear();
   const expired = location.pathname === "/token-expired";
+  const unrelease_page = location.pathname ==="/unrelease-page";
+  const unrelease_page_rewind = location.pathname === "/unrelease-page/rewind";
   const [visible, setVisible] = useState(false);
   useEffect(() => {
     setVisible(!isGuestSession());
   });
   if (expired) return null;
+  if (unrelease_page) return null;
+  if (unrelease_page_rewind) return null;
   if (!visible) return null;
+  
   
   return (
     <footer className="footer-container">
