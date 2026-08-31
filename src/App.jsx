@@ -8,8 +8,7 @@ import Journey from "./pages/Journey";
 import Galery from "./pages/Galery";
 import AccessGate from "./components/AccessGate";
 import ExpiredPage from "./pages/Expired";
-import Mei from "./next-gen/mei";
-import Rewind from "./next-gen/rewind";
+
 import Musik from "./pages/Songs";
 import { PlayerProvider } from "./context/PlayerContext";
 import MiniPlayer from "./components/MiniPlayer";
@@ -36,8 +35,7 @@ function App() {
                 <Route path="musik" element={<Musik />} />
                 <Route path="/unrelease-page">
                   <Route index element={<UnreleasedPage />} />
-                  <Route path="mei" element={<Mei />} />
-                  <Route path="rewind" element={<Rewind />} />
+                  
                 </Route>
               </Route>
             </Route>
