@@ -548,3 +548,144 @@
     background: #c8a45e;
     border-color: #7a5c34;
 }
+
+/* ---- toggle tipe input, gaya dua kartu perangko ---- */
+.input-type-toggle {
+    display: flex;
+    gap: 10px;
+    margin: 4px 0 2px;
+}
+
+.type-option {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 8px 10px;
+    background: #fffdf6;
+    border: 1px solid #b0a184;
+    border-radius: 3px;
+    color: #7a6642;
+    font-family: 'Special Elite', monospace;
+    font-size: 11px;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    box-shadow: 1px 1px 0 rgba(0,0,0,0.1);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.type-option svg {
+    stroke: #a3906c;
+    transition: stroke 0.15s ease;
+}
+
+.type-option:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.15);
+}
+
+.type-option.active {
+    background: #c8a45e;
+    color: #3a2f22;
+    border-color: #7a5c34;
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+}
+
+.type-option.active svg {
+    stroke: #3a2f22;
+}
+
+/* ---- file input custom, tetap ala kertas ---- */
+.file-field {
+    gap: 8px;
+}
+
+.file-input-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.file-input-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.file-input-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    align-self: flex-start;
+    background: #f4ecd8;
+    color: #4a3826;
+    border: 1px dashed #a3906c;
+    border-radius: 3px;
+    padding: 8px 14px;
+    font-family: 'Special Elite', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+    width: 100%;
+}
+
+.file-input-label:hover {
+    background: #efe5cd;
+    border-color: #7a5c34;
+}
+
+.file-input-label svg {
+    stroke: #7a6642;
+}
+
+.file-name-display {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Kalam', cursive;
+    font-size: 13px;
+    color: #7a6642;
+}
+
+.file-name-display svg {
+    stroke: #a3906c;
+    flex: 0 0 auto;
+}
+
+.song-delete {
+    flex: 0 0 auto;
+    background: transparent;
+    border: none;
+    color: #a3906c;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.55;
+    transition: opacity 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.song-card:hover .song-delete {
+    opacity: 1;
+}
+
+.song-delete:hover {
+    color: #a13d2b;
+    background: rgba(161, 61, 43, 0.1);
+}
+
+.song-delete:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.song-card.deleting {
+    opacity: 0.5;
+    pointer-events: none;
+}

@@ -8,17 +8,20 @@ import Journey from "./pages/Journey";
 import Galery from "./pages/Galery";
 import AccessGate from "./components/AccessGate";
 import ExpiredPage from "./pages/Expired";
-
 import Musik from "./pages/Songs";
 import { PlayerProvider } from "./context/PlayerContext";
 import MiniPlayer from "./components/MiniPlayer";
 import UnreleasedPage from "./unrelease-page";
 
+
+
+import ScrollToTop from "./scripts/ScrollToTop"
 import "./App.css";
 
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <PlayerProvider>
         <AccessGate>
           <Routes>
@@ -35,6 +38,7 @@ function App() {
                 <Route path="musik" element={<Musik />} />
                 <Route path="/unrelease-page">
                   <Route index element={<UnreleasedPage />} />
+                  
                   
                 </Route>
               </Route>
