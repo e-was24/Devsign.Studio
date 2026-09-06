@@ -159,7 +159,7 @@
   content: '';
   position: absolute;
   top: -9%;
-  left: 0;
+  left: -.5px;
   width: 37%;
   height: 11%;
   background: #fdf8ee;
@@ -217,7 +217,7 @@
   border-radius: 0 0 4px 4px;
   border-top: 1px dashed rgba(138, 115, 85, 0.35);
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
   align-items: flex-end;
   padding: 0 5% 5%;
   z-index: 3;
@@ -228,7 +228,7 @@
   font-family: 'Cormorant Garamond', serif;
   font-weight: 600;
   font-style: italic;
-  font-size: clamp(80%, 100%, 90%);
+  font-size: clamp(70%, 100%, 10%);
   color: #3d2f22;
 }
 
@@ -236,6 +236,7 @@
   font-family: 'Special Elite', cursive;
   font-size: clamp(0.65rem, 1.6vw, 0.75rem);
   letter-spacing: 0.05em;
+  font-size: 60%;
   color: #8a7355;
 }
 
