@@ -851,7 +851,7 @@
     }
     .journey-month-group.is-zigzag-top .journey-item-title {
         text-align: start;
-        transform: translate(3rem ,0rem);
+        transform: translate(0rem, 0rem);
         rotate: -90deg;
     }
     .journey-month-group.is-zigzag-top .journey-item-anchor {
@@ -879,7 +879,7 @@
     }
     .journey-month-group.is-zigzag-bottom .journey-item-title {
         text-align: start;
-        transform: translate(10rem, 0rem);
+        transform: translate(0rem, 0rem);
         rotate: 90deg;
     }
     .journey-month-group.is-zigzag-bottom .journey-item-anchor {
