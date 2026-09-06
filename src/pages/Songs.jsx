@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "../supabaseClient";
 import { usePlayer } from "../context/PlayerContext";
 import "./css/songs.css";
@@ -18,8 +18,9 @@ export default function Songs() {
   const [error, setError] = useState("");
   const [deletingId, setDeletingId] = useState(null); // lagu mana yang lagi diproses hapus
 
-  const dragItem = useRef(null);
-  const dragOverItem = useRef(null);
+  const cardRefs = useRef([]); // index -> DOM node, buat deteksi posisi drop
+  const dragItem = useRef(null); // index awal item yang di-drag
+  const dragOverItem = useRef(null); // index terakhir yang di-hover
   const [draggingId, setDraggingId] = useState(null);
   const [overId, setOverId] = useState(null);
 
@@ -121,86 +122,54 @@ export default function Songs() {
   }
 
   // ---- hapus lagu ----
-  // ---- hapus lagu ----
-async function handleDelete(song, e) {
-  e.stopPropagation();
+  async function handleDelete(song, e) {
+    e.stopPropagation();
 
-  const confirmed = window.confirm(
-    `Hapus "${song.title}" dari daftar lagu? Tindakan ini tidak bisa dibatalkan.`
-  );
-  if (!confirmed) return;
+    const confirmed = window.confirm(
+      `Hapus "${song.title}" dari daftar lagu? Tindakan ini tidak bisa dibatalkan.`
+    );
+    if (!confirmed) return;
 
-  setDeletingId(song.id);
+    setDeletingId(song.id);
 
-  try {
-    if (currentSong?.id === song.id) {
-      stopPlayer();
-    }
-
-    if (song.file_path) {
-      const { error: storageError } = await supabase.storage
-        .from("music")
-        .remove([song.file_path]);
-
-      if (storageError) {
-        console.error("Gagal hapus file di storage:", storageError);
+    try {
+      if (currentSong?.id === song.id) {
+        stopPlayer();
       }
+
+      if (song.file_path) {
+        const { error: storageError } = await supabase.storage
+          .from("music")
+          .remove([song.file_path]);
+
+        if (storageError) {
+          console.error("Gagal hapus file di storage:", storageError);
+        }
+      }
+
+      // .select() dipakai supaya kita tau baris mana yang BENERAN kehapus.
+      // Tanpa ini, RLS bisa diam-diam blokir delete tanpa error apapun.
+      const { data: deletedRows, error: deleteError } = await supabase
+        .from("songs")
+        .delete()
+        .eq("id", song.id)
+        .select();
+
+      if (deleteError) throw deleteError;
+
+      if (!deletedRows || deletedRows.length === 0) {
+        throw new Error(
+          "Lagu gagal terhapus dari database. Kemungkinan besar policy RLS di tabel 'songs' memblokir DELETE. Cek Supabase Dashboard > Authentication > Policies."
+        );
+      }
+
+      // update state lokal langsung, gak nunggu fetchSongs() lagi
+      setSongs((prev) => prev.filter((s) => s.id !== song.id));
+    } catch (err) {
+      alert(err.message || "Gagal menghapus lagu, coba lagi.");
+    } finally {
+      setDeletingId(null);
     }
-
-    // .select() dipakai supaya kita tau baris mana yang BENERAN kehapus.
-    // Tanpa ini, RLS bisa diam-diam blokir delete tanpa error apapun.
-    const { data: deletedRows, error: deleteError } = await supabase
-      .from("songs")
-      .delete()
-      .eq("id", song.id)
-      .select();
-
-    if (deleteError) throw deleteError;
-
-    if (!deletedRows || deletedRows.length === 0) {
-      throw new Error(
-        "Lagu gagal terhapus dari database. Kemungkinan besar policy RLS di tabel 'songs' memblokir DELETE. Cek Supabase Dashboard > Authentication > Policies."
-      );
-    }
-
-    // update state lokal langsung, gak nunggu fetchSongs() lagi
-    setSongs((prev) => prev.filter((s) => s.id !== song.id));
-  } catch (err) {
-    alert(err.message || "Gagal menghapus lagu, coba lagi.");
-  } finally {
-    setDeletingId(null);
-  }
-}
-
-  // ---- drag & drop reorder (tetap sama) ----
-  function handleDragStart(e, index) {
-    dragItem.current = index;
-    setDraggingId(songs[index].id);
-    e.dataTransfer.effectAllowed = "move";
-  }
-
-  function handleDragEnter(e, index) {
-    dragOverItem.current = index;
-    setOverId(songs[index].id);
-  }
-
-  function handleDragEnd() {
-    const from = dragItem.current;
-    const to = dragOverItem.current;
-
-    setDraggingId(null);
-    setOverId(null);
-    dragItem.current = null;
-    dragOverItem.current = null;
-
-    if (from === null || to === null || from === to) return;
-
-    const reordered = [...songs];
-    const [moved] = reordered.splice(from, 1);
-    reordered.splice(to, 0, moved);
-
-    setSongs(reordered);
-    persistOrder(reordered);
   }
 
   async function persistOrder(list) {
@@ -212,6 +181,92 @@ async function handleDelete(song, e) {
     );
     await Promise.all(updates);
   }
+
+  // ---- drag & drop reorder (Pointer Events -> jalan di mouse & touch) ----
+
+  // cari index card berdasarkan koordinat layar (dipakai buat drop-target detection)
+  function getIndexFromPoint(clientX, clientY) {
+    for (let i = 0; i < cardRefs.current.length; i++) {
+      const node = cardRefs.current[i];
+      if (!node) continue;
+      const rect = node.getBoundingClientRect();
+      if (
+        clientY >= rect.top &&
+        clientY <= rect.bottom &&
+        clientX >= rect.left &&
+        clientX <= rect.right
+      ) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  const handlePointerMove = useCallback((e) => {
+    if (dragItem.current === null) return;
+    e.preventDefault();
+
+    const hoverIndex = getIndexFromPoint(e.clientX, e.clientY);
+    if (hoverIndex === -1 || hoverIndex === dragOverItem.current) return;
+
+    dragOverItem.current = hoverIndex;
+    setOverId(songsRef.current[hoverIndex]?.id ?? null);
+  }, []);
+
+  const handlePointerUp = useCallback(() => {
+    window.removeEventListener("pointermove", handlePointerMove);
+    window.removeEventListener("pointerup", handlePointerUp);
+    window.removeEventListener("pointercancel", handlePointerUp);
+
+    const from = dragItem.current;
+    const to = dragOverItem.current;
+
+    setDraggingId(null);
+    setOverId(null);
+    dragItem.current = null;
+    dragOverItem.current = null;
+
+    if (from === null || to === null || from === to) return;
+
+    setSongs((prev) => {
+      const reordered = [...prev];
+      const [moved] = reordered.splice(from, 1);
+      reordered.splice(to, 0, moved);
+      persistOrder(reordered);
+      return reordered;
+    });
+  }, [handlePointerMove]);
+
+  function handlePointerDown(e, index) {
+    // cuma tombol kiri mouse / sentuhan tunggal yang mulai drag
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+
+    e.preventDefault();
+
+    dragItem.current = index;
+    dragOverItem.current = index;
+    setDraggingId(songs[index].id);
+
+    window.addEventListener("pointermove", handlePointerMove, { passive: false });
+    window.addEventListener("pointerup", handlePointerUp);
+    window.addEventListener("pointercancel", handlePointerUp);
+  }
+
+  // songsRef dipakai supaya handlePointerMove (dibuat sekali via useCallback)
+  // selalu baca daftar lagu terbaru, bukan closure yang basi
+  const songsRef = useRef(songs);
+  useEffect(() => {
+    songsRef.current = songs;
+  }, [songs]);
+
+  // bersihin listener kalau komponen unmount pas lagi drag
+  useEffect(() => {
+    return () => {
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerup", handlePointerUp);
+      window.removeEventListener("pointercancel", handlePointerUp);
+    };
+  }, [handlePointerMove, handlePointerUp]);
 
   return (
     <>
@@ -241,13 +296,17 @@ async function handleDelete(song, e) {
                     : ""
                 } ${isActive ? "active" : ""} ${isDeleting ? "deleting" : ""}`}
                 key={song.id}
-                draggable
-                onDragStart={(e) => handleDragStart(e, index)}
-                onDragEnter={(e) => handleDragEnter(e, index)}
-                onDragOver={(e) => e.preventDefault()}
-                onDragEnd={handleDragEnd}
+                ref={(node) => {
+                  cardRefs.current[index] = node;
+                }}
               >
-                <div className="drag-handle">⠿</div>
+                <div
+                  className="drag-handle"
+                  style={{ touchAction: "none", userSelect: "none" }}
+                  onPointerDown={(e) => handlePointerDown(e, index)}
+                >
+                  ⠿
+                </div>
 
                 <button
                   className="song-cover"

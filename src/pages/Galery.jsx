@@ -21,21 +21,21 @@ function shuffleArray(arr) {
 
 // --- helper: kunci unik tiap item, dan penyimpanan urutan ke localStorage ---
 const itemKey = (it) => `${it._type}-${it.id}`;
-const getOrderStorageKey = (journeyId) => `galery-order-${journeyId}`;
+const getOrderStorageKey = (sectionKey) => `galery-order-${sectionKey}`;
 
-function loadStoredOrder(journeyId) {
+function loadStoredOrder(sectionKey) {
   try {
-    const raw = localStorage.getItem(getOrderStorageKey(journeyId));
+    const raw = localStorage.getItem(getOrderStorageKey(sectionKey));
     return raw ? JSON.parse(raw) : null;
   } catch {
     return null;
   }
 }
 
-function saveStoredOrder(journeyId, items) {
+function saveStoredOrder(sectionKey, items) {
   try {
     localStorage.setItem(
-      getOrderStorageKey(journeyId),
+      getOrderStorageKey(sectionKey),
       JSON.stringify(items.map(itemKey)),
     );
   } catch {
@@ -57,7 +57,13 @@ export default function Galery() {
   const { slug } = useParams();
   const container = useRef();
 
-  const [journey, setJourney] = useState(null);
+  // "journey" -> section lama (journeys + journal_notes + upload)
+  // "folder"  -> section baru dari gallery_folder (foto only, tanpa notes/upload)
+  const [sectionType, setSectionType] = useState(null);
+  const [section, setSection] = useState(null); // journey row ATAU folder row
+  const [folderJourneyTitle, setFolderJourneyTitle] = useState(null); // journey pemilik folder (buat back-link)
+  const [notFound, setNotFound] = useState(false);
+
   const [galleryItems, setGalleryItems] = useState([]);
   const [notes, setNotes] = useState([]);
   const [displayItems, setDisplayItems] = useState([]); // gabungan: media + note, urutan persist
@@ -72,70 +78,115 @@ export default function Galery() {
   const [isBurning, setIsBurning] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const [showMoveFolder, setShowMoveFolder] = useState(false);
+  const [folderOptions, setFolderOptions] = useState([]);
+  const [selectedMoveFolderId, setSelectedMoveFolderId] = useState("");
+  const [moving, setMoving] = useState(false);
+
   useEffect(() => {
     setVisible(!isGuestSession());
   });
 
   const fetchGaleryData = useCallback(async () => {
     setLoading(true);
+    setNotFound(false);
 
-    const { data: journeyData, error: journeyError } = await supabase
-      .from("journeys")
+    // 1) coba resolve sebagai folder dulu (exact match by slug) - lebih spesifik,
+    //    dicek duluan supaya gak ketabrak sama journey yang judulnya kebetulan mirip
+    const { data: folderData } = await supabase
+      .from("gallery_folder")
       .select("*")
-      .ilike("title", slug)
-      .single();
+      .eq("slug", slug)
+      .maybeSingle();
 
-    if (journeyError || !journeyData) {
-      console.error("Journey tidak ditemukan:", journeyError);
-      setJourney(null);
+    let resolvedType = null;
+    let resolvedSection = null;
+
+    if (folderData) {
+      resolvedType = "folder";
+      resolvedSection = folderData;
+    } else {
+      // 2) fallback: resolve sebagai journey (perilaku lama)
+      const { data: journeyData } = await supabase
+        .from("journeys")
+        .select("*")
+        .ilike("title", slug)
+        .maybeSingle();
+
+      if (journeyData) {
+        resolvedType = "journey";
+        resolvedSection = journeyData;
+      }
+    }
+
+    if (!resolvedSection) {
+      setSectionType(null);
+      setSection(null);
+      setFolderJourneyTitle(null);
+      setNotFound(true);
       setLoading(false);
       return;
     }
 
-    setJourney(journeyData);
+    setSectionType(resolvedType);
+    setSection(resolvedSection);
 
-    const { data: itemsData, error: itemsError } = await supabase
+    if (resolvedType === "folder" && resolvedSection.journey_id) {
+      const { data: parentJourney } = await supabase
+        .from("journeys")
+        .select("title")
+        .eq("id", resolvedSection.journey_id)
+        .maybeSingle();
+      setFolderJourneyTitle(parentJourney?.title ?? null);
+    } else {
+      setFolderJourneyTitle(null);
+    }
+
+    const itemsQuery = supabase
       .from("gallery_items")
       .select("*")
-      .eq("journey_id", journeyData.id)
       .order("order_index", { ascending: true, nullsFirst: false });
 
+    const { data: itemsData, error: itemsError } =
+      resolvedType === "journey"
+        ? await itemsQuery.eq("journey_id", resolvedSection.id)
+        : await itemsQuery.eq("folder_id", resolvedSection.id);
+
+    let noteList = [];
     const { data: notesData, error: notesError } = await supabase
       .from("journal_notes")
       .select("*")
-      .eq("journey_id", journeyData.id)
+      .eq(resolvedType === "journey" ? "journey_id" : "folder_id", resolvedSection.id)
       .order("created_at", { ascending: false });
 
-    const media = !itemsError ? itemsData : [];
-    const noteList = !notesError ? notesData : [];
+    if (!notesError) noteList = notesData;
 
-    if (!itemsError) setGalleryItems(media);
-    if (!notesError) setNotes(noteList);
+    const media = !itemsError ? itemsData : [];
+
+    setGalleryItems(media);
+    setNotes(noteList);
 
     const allItems = [
       ...media.map((m) => ({ ...m, _type: "media" })),
       ...noteList.map((n) => ({ ...n, _type: "note" })),
     ];
 
-    const storedOrder = loadStoredOrder(journeyData.id);
+    const sectionKey = `${resolvedType}-${resolvedSection.id}`;
+    const storedOrder = loadStoredOrder(sectionKey);
 
     let finalOrder;
     if (storedOrder && storedOrder.length > 0) {
       const itemMap = new Map(allItems.map((it) => [itemKey(it), it]));
       const orderedKeys = new Set(storedOrder);
 
-      // urutan lama; item yang sudah kehapus otomatis ter-filter (gak ketemu di map)
       const ordered = storedOrder.map((k) => itemMap.get(k)).filter(Boolean);
-
-      // item baru (belum pernah tersimpan urutannya) -> sisipkan acak
       const newItems = allItems.filter((it) => !orderedKeys.has(itemKey(it)));
       finalOrder = insertItemsRandomly(ordered, shuffleArray(newItems));
     } else {
-      // pertama kali - acak sekali aja
       finalOrder = shuffleArray(allItems);
     }
 
-    saveStoredOrder(journeyData.id, finalOrder);
+    saveStoredOrder(sectionKey, finalOrder);
     setDisplayItems(finalOrder);
 
     setLoading(false);
@@ -151,27 +202,26 @@ export default function Galery() {
     return () => clearTimeout(timer);
   }, [notification]);
 
-  // --- Drag & drop hanya berlaku untuk item media (note belum ikut re-order) ---
+  // --- Drag & drop sekarang berlaku untuk SEMUA item (media & note) ---
+  // Urutan lengkap (media + note) selalu disimpan ke localStorage.
+  // Ke Supabase, cuma media yang punya kolom order_index, jadi cuma
+  // media yang di-sync ke database setiap drop.
   const handleDragStart = (e, index) => {
-    if (displayItems[index]._type !== "media") return;
     setDraggedItemIndex(index);
     e.dataTransfer.effectAllowed = "move";
   };
 
   const handleDragOver = (e, index) => {
-    if (displayItems[index]._type !== "media") return;
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
   };
 
   const handleDrop = async (e, targetIndex) => {
     e.preventDefault();
-    if (
-      draggedItemIndex === null ||
-      draggedItemIndex === targetIndex ||
-      displayItems[targetIndex]._type !== "media"
-    )
+    if (draggedItemIndex === null || draggedItemIndex === targetIndex) {
+      setDraggedItemIndex(null);
       return;
+    }
 
     const updatedDisplay = [...displayItems];
     const [movedItem] = updatedDisplay.splice(draggedItemIndex, 1);
@@ -179,8 +229,8 @@ export default function Galery() {
     setDisplayItems(updatedDisplay);
     setDraggedItemIndex(null);
 
-    // simpan urutan gabungan (media+note) biar konsisten walau refresh
-    saveStoredOrder(journey.id, updatedDisplay);
+    const sectionKey = `${sectionType}-${section.id}`;
+    saveStoredOrder(sectionKey, updatedDisplay);
 
     try {
       const mediaOnly = updatedDisplay.filter((it) => it._type === "media");
@@ -201,8 +251,64 @@ export default function Galery() {
     }
   };
 
+  const handleDragEnd = () => {
+    setDraggedItemIndex(null);
+  };
+
   const requestDelete = () => {
     setShowDeleteConfirm(true);
+  };
+
+  // --- Pindah folder: dropdown folder di-scope ke journey yang sama ---
+  const openMoveFolder = async () => {
+    const journeyScope =
+      sectionType === "journey" ? section?.id : (section?.journey_id ?? null);
+
+    let query = supabase
+      .from("gallery_folder")
+      .select("id, folder_title")
+      .order("folder_title", { ascending: true });
+
+    query = journeyScope
+      ? query.eq("journey_id", journeyScope)
+      : query.is("journey_id", null);
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error(error);
+      setNotification({ type: "error", message: "Gagal memuat daftar folder." });
+      return;
+    }
+
+    setFolderOptions(data ?? []);
+    setSelectedMoveFolderId(selectedItem?.folder_id ?? "");
+    setShowMoveFolder(true);
+  };
+
+  const confirmMoveFolder = async () => {
+    setMoving(true);
+    try {
+      const { error } = await supabase
+        .from("gallery_items")
+        .update({ folder_id: selectedMoveFolderId || null })
+        .eq("id", selectedItem.id);
+
+      if (error) throw error;
+
+      setNotification({
+        type: "success",
+        message: "Berhasil dipindahkan ke folder baru. 📁",
+      });
+      setShowMoveFolder(false);
+      setSelectedItem(null);
+      fetchGaleryData();
+    } catch (err) {
+      console.error(err);
+      setNotification({ type: "error", message: "Gagal memindahkan ke folder." });
+    } finally {
+      setMoving(false);
+    }
   };
 
   const confirmDelete = () => {
@@ -275,9 +381,15 @@ export default function Galery() {
     return <div className="galery-loading">Memuat galeri...</div>;
   }
 
-  if (!journey) {
+  if (notFound) {
     return <Navigate to="/journey" replace />;
   }
+
+  const isJourney = sectionType === "journey";
+  const sectionTitle = isJourney ? section.title : section.folder_title;
+  const sectionSubtitle = isJourney
+    ? `${section.month_label} ${section.year}`
+    : section.category ?? section.description ?? "";
 
   return (
     <>
@@ -309,12 +421,14 @@ export default function Galery() {
             <div className={`galery-sidebar ${sidebarOpen ? "is-open" : ""}`}>
               <div className="sidebar-actions">
                 <ImgPost
-                  journeyId={journey.id}
+                  journeyId={isJourney ? section.id : null}
+                  folderId={isJourney ? null : section.id}
                   onUploadSuccess={fetchGaleryData}
                   onOpen={() => setSidebarOpen(false)}
                 />
                 <BtnMakeNote
-                  journeyId={journey.id}
+                  journeyId={isJourney ? section.id : null}
+                  folderId={isJourney ? null : section.id}
                   onNoteSuccess={fetchGaleryData}
                   onOpen={() => setSidebarOpen(false)}
                 />
@@ -323,14 +437,21 @@ export default function Galery() {
           </>
         )}
 
-        <Link to="/journey" className="back-link">
+        <Link
+          to={
+            isJourney
+              ? "/journey"
+              : folderJourneyTitle
+              ? `/foldergallery/${encodeURIComponent(folderJourneyTitle)}`
+              : "/foldergallery"
+          }
+          className="back-link"
+        >
           ← Kembali
         </Link>
 
-        <h1 className="galery-title">{journey.title}</h1>
-        <p className="galery-subtitle">
-          {journey.month_label} {journey.year}
-        </p>
+        <h1 className="galery-title">{sectionTitle}</h1>
+        {sectionSubtitle && <p className="galery-subtitle">{sectionSubtitle}</p>}
         <p className="galery-tips">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -341,7 +462,7 @@ export default function Galery() {
           >
             <path d="M400-240q-33 0-56.5-23.5T320-320v-50q-57-39-88.5-100T200-600q0-117 81.5-198.5T480-880q117 0 198.5 81.5T760-600q0 69-31.5 129.5T640-370v50q0 33-23.5 56.5T560-240H400Zm0-80h160v-92l34-24q41-28 63.5-71.5T680-600q0-83-58.5-141.5T480-800q-83 0-141.5 58.5T280-600q0 49 22.5 92.5T366-436l34 24v92Zm0 240q-17 0-28.5-11.5T360-120v-40h240v40q0 17-11.5 28.5T560-80H400Zm80-520Z" />
           </svg>
-          Tips : Drag / geser foto untuk ubah urutan
+          Tips : Drag / geser foto &amp; catatan untuk ubah urutan
         </p>
 
         <div className="galery-grid">
@@ -354,10 +475,17 @@ export default function Galery() {
               if (item._type === "note") {
                 return (
                   <div
-                    className="galery-item galery-note-card"
+                    className={`galery-item galery-note-card ${
+                      draggedItemIndex === index ? "is-dragging" : ""
+                    }`}
                     key={`note-${item.id}`}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, index)}
+                    onDragOver={(e) => handleDragOver(e, index)}
+                    onDrop={(e) => handleDrop(e, index)}
+                    onDragEnd={handleDragEnd}
                     onClick={() => setSelectedItem(item)}
-                    title="Klik untuk baca catatan"
+                    title="Klik untuk baca catatan, geser untuk ubah urutan"
                   >
                     <p className="note-card-date">{item.date_label}</p>
                     <h3 className="note-card-title">{item.title}</h3>
@@ -372,12 +500,15 @@ export default function Galery() {
 
               return (
                 <div
-                  className="galery-item"
+                  className={`galery-item ${
+                    draggedItemIndex === index ? "is-dragging" : ""
+                  }`}
                   key={`media-${item.id}`}
                   draggable
                   onDragStart={(e) => handleDragStart(e, index)}
                   onDragOver={(e) => handleDragOver(e, index)}
                   onDrop={(e) => handleDrop(e, index)}
+                  onDragEnd={handleDragEnd}
                   onClick={() => setSelectedItem(item)}
                   title="Klik untuk preview, geser untuk ubah urutan"
                 >
@@ -397,7 +528,7 @@ export default function Galery() {
                   ) : (
                     <img
                       src={item.media_url}
-                      alt={item.alt_text || journey.title}
+                      alt={item.alt_text || sectionTitle}
                     />
                   )}
                   <p className="pic-location">
@@ -489,6 +620,19 @@ export default function Galery() {
 
             {!isBurning && visible && (
               <div className="modal-actions">
+                {selectedItem._type === "media" && (
+                  <button onClick={openMoveFolder} className="modal-move-btn">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="24px"
+                      viewBox="0 -960 960 960"
+                      width="24px"
+                    >
+                      <path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h240l80 80h320q33 0 56.5 23.5T880-640H447l-80-80H160v480l96-320h684L837-217q-8 26-29.5 41.5T760-160H160Z" />
+                    </svg>
+                    pindah folder
+                  </button>
+                )}
                 <button onClick={requestDelete} className="modal-delete-btn">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -504,6 +648,53 @@ export default function Galery() {
                 </button>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* --- POPUP PINDAH FOLDER --- */}
+      {showMoveFolder && (
+        <div
+          className="confirm-overlay"
+          onClick={() => !moving && setShowMoveFolder(false)}
+        >
+          <div className="confirm-box" onClick={(e) => e.stopPropagation()}>
+            <p className="confirm-icon">📁</p>
+            <h3 className="confirm-title">Pindah ke folder mana?</h3>
+            <p className="confirm-text">
+              Pilih folder tujuan, atau lepaskan dari folder manapun.
+            </p>
+
+            <select
+              className="move-folder-select"
+              value={selectedMoveFolderId}
+              onChange={(e) => setSelectedMoveFolderId(e.target.value)}
+              disabled={moving}
+            >
+              <option value="">Tanpa folder</option>
+              {folderOptions.map((f) => (
+                <option key={f.id} value={f.id}>
+                  {f.folder_title}
+                </option>
+              ))}
+            </select>
+
+            <div className="confirm-actions">
+              <button
+                className="confirm-btn-cancel"
+                onClick={() => setShowMoveFolder(false)}
+                disabled={moving}
+              >
+                Batal
+              </button>
+              <button
+                className="confirm-btn-delete"
+                onClick={confirmMoveFolder}
+                disabled={moving}
+              >
+                {moving ? "Memindahkan..." : "Pindahkan"}
+              </button>
+            </div>
           </div>
         </div>
       )}

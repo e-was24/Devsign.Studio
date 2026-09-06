@@ -157,3 +157,33 @@
 .journey-preview-remove:active {
     transform: scale(0.9);
 }
+
+/* --- tambahan: toggle pilih nama pengunggah --- */
+.journey-uploader-toggle {
+  display: flex;
+  gap: 10px;
+}
+
+.journey-uploader-btn {
+  flex: 1;
+  padding: 10px 12px;
+  font-family: 'Special Elite', cursive;
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+  border: 1px solid #c9b898;
+  border-radius: 2px;
+  background: rgba(255, 250, 240, 0.4);
+  color: #6b5842;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.journey-uploader-btn:hover {
+  background: rgba(107, 88, 66, 0.1);
+}
+
+.journey-uploader-btn.is-active {
+  background: #6b5842;
+  border-color: #6b5842;
+  color: #fdf8ee;
+}

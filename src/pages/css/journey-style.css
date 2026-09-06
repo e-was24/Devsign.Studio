@@ -43,14 +43,25 @@
 /* ============ HEADER TAHUN ============ */
 
 .drop-line {
-    min-height: 100vh;
-    padding: 4rem 0 6rem;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    flex-direction: column;
-    position: relative;
-    z-index: 6;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: #8a7355 rgba(138, 115, 85, 0.12);
+}
+
+.drop-line::-webkit-scrollbar {
+  height: 10px;
+}
+.drop-line::-webkit-scrollbar-track {
+  background: rgba(138, 115, 85, 0.12);
+  border-radius: 10px;
+}
+.drop-line::-webkit-scrollbar-thumb {
+  background: linear-gradient(to right, #8a7355, #c9b898, #8a7355);
+  border-radius: 10px;
+  border: 2px solid #ede3d3;
+}
+.drop-line::-webkit-scrollbar-thumb:hover {
+  background: #6b5842;
 }
 
 .title-years {
@@ -69,7 +80,9 @@
     font-family: 'Cormorant Garamond', serif;
     color: #3d2f22;
     opacity: .8;
-    width: 80%;
+    width: 100%;
+    text-align: center;
+    margin-top: 2rem;
 }
 
 /* ============ TIMELINE (garis tumbuh sesuai jumlah GRUP BULAN) ============ */
@@ -158,9 +171,11 @@
 .journey-month-group:nth-child(odd) .line-h-1 {
     left: 50%;
 }
+
 .journey-month-group:nth-child(odd) .journey-cards-stack {
     left: calc(50% + 45px);
 }
+
 .journey-month-group:nth-child(odd) .title-month {
     left: calc(50% - 150px);
 }
@@ -169,9 +184,11 @@
 .journey-month-group:nth-child(even) .line-h-1 {
     right: 50%;
 }
+
 .journey-month-group:nth-child(even) .journey-cards-stack {
     right: calc(50% + 45px);
 }
+
 .journey-month-group:nth-child(even) .title-month {
     right: calc(50% - 150px);
     left: auto;
@@ -248,19 +265,24 @@
     .line-v {
         max-width: 320px;
     }
+
     .title-month {
         left: calc(50% - 100px);
         font-size: 0.85rem;
     }
+
     .line-h-1 {
         width: 28px;
     }
+
     .journey-month-group:nth-child(odd) .journey-cards-stack {
         left: calc(50% + 28px);
     }
+
     .journey-month-group:nth-child(even) .journey-cards-stack {
         right: calc(50% + 28px);
     }
+
     .circle-1 {
         width: 65px;
         height: 65px;
@@ -331,18 +353,31 @@
 .journey-alert-success .journey-alert-text {
     color: #3d5a2f;
 }
+
 .journey-alert-error .journey-alert-text {
     color: #6b2c2c;
 }
 
 @keyframes journeyFadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes journeyPopIn {
-    from { opacity: 0; transform: scale(0.92); }
-    to { opacity: 1; transform: scale(1); }
+    from {
+        opacity: 0;
+        transform: scale(0.92);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 /* ============ PEMISAH ANTAR TAHUN ============ */
@@ -403,6 +438,7 @@
 .journey-month-group:nth-child(even) .journey-item-circle-wrap {
     flex-direction: row-reverse;
 }
+
 .journey-month-group:nth-child(even) .journey-item-title {
     transform: rotate(2deg);
 }
@@ -417,13 +453,11 @@
     width: 2px;
     height: 16px;
     transform: translateX(-50%);
-    background: repeating-linear-gradient(
-        to bottom,
-        #8a7355 0,
-        #8a7355 3px,
-        transparent 3px,
-        transparent 6px
-    );
+    background: repeating-linear-gradient(to bottom,
+            #8a7355 0,
+            #8a7355 3px,
+            transparent 3px,
+            transparent 6px);
     z-index: 1;
 }
 
@@ -574,5 +608,289 @@
 @media (max-width: 480px) {
     .journey-sidebar {
         width: 110px;
+    }
+}
+
+/* ============================================
+   DESKTOP: FULL WIDTH + TIMELINE HORIZONTAL
+   (tablet & mobile tetap vertikal seperti semula)
+   ============================================ */
+
+@media (min-width: 1024px) {
+
+    body.thame-journey .Landing-Page {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    body.thame-journey .layout-cover {
+        width: 100%;
+    }
+
+    .layout-journey {
+        width: 100%;
+    }
+
+    .post-info {
+        position: absolute;
+        top: 1.2rem;
+        left: 2rem;
+        width: 260px;
+        text-align: left;
+        z-index: 5;
+    }
+
+    .drop-line>br {
+        display: none;
+    }
+
+    .drop-line {
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: flex-start;
+        gap: 0;
+        /* segmen antar tahun rapat -> terlihat 1 garis */
+        padding: 8rem 3rem 8rem;
+        overflow-x: auto;
+        overflow-y: visible;
+        min-height: 100vh;
+    }
+
+    .journey-year-section {
+        position: relative;
+        /* acuan untuk label absolute */
+        flex: 0 0 auto;
+        width: auto;
+        margin-bottom: 0;
+    }
+
+    /* label tahun nemplok DI ATAS garis, seperti tick */
+    .title-years {
+        position: absolute;
+        top: var(--half-height, 220px);
+        left: 50px;
+        transform: translateY(-2rem) translateX(-3.8rem);
+        margin: 0;
+        font-size: 1.05rem;
+        white-space: nowrap;
+        /* background: #ede3d3; */
+        background: transparent;
+        padding: 2px 10px 6px;
+        z-index: 6;
+    }
+
+    .journey-year-section .line-v {
+        padding-top: 0;
+        margin: 0;
+    }
+
+    /* after */
+    .line-v {
+        max-width: none;
+        width: max-content;
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(150px, max-content);
+        /* fallback safety net */
+        grid-template-columns: repeat(var(--month-count, 1), minmax(150px, max-content));
+        grid-template-rows: var(--half-height, 220px) 3px var(--half-height, 220px);
+        align-items: stretch;
+        column-gap: 50px;
+        padding: 60px 40px 20px 70px;
+    }
+
+    .line-v::before {
+        grid-row: 2;
+        grid-column: 1 / -1;
+        top: auto;
+        bottom: auto;
+        left: auto;
+        right: auto;
+        width: 100%;
+        height: 3px;
+        transform: none;
+        background: linear-gradient(to right, #8a7355, #c9b898, #8a7355);
+        box-shadow: 0 0 8px rgba(138, 115, 85, 0.3);
+    }
+
+    .journey-month-group {
+        position: relative;
+        width: auto;
+        min-height: unset !important;
+        display: flex;
+        flex-direction: column-reverse;
+        align-items: flex-start;
+        /* anchor to first cover, not the whole row */
+        gap: 10px;
+
+    }
+
+    .journey-month-group::before {
+        left: 42px;
+        top: auto;
+        transform: translateX(-50%);
+        z-index: 3;
+    }
+
+    /* after */
+    .journey-month-group.is-zigzag-top {
+        grid-row: 1;
+        align-self: end;
+    }
+
+    .journey-month-group.is-zigzag-top::before {
+        bottom: -6px;
+    }
+
+    .journey-month-group.is-zigzag-bottom {
+        grid-row: 3;
+        align-self: start;
+        flex-direction: column-reverse;
+    }
+
+    .journey-month-group.is-zigzag-bottom::before {
+        top: -6px;
+    }
+
+    .drop-line {
+        position: relative;
+        cursor: grab;
+        user-select: none;
+    }
+
+    .post-info {
+        position: absolute;
+        left: 50%;
+        width: fit-content;
+        transform: translateX(-50%)
+    }
+
+    .drop-line.is-dragging {
+        cursor: grabbing;
+    }
+
+    .drop-line.is-dragging * {
+        user-select: none;
+        pointer-events: none;
+        /* prevents accidental card clicks/hover mid-drag */
+    }
+
+    .title-month {
+        position: static;
+        left: auto;
+        right: auto;
+        margin: 0;
+        width: 85px;
+        /* matches .circle-1 width */
+        text-align: center;
+        /* centers label text over the first cover */
+    }
+
+
+    .line-h-1 {
+        position: static;
+        left: auto;
+        right: auto;
+        width: 2px;
+        height: 30px;
+        margin-left: 41px;
+        /* centers the thin brown connector on the first cover */
+    }
+
+    .journey-cards-stack {
+        position: static;
+        left: auto;
+        right: auto;
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .journey-item-circle-wrap {
+        flex-direction: column !important;
+        gap: 6px;
+    }
+
+    .journey-item-title {
+        transform: none;
+        text-align: center;
+    }
+
+    .journey-month-group:nth-child(even) .journey-item-title {
+        transform: none;
+    }
+
+    .journey-item-circle-wrap:not(:last-child) .journey-item-anchor::after {
+        top: 50%;
+        left: 100%;
+        width: 16px;
+        height: 2px;
+        transform: translateY(-50%);
+        background: repeating-linear-gradient(to right,
+                #8a7355 0, #8a7355 3px, transparent 3px, transparent 6px);
+    }
+
+    .journey-month-group.is-zigzag-top .title-month {
+        transform: translateY(5rem);
+        rotate: 4deg;
+    }
+
+    .journey-month-group.is-zigzag-top .journey-cards-stack {
+        height: 100px;
+    }
+
+    .journey-month-group.is-zigzag-top .line-h-1 {
+        transform: translateY(2rem);
+    }
+
+    .journey-month-group.is-zigzag-top .journey-item-circle-wrap {
+        transform: translateY(-4rem);
+        text-align: start;
+    }
+    .journey-month-group.is-zigzag-top .journey-item-title {
+        text-align: start;
+        transform: translate(3rem ,0rem);
+        rotate: -90deg;
+    }
+    .journey-month-group.is-zigzag-top .journey-item-anchor {
+        transform: translateY(7.5rem);
+    }
+
+    /* bottom */
+
+    .journey-month-group.is-zigzag-bottom .title-month {
+        transform: translateY(-14rem);
+        rotate: 4deg;
+    }
+
+    .journey-month-group.is-zigzag-bottom .journey-cards-stack {
+        height: 100px;
+    }
+
+    .journey-month-group.is-zigzag-bottom .line-h-1 {
+        transform: translateY(-5.5rem);
+    }
+
+    .journey-month-group.is-zigzag-bottom .journey-item-circle-wrap {
+        transform: translateY(-5.5rem);
+        text-align: start;
+    }
+    .journey-month-group.is-zigzag-bottom .journey-item-title {
+        text-align: start;
+        transform: translate(10rem, 0rem);
+        rotate: 90deg;
+    }
+    .journey-month-group.is-zigzag-bottom .journey-item-anchor {
+        transform: translateY(7.5rem);
+    }
+}
+
+/* after */
+@media (min-width: 1440px) {
+    .line-v {
+        grid-template-columns: repeat(var(--month-count, 1), minmax(170px, max-content));
+        column-gap: 70px;
     }
 }

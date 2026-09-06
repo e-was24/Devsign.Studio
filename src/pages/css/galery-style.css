@@ -120,20 +120,58 @@
 }
 
 
-/* ============ 3. GRID GALERI ============ */
+/* ============ 3. GRID GALERI (masonry, tinggi natural per kartu) ============ */
 
 .galery-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 36px;
+    columns: 2 220px;      /* max 2 kolom di HP, tapi gak akan lebih sempit dari 220px */
+    column-gap: 20px;
     max-width: 1200px;
     margin: 0 auto;
     position: relative;
     z-index: 2;
 }
 
+@media (min-width: 640px) {
+    .galery-grid {
+        columns: 3 220px;   /* tablet kecil / HP landscape */
+        column-gap: 28px;
+    }
+}
+
+@media (min-width: 900px) {
+    .galery-grid {
+        columns: 4 220px;   /* tablet besar / laptop / desktop */
+        column-gap: 32px;
+    }
+}
+
+.galery-item,
+.galery-note-card {
+    /* penting: ini yang bikin tiap kartu ketahan utuh, gak kepotong pindah kolom */
+    break-inside: avoid;
+    -webkit-column-break-inside: avoid;
+    page-break-inside: avoid;
+
+    display: inline-block;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+@media (min-width: 640px) {
+    .galery-item,
+    .galery-note-card {
+        margin-bottom: 28px;
+    }
+}
+
+@media (min-width: 900px) {
+    .galery-item,
+    .galery-note-card {
+        margin-bottom: 32px;
+    }
+}
+
 .galery-empty {
-    grid-column: 1 / -1;
     text-align: center;
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
@@ -1188,10 +1226,9 @@
 /* ================================
    12. DEKORASI TEMPEL - TAPE & PIN
    (berlaku untuk SEMUA card: foto, video, note)
+   Ditaruh DI DALAM kotak kartu (bukan nongol ke atas) supaya gak
+   kepotong sama layout .galery-grid yang pakai CSS columns (masonry).
    ================================ */
-
-/* biar pin lama di note card gak dobel sama sistem baru ini */
-
 
 .galery-item {
     font-family: 'Special Elite', cursive;
@@ -1208,12 +1245,13 @@
 .pic-location {
     margin-top: 1rem;
     margin-bottom: -.5rem;
+    font-size: 80%;
 }
 
 .galery-item::before {
     content: "";
     position: absolute;
-    top: -13px;
+    top: -8px;
     left: 50%;
     z-index: 6;
     pointer-events: none;
@@ -1236,7 +1274,6 @@
 
 /* 2 & 6, dst -> PIN bulat merah tua */
 .galery-item:nth-child(4n+2)::before {
-    top: -9px;
     width: 13px;
     height: 13px;
     border-radius: 50%;
@@ -1262,7 +1299,6 @@
 
 /* 4 & 8, dst -> PIN bulat coklat gelap */
 .galery-item:nth-child(4n+4)::before {
-    top: -9px;
     width: 13px;
     height: 13px;
     border-radius: 50%;
@@ -1277,6 +1313,7 @@
 .galery-item:hover::before {
     z-index: 7;
 }
+
 
 /* ================================
    13. NOTE CARD - KERTAS CATATAN MINI
@@ -1446,3 +1483,67 @@
 .note-card-pin {
     display: none;
 }
+
+/* --- tambahan: tombol & dropdown pindah folder --- */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 18px;
+}
+
+.modal-move-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+
+  font-family: 'Special Elite', cursive;
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  text-transform: lowercase;
+  color: #6b5842;
+
+  opacity: 0.7;
+  transition: opacity 0.25s ease, color 0.25s ease, transform 0.2s ease;
+}
+
+.modal-move-btn svg {
+  width: 16px;
+  height: 16px;
+  fill: #6b5842;
+  opacity: 0.85;
+  transition: fill 0.25s ease;
+}
+
+.modal-move-btn:hover {
+  opacity: 1;
+  color: #3d2f22;
+  transform: translateX(-2px);
+}
+
+.modal-move-btn:hover svg {
+  fill: #3d2f22;
+}
+
+.move-folder-select {
+  width: 100%;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  color: #3d2f22;
+  background: rgba(255, 250, 240, 0.6);
+  border: 1px solid #c9b898;
+  border-radius: 2px;
+  padding: 9px 12px;
+  margin: 4px 0 22px;
+}
+
+.move-folder-select:focus {
+  outline: none;
+  border-color: #8a7355;
+}
+
+

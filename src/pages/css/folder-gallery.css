@@ -1,0 +1,837 @@
+/* ================================
+   FOLDER GALLERY - selaras dgn galery-style.css
+   ================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Special+Elite&display=swap');
+
+.folder-page {
+  min-height: 100vh;
+  width: 100%;
+  padding: 60px 8vw 100px;
+  background-color: #ede3d3;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(120, 90, 60, 0.06) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(90, 70, 50, 0.08) 0%, transparent 50%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  color: #4a3c2f;
+}
+
+/* ---------- Toolbar: filter kategori + tombol tambah ---------- */
+.folder-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  max-width: 1200px;
+  margin: 0 auto 40px;
+}
+
+.folder-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.folder-chip {
+  font-family: 'Special Elite', cursive;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #6b5842;
+  background: rgba(255, 250, 240, 0.3);
+  border: 1px solid rgba(107, 88, 66, 0.4);
+  border-radius: 2px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.folder-chip:hover {
+  background: rgba(107, 88, 66, 0.12);
+  border-color: #6b5842;
+}
+
+.folder-chip.is-active {
+  background: #6b5842;
+  border-color: #6b5842;
+  color: #fdf8ee;
+}
+
+.folder-add-btn {
+  font-family: 'Special Elite', cursive;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  color: #fdf8ee;
+  background: linear-gradient(135deg, #8a6a45, #5c4a30);
+  border: 1px solid #3d2f22;
+  border-radius: 2px;
+  padding: 10px 20px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(40, 28, 15, 0.3);
+  transition: transform 0.25s ease, background 0.25s ease;
+}
+
+.folder-add-btn:hover {
+  background: linear-gradient(135deg, #a3814f, #6b5738);
+  transform: translateY(-2px);
+}
+
+.folder-journey-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-style: italic;
+  font-size: 1.6rem;
+  color: #3d2f22;
+  text-align: center;
+  max-width: 1200px;
+  margin: -12px auto 30px;
+}
+
+.folder-empty {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 1.2rem;
+  color: #8a7355;
+  text-align: center;
+  padding: 60px 0;
+  width: 85vh;
+}
+
+@media (max-width: 1080px){
+  .folder-empty {
+     width: 65vh;
+  }
+}
+
+/* ---------- Grid folder ---------- */
+.folder-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* selalu 2 kolom di semua ukuran layar */
+  gap: 16px 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+@media (min-width: 640px) {
+  .folder-container {
+    gap: 32px 40px; /* jarak antar kartu lebih lega di layar besar */
+  }
+}
+
+.folder_section {
+  position: relative;
+  width: 100%;
+  height: 150px;
+  display: block;
+  text-decoration: none;
+  aspect-ratio: 120/100;
+  background: #fdf8ee;
+  border: 1px solid #c9b898;
+  border-radius: 0 4px 4px 4px;
+  box-shadow:
+    0 4px 6px rgba(60, 45, 25, 0.15),
+    0 10px 25px rgba(60, 45, 25, 0.2);
+  cursor: pointer;
+  transition: transform 0.35s ease, box-shadow 0.35s ease, height 0.3s ease;
+}
+
+@media (min-width: 1080px) {
+  .folder_section {
+    height: 220px; /* kartu lebih tinggi di layar lebar */
+  }
+}
+
+.folder_section::before {
+  content: '';
+  position: absolute;
+  top: -9%;
+  left: 0;
+  width: 37%;
+  height: 11%;
+  background: #fdf8ee;
+  border: 1px solid #c9b898;
+  border-bottom: none;
+  border-radius: 4px 8px 0 0;
+}
+
+.folder_section:hover {
+  transform: rotate(0deg) translateY(-6px);
+  box-shadow:
+    0 8px 14px rgba(60, 45, 25, 0.22),
+    0 20px 40px rgba(60, 45, 25, 0.28);
+}
+
+.img-cover {
+  position: absolute;
+  object-fit: cover;
+  border-radius: 2px;
+  box-shadow: 0 4px 10px rgba(40, 28, 15, 0.25);
+  background: #fdf8ee;
+  filter: sepia(0.35) contrast(1.05) brightness(0.97) saturate(0.85);
+  transition: filter 0.4s ease;
+}
+
+.folder_section:hover .img-cover {
+  filter: sepia(0.15) contrast(1.1) brightness(1) saturate(1);
+}
+
+.img1 {
+  width: 69%;
+  height: 59%;
+  top: 7%;
+  left: 17%;
+  z-index: 1;
+  transform: rotate(3deg);
+}
+
+.img2 {
+  width: 62%;
+  height: 55%;
+  top: 14%;
+  left: 11%;
+  z-index: 2;
+  transform: rotate(-4deg);
+}
+
+.cover-title {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 34%;
+  background: linear-gradient(180deg, rgba(253, 248, 238, 0.4) 0%, #ede3d3 100%);
+  border-radius: 0 0 4px 4px;
+  border-top: 1px dashed rgba(138, 115, 85, 0.35);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 0 5% 5%;
+  z-index: 3;
+  backdrop-filter: blur(2px);
+}
+
+.folder-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-style: italic;
+  font-size: clamp(80%, 100%, 90%);
+  color: #3d2f22;
+}
+
+.folder-date {
+  font-family: 'Special Elite', cursive;
+  font-size: clamp(0.65rem, 1.6vw, 0.75rem);
+  letter-spacing: 0.05em;
+  color: #8a7355;
+}
+
+/* ================================
+   SIDEBAR AKSI (Unggah Foto & Folder Baru)
+   disamakan dengan Galery.jsx biar konsisten
+   ================================ */
+
+.sidebar-toggle-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 30px;
+  width: 58px;
+  height: 58px;
+  border: 2px dashed #8a7355;
+  border-radius: 50px;
+  cursor: pointer;
+  z-index: 40;
+  opacity: 1;
+
+  background-image: radial-gradient(circle, #ede3d3 45%, transparent 46%);
+  background-size: 9px 9px;
+  background-position: -4px -4px;
+  background-repeat: round;
+  background-color: #fdf8ee;
+
+  box-shadow: 0 6px 14px rgba(40, 28, 15, 0.35), inset 0 0 0 3px #fdf8ee;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(-6deg);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sidebar-toggle-btn.is-open {
+  z-index: 999;
+  opacity: 1;
+}
+
+.sidebar-toggle-btn svg {
+  fill: #6b5842 !important;
+  filter: sepia(0.4);
+  transform: rotate(180deg);
+  transition: transform 0.3s ease;
+}
+
+.sidebar-toggle-btn:hover {
+  transform: rotate(0deg) scale(1.08) translateY(-3px);
+  box-shadow: 0 10px 22px rgba(40, 28, 15, 0.4), inset 0 0 0 3px #fdf8ee;
+}
+
+.sidebar-toggle-btn.is-open svg {
+  transform: rotate(0deg);
+}
+
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 14, 8, 0);
+  pointer-events: none;
+  transition: background 0.35s ease;
+  z-index: 900;
+}
+
+.sidebar-overlay.is-open {
+  background: rgba(20, 14, 8, 0.45);
+  pointer-events: auto;
+}
+
+.galery-sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 140px;
+  background-color: #fdf8ee;
+  background-image:
+    radial-gradient(circle at 15% 10%, rgba(120, 90, 60, 0.06) 0%, transparent 55%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  border-left: 2px dashed #8a7355;
+  box-shadow: -8px 0 24px rgba(40, 28, 15, 0.35);
+  z-index: 950;
+
+  transform: translateX(100%);
+  transition: transform 0.35s ease;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.galery-sidebar.is-open {
+  transform: translateX(0);
+}
+
+.sidebar-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  align-items: center;
+}
+
+.sidebar-action-btn {
+  position: static !important;
+  width: 58px;
+  height: 58px;
+  padding: 6px;
+  border: 2px dashed #8a7355;
+  cursor: pointer;
+  border-radius: 4px;
+
+  background-image: radial-gradient(circle, #ede3d3 45%, transparent 46%);
+  background-size: 9px 9px;
+  background-position: -4px -4px;
+  background-repeat: round;
+  background-color: #fdf8ee;
+
+  box-shadow: 0 6px 14px rgba(40, 28, 15, 0.35), inset 0 0 0 3px #fdf8ee;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sidebar-action-btn svg {
+  fill: #6b5842 !important;
+  filter: sepia(0.4);
+}
+
+.sidebar-action-btn:hover {
+  transform: scale(1.08) translateY(-2px);
+  box-shadow: 0 10px 22px rgba(40, 28, 15, 0.4), inset 0 0 0 3px #fdf8ee;
+}
+
+.sidebar-action-btn:active {
+  transform: scale(0.96);
+}
+
+.imgPost-btn {
+  transform: rotate(-6deg);
+}
+
+.folder-new-btn {
+  transform: rotate(5deg);
+}
+
+@media (max-width: 480px) {
+  .galery-sidebar {
+    width: 110px;
+  }
+}
+
+/* ================================
+   FOTO/VIDEO TANPA FOLDER
+   ================================ */
+
+.folder-loose-section {
+  max-width: 1200px;
+  margin: 70px auto 0;
+  padding-top: 40px;
+  border-top: 1px dashed rgba(138, 115, 85, 0.4);
+}
+
+.folder-loose-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-style: italic;
+  font-size: 1.4rem;
+  color: #3d2f22;
+  text-align: center;
+  margin: 0 0 8px;
+}
+
+.folder-loose-subtitle {
+  font-family: 'Special Elite', cursive;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: #8a7355;
+  text-align: center;
+  margin: 0 0 30px;
+}
+
+.folder-loose-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 22px;
+}
+
+.folder-loose-item {
+  width: 160px;
+  height: 160px;
+  background: #fdf8ee;
+  padding: 10px 10px 24px;
+  border: 1px solid #c9b898;
+  box-shadow: 0 4px 6px rgba(60, 45, 25, 0.15), 0 10px 20px rgba(60, 45, 25, 0.2);
+  cursor: pointer;
+  transform: rotate(var(--r, -1.5deg));
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.folder-loose-item:nth-child(odd) {
+  --r: -2deg;
+}
+
+.folder-loose-item:nth-child(even) {
+  --r: 1.8deg;
+}
+
+.folder-loose-item:hover {
+  transform: rotate(0deg) scale(1.05) translateY(-4px);
+  box-shadow: 0 8px 14px rgba(60, 45, 25, 0.22), 0 16px 32px rgba(60, 45, 25, 0.26);
+  z-index: 3;
+}
+
+.folder-loose-media {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: sepia(0.35) contrast(1.05) brightness(0.97) saturate(0.85);
+  transition: filter 0.4s ease;
+}
+
+.folder-loose-item:hover .folder-loose-media {
+  filter: sepia(0.15) contrast(1.1) brightness(1) saturate(1);
+}
+
+/* ================================
+   MODAL PREVIEW FOTO TANPA FOLDER
+   ================================ */
+
+.folder-item-modal {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(30, 22, 12, 0.82);
+  backdrop-filter: blur(3px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  padding: 24px;
+  animation: folderFadeIn 0.3s ease;
+}
+
+.folder-item-modal-content {
+  position: relative;
+  max-width: 85vw;
+  max-height: 90vh;
+  background-color: #fdf8ee;
+  padding: 20px 20px 26px;
+  border: 1px solid #c9b898;
+  border-radius: 2px;
+  box-shadow: 0 20px 50px rgba(20, 14, 8, 0.5), 0 4px 12px rgba(20, 14, 8, 0.3);
+  transform: rotate(-0.6deg);
+  animation: folderPopIn 0.35s ease;
+}
+
+.folder-modal-close {
+  position: absolute;
+  top: 0px;
+  right: 6px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  z-index: 10;
+
+  font-family: 'Special Elite', cursive;
+  font-size: 26px;
+  line-height: 1;
+  color: #3d2f22;
+  transform: rotate(-8deg);
+  transition: transform 0.25s ease, color 0.25s ease;
+}
+
+.folder-modal-close:hover {
+  color: #6b2c2c;
+}
+
+.folder-modal-media-wrap {
+  position: relative;
+}
+
+.folder-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 18px;
+  margin-top: 14px;
+}
+
+.folder-modal-assign-btn,
+.folder-modal-delete-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+
+  font-family: 'Special Elite', cursive;
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  text-transform: lowercase;
+
+  opacity: 0.7;
+  transition: opacity 0.25s ease, color 0.25s ease, transform 0.2s ease;
+}
+
+.folder-modal-assign-btn {
+  color: #6b5842;
+}
+
+.folder-modal-assign-btn svg {
+  width: 16px;
+  height: 16px;
+  fill: #6b5842;
+}
+
+.folder-modal-assign-btn:hover {
+  opacity: 1;
+  color: #3d2f22;
+  transform: translateX(-2px);
+}
+
+.folder-modal-delete-btn {
+  color: #8a4a2e;
+}
+
+.folder-modal-delete-btn svg {
+  width: 16px;
+  height: 16px;
+  fill: #8a4a2e;
+}
+
+.folder-modal-delete-btn:hover {
+  opacity: 1;
+  color: #6b2c0a;
+  transform: translateX(-2px);
+}
+
+/* ================================
+   POPUP: MASUKKAN FOLDER & KONFIRMASI HAPUS
+   ================================ */
+
+.folder-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(30, 22, 12, 0.78);
+  backdrop-filter: blur(3px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10001;
+  padding: 20px;
+  animation: folderFadeIn 0.25s ease;
+}
+
+.folder-confirm-box {
+  background-color: #fdf8ee;
+  border: 1px solid #c9b898;
+  border-radius: 3px;
+  padding: 28px 26px 22px;
+  max-width: 340px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(20, 14, 8, 0.5);
+  transform: rotate(-0.4deg);
+  animation: folderPopIn 0.3s ease;
+}
+
+.folder-confirm-icon {
+  font-size: 2rem;
+  margin: 0 0 6px;
+  filter: sepia(0.3);
+}
+
+.folder-confirm-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-size: 1.35rem;
+  color: #3d2f22;
+  margin: 0 0 10px;
+}
+
+.folder-confirm-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 0.95rem;
+  color: #6b5842;
+  margin: 0 0 22px;
+  line-height: 1.5;
+}
+
+.folder-move-select {
+  width: 100%;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  color: #3d2f22;
+  background: rgba(255, 250, 240, 0.6);
+  border: 1px solid #c9b898;
+  border-radius: 2px;
+  padding: 9px 12px;
+  margin: 4px 0 22px;
+}
+
+.folder-move-select:focus {
+  outline: none;
+  border-color: #8a7355;
+}
+
+.folder-confirm-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.folder-confirm-btn-cancel,
+.folder-confirm-btn-delete {
+  font-family: 'Special Elite', cursive;
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  padding: 8px 18px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.folder-confirm-btn-cancel {
+  background: #e4d9c4;
+  color: #3d2f22;
+  border: 1px solid #c9b898;
+}
+
+.folder-confirm-btn-cancel:hover:not(:disabled) {
+  background: #d8cab0;
+}
+
+.folder-confirm-btn-delete {
+  background: linear-gradient(135deg, #8a2e0f, #5c1f0a);
+  color: #fdf8ee;
+  border: 1px solid #3d2f22;
+  box-shadow: 0 3px 8px rgba(40, 28, 15, 0.35);
+}
+
+.folder-confirm-btn-delete:hover:not(:disabled) {
+  background: linear-gradient(135deg, #a8380f, #6b2c0a);
+  transform: translateY(-1px);
+}
+
+.folder-confirm-btn-cancel:disabled,
+.folder-confirm-btn-delete:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ================================
+   TOAST NOTIFIKASI
+   ================================ */
+
+.folder-toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #fdf8ee;
+  border: 1px solid #c9b898;
+  border-radius: 3px;
+  padding: 12px 22px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  color: #3d2f22;
+  box-shadow: 0 12px 30px rgba(20, 14, 8, 0.35);
+  z-index: 10002;
+  animation: folderToastIn 0.35s ease;
+}
+
+.folder-toast-error {
+  border-color: #8a2e0f;
+  color: #6b2c0a;
+}
+
+@keyframes folderFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes folderPopIn {
+  from {
+    opacity: 0;
+    transform: rotate(-0.6deg) scale(0.94);
+  }
+
+  to {
+    opacity: 1;
+    transform: rotate(-0.6deg) scale(1);
+  }
+}
+
+@keyframes folderToastIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* ================================
+   TOMBOL HAPUS FOLDER
+   ================================ */
+
+.folder-delete-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 5;
+
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(40, 28, 15, 0.55);
+  border: 1px solid rgba(253, 248, 238, 0.5);
+  border-radius: 50%;
+  cursor: pointer;
+
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity 0.25s ease, transform 0.25s ease, background 0.25s ease;
+}
+
+.folder-delete-btn svg {
+  fill: #fdf8ee;
+}
+
+.folder_section:hover .folder-delete-btn {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.folder-delete-btn:hover {
+  background: rgba(138, 46, 15, 0.85);
+  transform: scale(1.1);
+}
+
+/* ---------- Back link ke halaman journey ---------- */
+.folder-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Special Elite', cursive;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6b5842;
+  text-decoration: none;
+  padding: 8px 18px;
+  border: 1px solid rgba(107, 88, 66, 0.4);
+  border-radius: 2px;
+  background: rgba(255, 250, 240, 0.3);
+  transition: all 0.35s ease;
+  margin-bottom: 30px;
+}
+
+.folder-back-link:hover {
+  background: rgba(107, 88, 66, 0.12);
+  border-color: #6b5842;
+  letter-spacing: 0.12em;
+}
+
+/* ---------- Pilihan folder tujuan saat upload (opsional) ---------- */
+.folder-upload-target-select {
+  width: 108px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.82rem;
+  color: #3d2f22;
+  background: rgba(255, 250, 240, 0.7);
+  border: 1px solid #c9b898;
+  border-radius: 2px;
+  padding: 6px 8px;
+  cursor: pointer;
+}
+
+.folder-upload-target-select:focus {
+  outline: none;
+  border-color: #8a7355;
+}
+
+@media (max-width: 480px) {
+  .folder-upload-target-select {
+    width: 90px;
+    font-size: 0.75rem;
+  }
+}

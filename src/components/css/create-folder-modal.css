@@ -1,0 +1,160 @@
+.folder-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(30, 22, 12, 0.78);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  padding: 20px;
+}
+
+.folder-modal-box {
+  position: relative;
+  width: 440px;
+  max-width: 92vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  background-color: #fdf8ee;
+  background-image:
+    radial-gradient(circle at 15% 10%, rgba(120, 90, 60, 0.06) 0%, transparent 55%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  border: 1px solid #c9b898;
+  border-radius: 2px;
+  padding: 30px 28px 26px;
+  box-shadow: 0 20px 50px rgba(20, 14, 8, 0.5);
+  transform: rotate(-0.4deg);
+}
+
+.folder-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  background: transparent;
+  border: none;
+  font-family: 'Special Elite', cursive;
+  font-size: 24px;
+  color: #3d2f22;
+  cursor: pointer;
+  transform: rotate(-8deg);
+  transition: color 0.25s ease;
+}
+
+.folder-modal-close:hover {
+  color: #6b2c2c;
+}
+
+.folder-modal-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-size: 1.6rem;
+  color: #3d2f22;
+  margin: 0 0 20px;
+}
+
+.folder-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.folder-modal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: 'Special Elite', cursive;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #6b5842;
+}
+
+.folder-modal-field input,
+.folder-modal-field textarea {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  color: #3d2f22;
+  background: rgba(255, 250, 240, 0.5);
+  border: 1px solid #c9b898;
+  border-radius: 2px;
+  padding: 9px 12px;
+  resize: vertical;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.folder-modal-field input:focus,
+.folder-modal-field textarea:focus {
+  outline: none;
+  border-color: #8a7355;
+}
+
+.folder-modal-field small {
+  font-family: 'Special Elite', cursive;
+  text-transform: none;
+  color: #a3703f;
+  font-size: 0.7rem;
+  opacity: 0.85;
+}
+
+.folder-modal-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 1rem;
+  color: #6b5842;
+}
+
+.folder-modal-error {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  color: #8a2e0f;
+  margin: 0;
+}
+
+.folder-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.folder-modal-btn {
+  font-family: 'Special Elite', cursive;
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  padding: 9px 20px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.folder-modal-btn.secondary {
+  background: #e4d9c4;
+  color: #3d2f22;
+  border: 1px solid #c9b898;
+}
+
+.folder-modal-btn.secondary:hover {
+  background: #d8cab0;
+}
+
+.folder-modal-btn.primary {
+  background: linear-gradient(135deg, #8a6a45, #5c4a30);
+  color: #fdf8ee;
+  border: 1px solid #3d2f22;
+  box-shadow: 0 3px 8px rgba(40, 28, 15, 0.35);
+}
+
+.folder-modal-btn.primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #a3814f, #6b5738);
+}
+
+.folder-modal-btn.primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+

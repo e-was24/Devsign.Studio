@@ -4,7 +4,7 @@ import { createPortal } from "react-dom";
 import "./css/imgPost.css";
 import { isGuestSession } from "./AccessGate";
 
-export default function ImgPost({ journeyId, onUploadSuccess, onOpen }) {
+export default function ImgPost({ journeyId = null, folderId = null, onUploadSuccess, onOpen }) {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState([]);
@@ -28,6 +28,7 @@ export default function ImgPost({ journeyId, onUploadSuccess, onOpen }) {
     date_number: currentDateNum,
     title: "",
   });
+  const [uploaderName, setUploaderName] = useState("Riska");
 
   // Auto-dismiss notifikasi
   useEffect(() => {
@@ -95,10 +96,12 @@ export default function ImgPost({ journeyId, onUploadSuccess, onOpen }) {
         const { error: dbErr } = await supabase.from("gallery_items").insert([
           {
             journey_id: journeyId,
+            folder_id: folderId,
             media_url: publicUrl,
             media_type: mediaType,
             date_label: fullDateLabel,
             alt_text: formData.title || "Dokumentasi perjalanan",
+            name: uploaderName,
           },
         ]);
 
@@ -113,11 +116,12 @@ export default function ImgPost({ journeyId, onUploadSuccess, onOpen }) {
       setFiles([]);
       setPreviews([]);
       setFormData({
-        year: "2026",
-        month_label: "Agustus",
-        date_number: today,
+        year: currentYear,
+        month_label: currentMonthName,
+        date_number: currentDateNum,
         title: "",
       });
+      setUploaderName("Riska");
       setIsOpen(false);
 
       if (onUploadSuccess) onUploadSuccess();
@@ -219,6 +223,26 @@ export default function ImgPost({ journeyId, onUploadSuccess, onOpen }) {
                 </div>
 
                 <div className="journey-form-group">
+                  <label className="journey-label">Diunggah oleh</label>
+                  <div className="journey-uploader-toggle">
+                    <button
+                      type="button"
+                      className={`journey-uploader-btn ${uploaderName === "Riska" ? "is-active" : ""}`}
+                      onClick={() => setUploaderName("Riska")}
+                    >
+                      Riska
+                    </button>
+                    <button
+                      type="button"
+                      className={`journey-uploader-btn ${uploaderName === "Elan" ? "is-active" : ""}`}
+                      onClick={() => setUploaderName("Elan")}
+                    >
+                      Elan
+                    </button>
+                  </div>
+                </div>
+
+                <div className="journey-form-group">
                   <label className="journey-label">Pilih File</label>
                   <input
                     type="file"
@@ -266,11 +290,12 @@ export default function ImgPost({ journeyId, onUploadSuccess, onOpen }) {
                       setFiles([]);
                       setPreviews([]);
                       setFormData({
-                        year: "2026",
-                        month_label: "Agustus",
-                        date_number: "15",
+                        year: currentYear,
+                        month_label: currentMonthName,
+                        date_number: currentDateNum,
                         title: "",
                       });
+                      setUploaderName("Pengguna 1");
                     }}
                     className="journey-btn-cancel"
                   >

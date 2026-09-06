@@ -17,6 +17,14 @@ gsap.registerPlugin(TextPlugin);
 export default function Journey() {
   const container = useRef();
   const layoutRef = useRef();
+  const dropLineRef = useRef();
+  const dragState = useRef({
+    isDown: false,
+    startX: 0,
+    scrollLeft: 0,
+    moved: false,
+  });
+
   const [isLoading, setIsLoading] = useState(true);
   const [journeys, setJourneys] = useState([]);
   const CARD_HEIGHT = 85;
@@ -89,6 +97,8 @@ export default function Journey() {
     ]);
   }, [journeys]);
 
+  const desktopHalfHeight = CARD_HEIGHT + 120;
+
   useGSAP(() => {
     const loadingTl = gsap.timeline();
 
@@ -126,6 +136,43 @@ export default function Journey() {
       },
     );
   }, [yearGroups]);
+
+  // ---- Click-and-drag horizontal panning (desktop) ----
+  const handleDragStart = (e) => {
+    const el = dropLineRef.current;
+    if (!el) return;
+    if (e.button !== 0) return;
+    dragState.current.isDown = true;
+    dragState.current.moved = false;
+    dragState.current.startX = e.pageX;
+    dragState.current.scrollLeft = el.scrollLeft;
+  };
+
+  const handleDragMove = (e) => {
+    const el = dropLineRef.current;
+    if (!dragState.current.isDown || !el) return;
+    e.preventDefault();
+    const walk = e.pageX - dragState.current.startX;
+    if (!dragState.current.moved && Math.abs(walk) > 5) {
+      dragState.current.moved = true;
+      el.classList.add("is-dragging");
+    }
+    el.scrollLeft = dragState.current.scrollLeft - walk;
+  };
+
+  const endDrag = () => {
+    const el = dropLineRef.current;
+    dragState.current.isDown = false;
+    el?.classList.remove("is-dragging");
+  };
+
+  const handleClickCapture = (e) => {
+    if (dragState.current.moved) {
+      e.preventDefault();
+      e.stopPropagation();
+      dragState.current.moved = false;
+    }
+  };
 
   return (
     <div ref={container}>
@@ -172,7 +219,16 @@ export default function Journey() {
           </>
         )}
 
-        <div className="drop-line">
+        <div
+          className="drop-line"
+          ref={dropLineRef}
+          style={{ "--half-height": `${desktopHalfHeight}px` }}
+          onMouseDown={handleDragStart}
+          onMouseMove={handleDragMove}
+          onMouseUp={endDrag}
+          onMouseLeave={endDrag}
+          onClickCapture={handleClickCapture}
+        >
           <p className="post-info">
             💡Tip: Select or create a cover below → Upload a photo into that
             cover.
@@ -183,55 +239,73 @@ export default function Journey() {
             <div key={year} className="journey-year-section">
               <h2 className="title-years">{year}</h2>
 
-              <div className="line-v">
-                {monthGroups.map(([month, items]) => (
-                  <div
-                    key={`${year}-${month}`}
-                    className="journey-month-group"
-                    style={{ minHeight: `${getGroupHeight(items.length)}px` }}
-                  >
-                    <h1 className="title-month">{month}</h1>
-                    <div className="line-h-1"></div>
+              <div
+                className="line-v"
+                style={{ "--month-count": monthGroups.length }}
+              >
+                {monthGroups.map(([month, items], idx) => {
+                  const zigzagClass =
+                    idx % 2 === 0 ? "is-zigzag-top" : "is-zigzag-bottom";
 
-                    <div className="journey-cards-stack">
-                      {items.map((item) => (
-                        <div key={item.id} className="journey-item-circle-wrap">
-                          <div className="journey-item-anchor">
-                            <Link
-                              to={`/galery/${item.title.toLowerCase()}`}
-                              className="link"
-                            >
-                              <div
-                                className="circle-1"
-                                title={item.title}
-                                style={{
-                                  backgroundImage: `url(${item.cover_url})`,
-                                  backgroundSize: "cover",
-                                }}
-                              ></div>
-                            </Link>
+                  return (
+                    <div
+                      key={`${year}-${month}`}
+                      className={`journey-month-group ${zigzagClass}`}
+                      style={{
+                        minHeight: `${getGroupHeight(items.length)}px`,
+                        gridColumn: idx + 1,
+                      }}
+                    >
+                      <h1 className="title-month">{month}</h1>
+                      <div className="line-h-1"></div>
 
-                            {visible && (
-                              <button
-                                onClick={() =>
-                                  handleDeleteJourney(item.id, item.title)
-                                }
-                                className="journey-delete-btn"
-                                title="Hapus Journey"
+                      <div className="journey-cards-stack">
+                        {items.map((item) => (
+                          <div
+                            key={item.id}
+                            className="journey-item-circle-wrap"
+                          >
+                            <div className="journey-item-anchor">
+                              {/* Dulu: to="/foldergallery" (folder semua journey campur jadi satu).
+                                  Sekarang: /foldergallery/:slug, di-resolve ke journey ini persis
+                                  seperti /galery/:slug me-resolve journeys.title -> supaya folder
+                                  yang muncul cuma folder milik journey ini. */}
+                              <Link
+                                to={`/foldergallery/${encodeURIComponent(item.title)}`}
+                                className="link"
                               >
-                                &times;
-                              </button>
-                            )}
-                          </div>
+                                <div
+                                  className="circle-1"
+                                  title={item.title}
+                                  style={{
+                                    backgroundImage: `url(${item.cover_url})`,
+                                    backgroundSize: "cover",
+                                  }}
+                                ></div>
+                              </Link>
 
-                          <span className="journey-item-title">
-                            {item.title}
-                          </span>
-                        </div>
-                      ))}
+                              {visible && (
+                                <button
+                                  onClick={() =>
+                                    handleDeleteJourney(item.id, item.title)
+                                  }
+                                  className="journey-delete-btn"
+                                  title="Hapus Journey"
+                                >
+                                  &times;
+                                </button>
+                              )}
+                            </div>
+
+                            <span className="journey-item-title">
+                              {item.title}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           ))}

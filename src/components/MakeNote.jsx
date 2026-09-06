@@ -5,7 +5,7 @@ import { supabase } from "../supabaseClient";
 import "./css/MakeNote.css";
 import { isGuestSession } from "./AccessGate";
 
-export default function BtnMakeNote({ journeyId, onNoteSuccess, onOpen }) {
+export default function BtnMakeNote({ journeyId = null, folderId = null, onNoteSuccess, onOpen }) {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -62,6 +62,7 @@ export default function BtnMakeNote({ journeyId, onNoteSuccess, onOpen }) {
       const { error } = await supabase.from("journal_notes").insert([
         {
           journey_id: journeyId,
+          folder_id: folderId,
           title: formData.title || "Tanpa judul",
           content: formData.content,
           date_label: fullDateLabel,

@@ -17,14 +17,42 @@ html {
 
 .Landing-Page {
     position: relative;
-    max-width: 476px;
+    width: 100%;
+    max-width: 476px;      /* default: mobile */
     margin: 0 auto;
-    /* border: 1px solid var(--border); */
     height: 100svh;
+    min-height: 100vh;
     font-size: .9em;
     text-align: center;
     padding: 16px 0;
     overflow-y: scroll;
+    transition: background 0.5s ease, max-width 0.3s ease;
+}
+
+/* Tablet */
+@media (min-width: 600px) {
+    .Landing-Page {
+        max-width: 600px;
+        font-size: 1em;
+    }
+}
+
+/* Desktop kecil - menengah */
+@media (min-width: 1024px) {
+    .Landing-Page {
+        max-width: 720px;
+        padding: 24px 0;
+        border-left: 1px solid rgba(0,0,0,0.06);
+        border-right: 1px solid rgba(0,0,0,0.06);
+        box-shadow: 0 0 40px rgba(0,0,0,0.05);
+    }
+}
+
+/* Desktop besar */
+@media (min-width: 1440px) {
+    .Landing-Page {
+        max-width: 820px;
+    }
 }
 
 .Landing-Page .profile-menu {
