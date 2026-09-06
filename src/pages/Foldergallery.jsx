@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import CreateFolderModal from "../components/Createfoldermodal";
 import ImgPost from "../components/imagePost";
+import BtnMakeNote from "../components/MakeNote";
 import { isGuestSession } from "../components/AccessGate";
 import "./css/folder-gallery.css";
 
@@ -27,7 +28,8 @@ export default function FolderGallery() {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // --- foto/video yang belum masuk folder manapun ---
+  // --- foto/video/catatan yang belum masuk folder manapun ---
+  // digabung jadi satu array, dibedakan lewat _type: "media" | "note"
   const [looseItems, setLooseItems] = useState([]);
   const [loadingLoose, setLoadingLoose] = useState(true);
   const [selectedLooseItem, setSelectedLooseItem] = useState(null);
@@ -170,7 +172,7 @@ export default function FolderGallery() {
     if (!slug || journey) loadCategories();
   }, [journey, slug]);
 
-  // 3) load foto/video yang belum masuk folder manapun (folder_id null)
+  // 3) load foto/video + catatan yang belum masuk folder manapun (folder_id null)
   const loadLooseItems = useCallback(async () => {
     if (slug && !journey) {
       setLooseItems([]);
@@ -180,7 +182,7 @@ export default function FolderGallery() {
 
     setLoadingLoose(true);
 
-    let query = supabase
+    let mediaQuery = supabase
       .from("gallery_items")
       .select(
         "id, media_url, media_type, alt_text, date_label, journey_id, folder_id, created_at",
@@ -189,19 +191,36 @@ export default function FolderGallery() {
       .eq("is_active", true)
       .order("created_at", { ascending: false });
 
+    let notesQuery = supabase
+      .from("journal_notes")
+      .select(
+        "id, title, content, date_label, journey_id, folder_id, created_at",
+      )
+      .is("folder_id", null)
+      .order("created_at", { ascending: false });
+
     if (journey) {
-      query = query.eq("journey_id", journey.id);
+      mediaQuery = mediaQuery.eq("journey_id", journey.id);
+      notesQuery = notesQuery.eq("journey_id", journey.id);
     }
 
-    const { data, error } = await query;
+    const [
+      { data: mediaData, error: mediaError },
+      { data: noteData, error: noteError },
+    ] = await Promise.all([mediaQuery, notesQuery]);
 
-    if (error) {
-      console.error("Gagal memuat foto tanpa folder:", error);
-      setLoadingLoose(false);
-      return;
-    }
+    if (mediaError)
+      console.error("Gagal memuat foto tanpa folder:", mediaError);
+    if (noteError)
+      console.error("Gagal memuat catatan tanpa folder:", noteError);
 
-    setLooseItems(data ?? []);
+    // gabung media + note, urutkan campur berdasarkan waktu dibuat (terbaru duluan)
+    const combined = [
+      ...(mediaData ?? []).map((m) => ({ ...m, _type: "media" })),
+      ...(noteData ?? []).map((n) => ({ ...n, _type: "note" })),
+    ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+    setLooseItems(combined);
     setLoadingLoose(false);
   }, [journey, slug]);
 
@@ -215,7 +234,7 @@ export default function FolderGallery() {
     return () => clearTimeout(timer);
   }, [notification]);
 
-  // --- masukkan foto lepas ke sebuah folder ---
+  // --- masukkan foto/catatan lepas ke sebuah folder ---
   const openAssignFolder = async () => {
     let query = supabase
       .from("gallery_folder")
@@ -250,8 +269,11 @@ export default function FolderGallery() {
     }
     setAssigning(true);
     try {
+      const table =
+        selectedLooseItem._type === "note" ? "journal_notes" : "gallery_items";
+
       const { error } = await supabase
-        .from("gallery_items")
+        .from(table)
         .update({ folder_id: selectedAssignFolderId })
         .eq("id", selectedLooseItem.id);
 
@@ -259,7 +281,10 @@ export default function FolderGallery() {
 
       setNotification({
         type: "success",
-        message: "Foto berhasil dimasukkan ke folder. 📁",
+        message:
+          selectedLooseItem._type === "note"
+            ? "Catatan berhasil dimasukkan ke folder. 📁"
+            : "Foto berhasil dimasukkan ke folder. 📁",
       });
       setShowAssignFolder(false);
       setSelectedLooseItem(null);
@@ -283,22 +308,37 @@ export default function FolderGallery() {
   const confirmDeleteLoose = async () => {
     setDeletingLoose(true);
     try {
-      const urlParts = selectedLooseItem.media_url.split("/galeri/");
-      if (urlParts.length > 1) {
-        await supabase.storage.from("galeri").remove([urlParts[1]]);
+      if (selectedLooseItem._type === "note") {
+        const { error } = await supabase
+          .from("journal_notes")
+          .delete()
+          .eq("id", selectedLooseItem.id);
+
+        if (error) throw error;
+
+        setNotification({
+          type: "success",
+          message: "Catatan berhasil dihilangkan 📝🔥",
+        });
+      } else {
+        const urlParts = selectedLooseItem.media_url.split("/galeri/");
+        if (urlParts.length > 1) {
+          await supabase.storage.from("galeri").remove([urlParts[1]]);
+        }
+
+        const { error } = await supabase
+          .from("gallery_items")
+          .delete()
+          .eq("id", selectedLooseItem.id);
+
+        if (error) throw error;
+
+        setNotification({
+          type: "success",
+          message: "Foto/video berhasil dibakar 🔥",
+        });
       }
 
-      const { error } = await supabase
-        .from("gallery_items")
-        .delete()
-        .eq("id", selectedLooseItem.id);
-
-      if (error) throw error;
-
-      setNotification({
-        type: "success",
-        message: "Foto/video berhasil dibakar 🔥",
-      });
       setShowDeleteLooseConfirm(false);
       setSelectedLooseItem(null);
       loadLooseItems();
@@ -306,7 +346,10 @@ export default function FolderGallery() {
       console.error("Gagal menghapus:", err);
       setNotification({
         type: "error",
-        message: "Terjadi kesalahan saat menghapus file.",
+        message:
+          selectedLooseItem._type === "note"
+            ? "Terjadi kesalahan saat menghapus catatan."
+            : "Terjadi kesalahan saat menghapus file.",
       });
     } finally {
       setDeletingLoose(false);
@@ -483,56 +526,67 @@ export default function FolderGallery() {
           ))}
       </div>
 
-      {/* --- FOTO/VIDEO TANPA FOLDER --- */}
+      {/* --- FOTO/VIDEO/CATATAN TANPA FOLDER --- */}
       <div className="folder-loose-section">
         {!loadingLoose && looseItems.length === 0 && (
           <>
-            <h3 className="folder-loose-title">Belum Ada Foto / Video</h3>
+            <h3 className="folder-loose-title">
+              Belum Ada Foto / Video / Catatan
+            </h3>
             <p className="folder-loose-subtitle">
-              Foto/video yang diunggah lewat sini atau dikeluarkan dari folder
-              akan muncul di bawah.
+              Foto, video, dan catatan yang dibuat lewat sini atau dikeluarkan
+              dari folder akan muncul di bawah.
             </p>
           </>
         )}
 
-        {loadingLoose && <p className="folder-empty">Memuat foto...</p>}
-
-        {!loadingLoose && looseItems.length === 0 && (
-          <p className="folder-empty">Belum ada foto tanpa folder.</p>
-        )}
+        {loadingLoose && <p className="folder-empty">Memuat...</p>}
 
         {!loadingLoose && looseItems.length > 0 && (
           <div className="folder-loose-grid">
-            {looseItems.map((item) => (
-              <div
-                className="folder-loose-item"
-                key={item.id}
-                onClick={() => setSelectedLooseItem(item)}
-                title="Klik untuk preview"
-              >
-                {isVideoItem(item) ? (
-                  <video
-                    className="folder-loose-media"
-                    src={item.media_url}
-                    muted
-                    loop
-                    autoPlay
-                    playsInline
-                  />
-                ) : (
-                  <img
-                    className="folder-loose-media"
-                    src={item.media_url}
-                    alt={item.alt_text || "Dokumentasi"}
-                  />
-                )}
-              </div>
-            ))}
+            {looseItems.map((item) =>
+              item._type === "note" ? (
+                <div
+                  className="folder-loose-item folder-loose-note"
+                  key={`note-${item.id}`}
+                  onClick={() => setSelectedLooseItem(item)}
+                  title="Klik untuk baca catatan"
+                >
+                  <p className="folder-loose-note-date">{item.date_label}</p>
+                  <h4 className="folder-loose-note-title">{item.title}</h4>
+                  <p className="folder-loose-note-content">{item.content}</p>
+                </div>
+              ) : (
+                <div
+                  className="folder-loose-item"
+                  key={`media-${item.id}`}
+                  onClick={() => setSelectedLooseItem(item)}
+                  title="Klik untuk preview"
+                >
+                  {isVideoItem(item) ? (
+                    <video
+                      className="folder-loose-media"
+                      src={item.media_url}
+                      muted
+                      loop
+                      autoPlay
+                      playsInline
+                    />
+                  ) : (
+                    <img
+                      className="folder-loose-media"
+                      src={item.media_url}
+                      alt={item.alt_text || "Dokumentasi"}
+                    />
+                  )}
+                </div>
+              ),
+            )}
           </div>
         )}
       </div>
 
-      {/* --- SIDEBAR AKSI: unggah foto & folder baru --- */}
+      {/* --- SIDEBAR AKSI: unggah foto, buat catatan & folder baru --- */}
       {visible && (
         <button
           className={`sidebar-toggle-btn ${sidebarOpen ? "is-open" : ""}`}
@@ -582,6 +636,16 @@ export default function FolderGallery() {
                 }}
                 onOpen={() => setSidebarOpen(false)}
               />
+              <BtnMakeNote
+                journeyId={journey?.id ?? null}
+                folderId={uploadTargetFolderId || null}
+                onNoteSuccess={() => {
+                  setUploadTargetFolderId("");
+                  loadLooseItems();
+                  loadFolders();
+                }}
+                onOpen={() => setSidebarOpen(false)}
+              />
               <button
                 className="sidebar-action-btn folder-new-btn"
                 onClick={() => {
@@ -605,14 +669,18 @@ export default function FolderGallery() {
         </>
       )}
 
-      {/* --- MODAL PREVIEW FOTO TANPA FOLDER --- */}
+      {/* --- MODAL PREVIEW FOTO/CATATAN TANPA FOLDER --- */}
       {selectedLooseItem && !showAssignFolder && !showDeleteLooseConfirm && (
         <div
           className="folder-item-modal"
           onClick={() => setSelectedLooseItem(null)}
         >
           <div
-            className="folder-item-modal-content"
+            className={`folder-item-modal-content ${
+              selectedLooseItem._type === "note"
+                ? "folder-modal-content-note"
+                : ""
+            }`}
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -622,28 +690,46 @@ export default function FolderGallery() {
               &times;
             </button>
 
-            <div className="folder-modal-media-wrap">
-              {isVideoItem(selectedLooseItem) ? (
-                <video
-                  src={selectedLooseItem.media_url}
-                  autoPlay
-                  playsInline
-                  loop
-                  style={{ width: "100%", maxHeight: "70vh", display: "block" }}
-                />
-              ) : (
-                <img
-                  src={selectedLooseItem.media_url}
-                  alt={selectedLooseItem.alt_text || "Dokumentasi"}
-                  style={{
-                    width: "100%",
-                    maxHeight: "70vh",
-                    objectFit: "contain",
-                    display: "block",
-                  }}
-                />
-              )}
-            </div>
+            {selectedLooseItem._type === "note" ? (
+              <div className="folder-note-modal-wrap">
+                <p className="folder-note-modal-date">
+                  {selectedLooseItem.date_label}
+                </p>
+                <h2 className="folder-note-modal-title">
+                  {selectedLooseItem.title}
+                </h2>
+                <p className="folder-note-modal-content">
+                  {selectedLooseItem.content}
+                </p>
+              </div>
+            ) : (
+              <div className="folder-modal-media-wrap">
+                {isVideoItem(selectedLooseItem) ? (
+                  <video
+                    src={selectedLooseItem.media_url}
+                    autoPlay
+                    playsInline
+                    loop
+                    style={{
+                      width: "100%",
+                      maxHeight: "70vh",
+                      display: "block",
+                    }}
+                  />
+                ) : (
+                  <img
+                    src={selectedLooseItem.media_url}
+                    alt={selectedLooseItem.alt_text || "Dokumentasi"}
+                    style={{
+                      width: "100%",
+                      maxHeight: "70vh",
+                      objectFit: "contain",
+                      display: "block",
+                    }}
+                  />
+                )}
+              </div>
+            )}
 
             {visible && (
               <div className="folder-modal-actions">
@@ -673,7 +759,9 @@ export default function FolderGallery() {
                   >
                     <path d="M240-400q0 52 21 98.5t60 81.5q-1-5-1-9v-9q0-32 12-60t35-51l113-111 113 111q23 23 35 51t12 60v9q0 4-1 9 39-35 60-81.5t21-98.5q0-50-18.5-94.5T648-574q-20 13-42 19.5t-45 6.5q-62 0-107.5-41T401-690q-39 33-69 68.5t-50.5 72Q261-513 250.5-475T240-400Zm240 52-57 56q-11 11-17 25t-6 29q0 32 23.5 55t56.5 23q33 0 56.5-23t23.5-55q0-16-6-29.5T537-292l-57-56Zm0-492v132q0 34 23.5 57t57.5 23q18 0 33.5-7.5T622-658l18-22q74 42 117 117t43 163q0 134-93 227T480-80q-134 0-227-93t-93-227q0-129 86.5-245T480-840Z" />
                   </svg>
-                  burn (hapus)
+                  {selectedLooseItem._type === "note"
+                    ? "sobek (hapus)"
+                    : "burn (hapus)"}
                 </button>
               </div>
             )}
@@ -694,7 +782,9 @@ export default function FolderGallery() {
             <p className="folder-confirm-icon">📁</p>
             <h3 className="folder-confirm-title">Masukkan ke folder mana?</h3>
             <p className="folder-confirm-text">
-              Pilih folder tujuan untuk foto/video ini.
+              {selectedLooseItem?._type === "note"
+                ? "Pilih folder tujuan untuk catatan ini."
+                : "Pilih folder tujuan untuk foto/video ini."}
             </p>
 
             <select
@@ -731,7 +821,7 @@ export default function FolderGallery() {
         </div>
       )}
 
-      {/* --- POPUP KONFIRMASI HAPUS FOTO TANPA FOLDER --- */}
+      {/* --- POPUP KONFIRMASI HAPUS FOTO/CATATAN TANPA FOLDER --- */}
       {showDeleteLooseConfirm && (
         <div
           className="folder-confirm-overlay"
@@ -742,9 +832,15 @@ export default function FolderGallery() {
             onClick={(e) => e.stopPropagation()}
           >
             <p className="folder-confirm-icon">🔥</p>
-            <h3 className="folder-confirm-title">Bakar dokumentasi ini?</h3>
+            <h3 className="folder-confirm-title">
+              {selectedLooseItem?._type === "note"
+                ? "Sobek catatan ini?"
+                : "Bakar dokumentasi ini?"}
+            </h3>
             <p className="folder-confirm-text">
-              Foto/video ini akan hilang permanen dan tidak bisa dikembalikan.
+              {selectedLooseItem?._type === "note"
+                ? "Catatan ini akan hilang permanen dan tidak bisa dikembalikan."
+                : "Foto/video ini akan hilang permanen dan tidak bisa dikembalikan."}
             </p>
             <div className="folder-confirm-actions">
               <button

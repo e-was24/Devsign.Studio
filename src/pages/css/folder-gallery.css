@@ -848,3 +848,227 @@
     font-size: 0.75rem;
   }
 }
+
+/* ================================
+   NOTE STYLE — disamakan dgn Galery.jsx
+   ================================ */
+
+/* ---------- Kartu note di grid "tanpa folder" ---------- */
+.folder-loose-item.folder-loose-note {
+  width: 200px;
+  height: auto;
+  min-height: 190px;
+  padding: 18px 16px 16px;
+  display: flex;
+  flex-direction: column;
+
+  background-color: #fdf6e8;
+  background-image:
+    repeating-linear-gradient(to bottom,
+      transparent 0,
+      transparent 25px,
+      rgba(138, 115, 85, 0.18) 25px,
+      rgba(138, 115, 85, 0.18) 26px),
+    linear-gradient(to right,
+      transparent 0,
+      transparent 26px,
+      rgba(139, 46, 46, 0.22) 26px,
+      rgba(139, 46, 46, 0.22) 27px,
+      transparent 27px),
+    radial-gradient(circle at 15% 10%, rgba(120, 90, 60, 0.05) 0%, transparent 55%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
+  background-position: 0 4px, 0 0, 0 0, 0 0;
+
+  border: 1px solid #d8c7a3;
+}
+
+.folder-loose-note-date {
+  font-family: 'Special Elite', cursive;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #8a7355;
+  opacity: 0.85;
+  margin: 0 0 8px 8px;
+}
+
+.folder-loose-note-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #3d2f22;
+  letter-spacing: 0.01em;
+  line-height: 1.3;
+  margin: 0 0 10px 8px;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.folder-loose-note-content {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 0.9rem;
+  line-height: 26px;
+  color: #6b5842;
+  margin: 0 0 0 8px;
+
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.folder-loose-note:hover {
+  transform: rotate(0deg) scale(1.03) translateY(-4px);
+  box-shadow:
+    0 8px 14px rgba(60, 45, 25, 0.2),
+    0 20px 36px rgba(60, 45, 25, 0.22);
+}
+
+/* ---------- Modal preview note ---------- */
+.folder-modal-content-note {
+  background-color: #fdf8ee;
+  background-image:
+    repeating-linear-gradient(to bottom,
+      transparent 0,
+      transparent 31px,
+      rgba(138, 115, 85, 0.22) 31px,
+      rgba(138, 115, 85, 0.22) 32px),
+    linear-gradient(to right,
+      transparent 0,
+      transparent 38px,
+      rgba(139, 46, 46, 0.28) 38px,
+      rgba(139, 46, 46, 0.28) 39px,
+      transparent 39px),
+    radial-gradient(circle at 15% 10%, rgba(120, 90, 60, 0.06) 0%, transparent 55%),
+    radial-gradient(circle at 85% 85%, rgba(90, 70, 50, 0.07) 0%, transparent 55%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  background-position: 0 6px, 0 0, 0 0, 0 0, 0 0;
+
+  border: 1px solid #d8c7a3;
+  border-radius: 1px;
+  padding: 40px 30px 34px 48px !important;
+  max-width: 480px;
+  max-height: 90vh;
+
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  position: relative;
+  box-shadow:
+    0 20px 50px rgba(20, 14, 8, 0.5),
+    0 4px 12px rgba(20, 14, 8, 0.3),
+    inset 0 0 60px rgba(40, 28, 15, 0.08);
+}
+
+/* washi tape di atas kertas */
+.folder-modal-content-note::before {
+  content: "";
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-2deg);
+  width: 90px;
+  height: 26px;
+  background: rgba(201, 184, 152, 0.55);
+  border: 1px solid rgba(138, 115, 85, 0.4);
+  box-shadow: 0 3px 6px rgba(40, 28, 15, 0.25);
+  z-index: 5;
+}
+
+/* tepi robek di bawah kertas */
+.folder-modal-content-note::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 12px;
+  background-color: #fdf8ee;
+  -webkit-mask-image: linear-gradient(#000, #000),
+    repeating-linear-gradient(110deg,
+      transparent 0 6px,
+      #000 6px 12px);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+  -webkit-mask-repeat: repeat-x;
+  mask-repeat: repeat-x;
+  -webkit-mask-size: 100% 100%, 16px 100%;
+  mask-size: 100% 100%, 16px 100%;
+  box-shadow: 0 6px 8px rgba(20, 14, 8, 0.15);
+}
+
+.folder-note-modal-wrap {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  z-index: 2;
+  padding-right: 6px;
+}
+
+.folder-note-modal-wrap::-webkit-scrollbar {
+  width: 6px;
+}
+.folder-note-modal-wrap::-webkit-scrollbar-thumb {
+  background: #8a7355;
+  border-radius: 3px;
+}
+.folder-note-modal-wrap::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.folder-note-modal-date {
+  font-family: 'Special Elite', cursive;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8a7355;
+  margin: 0 0 14px;
+  opacity: 0.85;
+}
+
+.folder-note-modal-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-size: 1.6rem;
+  color: #3d2f22;
+  margin: 0 0 20px;
+  letter-spacing: 0.02em;
+  line-height: 1.35;
+  max-width: 92%;
+
+  display: inline-block;
+  position: relative;
+}
+
+.folder-note-modal-title::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 1px;
+  margin-top: 10px;
+  background: linear-gradient(90deg, #8a7355, transparent 85%);
+  opacity: 0.5;
+}
+
+.folder-note-modal-content {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 1.08rem;
+  line-height: 32px;
+  color: #4a3b2a;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  margin: 0;
+}
