@@ -104,6 +104,12 @@
   }
 }
 
+@media (max-width: 476px) {
+  .folder-empty {
+    width: 100%;
+  }
+}
+
 /* ---------- Grid folder ---------- */
 .folder-container {
   display: grid;
@@ -139,6 +145,13 @@
 @media (min-width: 1080px) {
   .folder_section {
     height: 220px; /* kartu lebih tinggi di layar lebar */
+  }
+}
+
+@media (max-width: 476px) {
+  .folder_section {
+    aspect-ratio: 100 / 100;
+    height: 100px;
   }
 }
 
