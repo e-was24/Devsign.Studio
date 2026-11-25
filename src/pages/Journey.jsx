@@ -9,6 +9,7 @@ import { supabase } from "../supabaseClient";
 import { isGuestSession } from "../components/AccessGate";
 import GuestInviteButton from "../components/GuestInviteButton";
 import OpenMusikArea from "../components/OpenMusikArea";
+import PhotoBoothArea from "../components/OpenPhotoBooth";
 
 import "./css/journey-style.css";
 
@@ -214,6 +215,7 @@ export default function Journey() {
                   onOpen={() => setSidebarOpen(false)}
                 />
                 <OpenMusikArea onOpen={() => setSidebarOpen(false)} />
+                <PhotoBoothArea onOpen={() => setSidebarOpen(false)} />
               </div>
             </div>
           </>
@@ -266,10 +268,6 @@ export default function Journey() {
                             className="journey-item-circle-wrap"
                           >
                             <div className="journey-item-anchor">
-                              {/* Dulu: to="/foldergallery" (folder semua journey campur jadi satu).
-                                  Sekarang: /foldergallery/:slug, di-resolve ke journey ini persis
-                                  seperti /galery/:slug me-resolve journeys.title -> supaya folder
-                                  yang muncul cuma folder milik journey ini. */}
                               <Link
                                 to={`/foldergallery/${encodeURIComponent(item.title)}`}
                                 className="link"

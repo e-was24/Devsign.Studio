@@ -1,0 +1,136 @@
+/* ================================
+   PHOTO BOOTH - ALUR 3 FASE (timer, galeri, pilih foto)
+   Taruh di src/css/photo-booth-flow.css
+   ================================ */
+
+/* ============ TIMER ============ */
+
+.pb-timer {
+    margin: 0.6rem auto 0;
+    display: inline-block;
+    font-family: 'Special Elite', cursive;
+    font-size: 1.8rem;
+    letter-spacing: 0.12em;
+    color: #3d2f22;
+    background: #fdf8ee;
+    border: 1px dashed #8a7355;
+    border-radius: 2px;
+    padding: 0.2rem 1.1rem;
+    box-shadow: 0 4px 10px rgba(40, 28, 15, 0.2);
+}
+
+.pb-timer.is-urgent {
+    color: #c0443a;
+    border-color: #c0443a;
+    animation: pbPulse 1s ease infinite;
+}
+
+.pb-steps {
+    display: flex;
+    justify-content: center;
+    gap: 0.6rem;
+    margin-top: 0.9rem;
+}
+
+.pb-step {
+    width: 34px;
+    height: 4px;
+    background: #c9b898;
+    border-radius: 2px;
+    transition: background 0.3s ease;
+}
+
+.pb-step.is-active {
+    background: #3d2f22;
+}
+
+/* ============ GALERI FOTO ============ */
+
+.pb-thumbs {
+    width: min(300px, 100%);
+}
+
+.pb-thumb-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: 0.6rem;
+    max-height: 52vh;
+    overflow-y: auto;
+    padding: 0.5rem;
+    background: rgba(253, 248, 238, 0.6);
+    border: 1px dashed #8a7355;
+    border-radius: 2px;
+}
+
+.pb-thumbs .pb-thumb-grid {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.pb-thumb-grid img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    display: block;
+    border: 3px solid #fdf8ee;
+    box-shadow: 0 3px 8px rgba(40, 28, 15, 0.3);
+    animation: pbFadeIn 0.35s ease;
+}
+
+.pb-thumb-grid .pb-hint {
+    grid-column: 1 / -1;
+    margin: 0.5rem 0;
+}
+
+.pb-thumb-btn {
+    position: relative;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.pb-thumb-btn:hover {
+    transform: translateY(-2px);
+}
+
+.pb-thumb-btn:focus-visible {
+    outline: 2px solid #3d2f22;
+    outline-offset: 3px;
+}
+
+.pb-thumb-btn.is-picked img {
+    border-color: #3d2f22;
+    opacity: 0.75;
+}
+
+.pb-thumb-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Special Elite', cursive;
+    font-size: 0.85rem;
+    color: #fdf8ee;
+    background: #3d2f22;
+    border-radius: 50%;
+}
+
+.pb-slot.is-filled {
+    cursor: pointer;
+}
+
+@keyframes pbPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.06); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pb-timer.is-urgent {
+        animation: none;
+    }
+}

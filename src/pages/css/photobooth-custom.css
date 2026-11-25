@@ -1,0 +1,201 @@
+/* ================================
+   PHOTO BOOTH - DESAIN BARU + BINGKAI UNGGAHAN
+   Taruh di src/css/photobooth-custom.css
+   ================================ */
+
+/* ============ KRAFT ============ */
+
+.pb-strip-preview[data-frame="kraft"] {
+    background: #c8a97e;
+    border-color: #a98a5f;
+}
+.pb-strip-preview[data-frame="kraft"]::before {
+    border-color: rgba(245, 234, 214, 0.85);
+    border-width: 2px;
+}
+.pb-strip-preview[data-frame="kraft"] .pb-slot {
+    background: rgba(245, 234, 214, 0.25);
+    border: 3px solid #f5ead6;
+}
+.pb-strip-preview[data-frame="kraft"] .pb-slot-num {
+    color: #f5ead6;
+}
+.pb-strip-preview[data-frame="kraft"] .pb-strip-caption {
+    color: #4a3520;
+}
+.pb-frame-btn[data-frame="kraft"] .pb-frame-icon {
+    background: #c8a97e;
+    border-color: #a98a5f;
+}
+.pb-frame-btn[data-frame="kraft"] .pb-frame-icon i {
+    background: #f5ead6;
+    opacity: 1;
+}
+
+/* ============ MIDNIGHT ============ */
+
+.pb-strip-preview[data-frame="midnight"] {
+    background-color: #14213d;
+    background-image:
+        radial-gradient(circle, rgba(224, 184, 76, 0.9) 1px, transparent 1.5px),
+        radial-gradient(circle, rgba(224, 184, 76, 0.6) 1px, transparent 1.5px);
+    background-size: 37px 41px, 23px 29px;
+    background-position: 0 0, 11px 17px;
+    border-color: #0b1226;
+}
+.pb-strip-preview[data-frame="midnight"]::before {
+    border-color: rgba(224, 184, 76, 0.45);
+}
+.pb-strip-preview[data-frame="midnight"] .pb-slot {
+    background: rgba(11, 18, 38, 0.8);
+    border: 2px solid #e0b84c;
+}
+.pb-strip-preview[data-frame="midnight"] .pb-slot-num {
+    color: #e0b84c;
+}
+.pb-strip-preview[data-frame="midnight"] .pb-strip-caption {
+    color: #e0b84c;
+}
+.pb-frame-btn[data-frame="midnight"] .pb-frame-icon {
+    background: #14213d;
+    border-color: #0b1226;
+}
+.pb-frame-btn[data-frame="midnight"] .pb-frame-icon i {
+    background: #e0b84c;
+    opacity: 0.9;
+}
+
+/* ============ PASTEL ============ */
+
+.pb-strip-preview[data-frame="pastel"] {
+    background-color: #f9d9e3;
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.85) 3px, transparent 3.5px);
+    background-size: 23px 23px;
+    border-color: #e9b8c9;
+}
+.pb-strip-preview[data-frame="pastel"]::before {
+    border-color: rgba(138, 75, 99, 0.3);
+}
+.pb-strip-preview[data-frame="pastel"] .pb-slot {
+    border-radius: 14px;
+    border: 4px solid #ffffff;
+    background: rgba(255, 255, 255, 0.35);
+}
+.pb-strip-preview[data-frame="pastel"] .pb-slot-num {
+    color: #8a4b63;
+}
+.pb-strip-preview[data-frame="pastel"] .pb-strip-caption {
+    font-family: 'Caveat', cursive;
+    font-size: 1.5rem;
+    color: #8a4b63;
+}
+.pb-frame-btn[data-frame="pastel"] .pb-frame-icon {
+    background: #f9d9e3;
+    border-color: #e9b8c9;
+}
+.pb-frame-btn[data-frame="pastel"] .pb-frame-icon i {
+    background: #ffffff;
+    border-radius: 4px;
+    opacity: 1;
+}
+
+/* ============ BINGKAI UNGGAHAN ============ */
+
+.pb-custom-preview {
+    position: relative;
+    flex: none;
+    transform: rotate(1deg);
+    filter: drop-shadow(0 10px 22px rgba(60, 45, 25, 0.35));
+}
+
+.pb-custom-slot {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: rgba(42, 31, 20, 0.55);
+}
+
+.pb-custom-slot.is-filled {
+    cursor: pointer;
+}
+
+.pb-custom-slot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    animation: pbFadeIn 0.35s ease;
+}
+
+.pb-custom-slot .pb-slot-num {
+    color: #fdf8ee;
+}
+
+/* bingkai di atas foto; klik menembus ke slot */
+.pb-custom-overlay {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    pointer-events: none;
+}
+
+.pb-custom-thumb {
+    width: 44px;
+    height: 56px;
+    object-fit: contain;
+    background-color: #ede3d3;
+    background-image:
+        linear-gradient(45deg, #d9ccb6 25%, transparent 25%, transparent 75%, #d9ccb6 75%),
+        linear-gradient(45deg, #d9ccb6 25%, transparent 25%, transparent 75%, #d9ccb6 75%);
+    background-size: 10px 10px;
+    background-position: 0 0, 5px 5px;
+    border: 1px solid #c9b898;
+}
+
+/* ============ TOMBOL UNGGAH ============ */
+
+.pb-upload-btn {
+    justify-content: center;
+    border-style: dashed;
+    background: transparent;
+}
+
+.pb-upload-plus {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    line-height: 1;
+    color: #3d2f22;
+}
+
+.pb-help {
+    margin: -0.2rem 0 0;
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    color: #6b5842;
+}
+
+.pb-link {
+    padding: 0;
+    font: inherit;
+    color: #3d2f22;
+    text-decoration: underline;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.pb-link:focus-visible {
+    outline: 2px solid #3d2f22;
+    outline-offset: 2px;
+}
+
+.pb-hint--static {
+    margin: 0;
+}
