@@ -12,11 +12,7 @@ import Musik from "./pages/Songs";
 import { PlayerProvider } from "./context/PlayerContext";
 import MiniPlayer from "./components/MiniPlayer";
 
-import UnreleasedPage from "./unrelease-page";
-import Mei from "./next-gen/mei";
-import Rewind from "./next-gen/rewind";
-import NewYear from "./next-gen/newYear";
-import PhotoBooth from "./pages/PhotoBooth";
+
 
 import FolderGallery from "./pages/Foldergallery";
 import ScrollToTop from "./scripts/ScrollToTop";
@@ -44,13 +40,7 @@ function App() {
                 <Route path="foldergallery" element={<FolderGallery />} />
                 <Route path="foldergallery/:slug" element={<FolderGallery />} />
 
-                <Route path="/unrelease-page">
-                  <Route index element={<UnreleasedPage />} />
-
-                  <Route path="mei" element={<Mei />} />
-                  <Route path="rewind" element={<Rewind />} />
-                  <Route path="newyear" element={<NewYear/>} />
-                </Route>
+                
               </Route>
             </Route>
           </Routes>
