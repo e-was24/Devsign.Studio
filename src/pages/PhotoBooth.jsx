@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import JSZip from "jszip";
 import "./css/photobooth.css";
 
 import { frameStorage } from "./js/frameStorage"; // BARU: penyimpanan bingkai unggahan
@@ -999,32 +1000,37 @@ export default function PhotoBooth() {
   const downloadZip = async () => {
     if (!result) return;
     setBusy(true);
-    const { default: JSZip } = await import("jszip");
-    const zip = new JSZip();
-    const d = new Date();
-    const stamp = `${d.getFullYear()}${pad2(d.getMonth() + 1)}${pad2(d.getDate())}-${pad2(
-      d.getHours(),
-    )}${pad2(d.getMinutes())}`;
-    const root = zip.folder(`photobooth-${stamp}`);
+    try {
+      const zip = new JSZip();
+      const d = new Date();
+      const stamp = `${d.getFullYear()}${pad2(d.getMonth() + 1)}${pad2(d.getDate())}-${pad2(
+        d.getHours(),
+      )}${pad2(d.getMinutes())}`;
+      const root = zip.folder(`photobooth-${stamp}`);
 
-    const vids = result.videoBlobs || [];
-    vids.forEach((b, i) =>
-      root.file(
-        vids.length === 1 ? "video-sesi.webm" : `video-sesi-${i + 1}.webm`,
-        b,
-      ),
-    );
-    const fotoDir = root.folder("foto");
-    shots.forEach((s, i) => fotoDir.file(`foto-${pad2(i + 1)}.png`, s.blob));
-    root.file("bingkai.png", result.frameBlob);
+      const vids = result.videoBlobs || [];
+      vids.forEach((b, i) =>
+        root.file(
+          vids.length === 1 ? "video-sesi.webm" : `video-sesi-${i + 1}.webm`,
+          b,
+        ),
+      );
+      const fotoDir = root.folder("foto");
+      shots.forEach((s, i) => fotoDir.file(`foto-${pad2(i + 1)}.png`, s.blob));
+      root.file("bingkai.png", result.frameBlob);
 
-    const out = await zip.generateAsync({ type: "blob" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(out);
-    a.download = `photobooth-${stamp}.zip`;
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
-    setBusy(false);
+      const out = await zip.generateAsync({ type: "blob" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(out);
+      a.download = `photobooth-${stamp}.zip`;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    } catch (error) {
+      console.error("Gagal membuat ZIP photobooth:", error);
+      setNotice("Gagal menyusun file ZIP. Silakan coba lagi.");
+    } finally {
+      setBusy(false);
+    }
   };
 
   /* ================= RENDER ================= */

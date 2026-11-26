@@ -12,6 +12,7 @@ import Musik from "./pages/Songs";
 import { PlayerProvider } from "./context/PlayerContext";
 import MiniPlayer from "./components/MiniPlayer";
 
+
 import PhotoBooth from "./pages/PhotoBooth";
 import FolderGallery from "./pages/Foldergallery";
 import ScrollToTop from "./scripts/ScrollToTop";
@@ -39,7 +40,7 @@ function App() {
                 <Route path="foldergallery" element={<FolderGallery />} />
                 <Route path="foldergallery/:slug" element={<FolderGallery />} />
 
-                
+               
               </Route>
             </Route>
           </Routes>

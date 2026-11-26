@@ -35,8 +35,11 @@ function Home() {
 
   useGSAP(
     () => {
+      const menuLinks = container.current?.querySelectorAll(".menu-link");
+      if (!menuLinks?.length) return;
+
       // Animasi munculnya menu Navigasi
-      gsap.from(".menu-link", {
+      gsap.from(menuLinks, {
         opacity: 0,
         scale: 0,
         y: -20,
@@ -46,7 +49,11 @@ function Home() {
         delay: 0.5,
       });
     },
-    { scope: container },
+    {
+      scope: container,
+      dependencies: [location.pathname, visible],
+      revertOnUpdate: true,
+    },
   );
 
   useEffect(() => {
