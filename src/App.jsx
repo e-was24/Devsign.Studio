@@ -14,6 +14,7 @@ import MiniPlayer from "./components/MiniPlayer";
 
 
 
+import PhotoBooth from "./pages/PhotoBooth";
 import FolderGallery from "./pages/Foldergallery";
 import ScrollToTop from "./scripts/ScrollToTop";
 import "./App.css";
