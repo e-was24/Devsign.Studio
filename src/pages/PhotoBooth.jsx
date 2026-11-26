@@ -13,9 +13,30 @@ const PHASES = {
 
 // susunan / kolase
 const LAYOUTS = {
-  strip: { name: "Strip", kind: "3 foto tegak", cols: 1, rows: 3, w: 640, h: 480 },
-  grid: { name: "Kolase", kind: "4 foto 2×2", cols: 2, rows: 2, w: 560, h: 420 },
-  wide: { name: "Panorama", kind: "3 foto mendatar", cols: 3, rows: 1, w: 480, h: 360 },
+  strip: {
+    name: "Strip",
+    kind: "3 foto tegak",
+    cols: 1,
+    rows: 3,
+    w: 640,
+    h: 480,
+  },
+  grid: {
+    name: "Kolase",
+    kind: "4 foto 2×2",
+    cols: 2,
+    rows: 2,
+    w: 560,
+    h: 420,
+  },
+  wide: {
+    name: "Panorama",
+    kind: "3 foto mendatar",
+    cols: 3,
+    rows: 1,
+    w: 480,
+    h: 360,
+  },
 };
 
 // desain bingkai bawaan
@@ -34,11 +55,20 @@ const FILTERS = {
   none: { name: "Normal", css: "none" },
   bw: { name: "Hitam Putih", css: "grayscale(1) contrast(1.1)" },
   sepia: { name: "Sepia", css: "sepia(0.85) contrast(1.05)" },
-  warm: { name: "Hangat", css: "sepia(0.25) saturate(1.3) hue-rotate(-10deg) brightness(1.05)" },
-  cool: { name: "Dingin", css: "saturate(1.1) hue-rotate(15deg) brightness(1.03)" },
+  warm: {
+    name: "Hangat",
+    css: "sepia(0.25) saturate(1.3) hue-rotate(-10deg) brightness(1.05)",
+  },
+  cool: {
+    name: "Dingin",
+    css: "saturate(1.1) hue-rotate(15deg) brightness(1.03)",
+  },
   vivid: { name: "Cerah", css: "saturate(1.6) contrast(1.1)" },
   fade: { name: "Pudar", css: "contrast(0.85) brightness(1.1) saturate(0.8)" },
-  vintage: { name: "Vintage", css: "sepia(0.4) contrast(1.1) brightness(0.95) saturate(1.2)" },
+  vintage: {
+    name: "Vintage",
+    css: "sepia(0.4) contrast(1.1) brightness(0.95) saturate(1.2)",
+  },
 };
 
 const MAX_CUSTOM_SLOTS = 8;
@@ -51,7 +81,9 @@ const fmt = (s) => `${Math.floor(s / 60)}:${pad2(s % 60)}`;
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 
 const findCustom = (design, customs) =>
-  design.startsWith("custom:") ? customs.find((c) => "custom:" + c.id === design) : null;
+  design.startsWith("custom:")
+    ? customs.find((c) => "custom:" + c.id === design)
+    : null;
 const countFor = (design, layout, customs) => {
   const c = findCustom(design, customs);
   return c ? c.slots.length : slotCount(layout);
@@ -67,7 +99,8 @@ const aspectFor = (design, layout, customs, i) => {
 };
 
 const newId = () =>
-  window.crypto?.randomUUID?.() ?? "id-" + Date.now() + "-" + Math.random().toString(16).slice(2);
+  window.crypto?.randomUUID?.() ??
+  "id-" + Date.now() + "-" + Math.random().toString(16).slice(2);
 
 /* ================= PENYESUAIAN POSISI FOTO ================= */
 
@@ -208,7 +241,7 @@ async function renderFrame({ layout, design, images, caption, adjusts }) {
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, W, H);
     let seed = 7;
-    const rnd = () => ((seed = (seed * 9301 + 49297) % 233280) / 233280);
+    const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
     ctx.fillStyle = "rgba(224,184,76,0.85)";
     for (let i = 0; i < 70; i++) {
       ctx.beginPath();
@@ -310,7 +343,10 @@ async function renderFrame({ layout, design, images, caption, adjusts }) {
  * - area hijau #00FF00 (untuk JPG / editor tanpa transparansi) → dijadikan transparan
  */
 function prepareCustomFrame(img) {
-  const sc = Math.min(1, MAX_CUSTOM_SIDE / Math.max(img.naturalWidth, img.naturalHeight));
+  const sc = Math.min(
+    1,
+    MAX_CUSTOM_SIDE / Math.max(img.naturalWidth, img.naturalHeight),
+  );
   const w = Math.max(1, Math.round(img.naturalWidth * sc));
   const h = Math.max(1, Math.round(img.naturalHeight * sc));
   const canvas = document.createElement("canvas");
@@ -350,7 +386,11 @@ function detectSlots(canvas) {
   const stack = [];
   for (let s = 0; s < w * h; s++) {
     if (!mask[s] || seen[s]) continue;
-    let minX = w, minY = h, maxX = 0, maxY = 0, count = 0;
+    let minX = w,
+      minY = h,
+      maxX = 0,
+      maxY = 0,
+      count = 0;
     stack.push(s);
     seen[s] = 1;
     while (stack.length) {
@@ -362,12 +402,25 @@ function detectSlots(canvas) {
       if (x > maxX) maxX = x;
       if (y < minY) minY = y;
       if (y > maxY) maxY = y;
-      if (x > 0 && mask[p - 1] && !seen[p - 1]) { seen[p - 1] = 1; stack.push(p - 1); }
-      if (x < w - 1 && mask[p + 1] && !seen[p + 1]) { seen[p + 1] = 1; stack.push(p + 1); }
-      if (y > 0 && mask[p - w] && !seen[p - w]) { seen[p - w] = 1; stack.push(p - w); }
-      if (y < h - 1 && mask[p + w] && !seen[p + w]) { seen[p + w] = 1; stack.push(p + w); }
+      if (x > 0 && mask[p - 1] && !seen[p - 1]) {
+        seen[p - 1] = 1;
+        stack.push(p - 1);
+      }
+      if (x < w - 1 && mask[p + 1] && !seen[p + 1]) {
+        seen[p + 1] = 1;
+        stack.push(p + 1);
+      }
+      if (y > 0 && mask[p - w] && !seen[p - w]) {
+        seen[p - w] = 1;
+        stack.push(p - w);
+      }
+      if (y < h - 1 && mask[p + w] && !seen[p + w]) {
+        seen[p + w] = 1;
+        stack.push(p + w);
+      }
     }
-    const touchesEdge = minX === 0 || minY === 0 || maxX === w - 1 || maxY === h - 1;
+    const touchesEdge =
+      minX === 0 || minY === 0 || maxX === w - 1 || maxY === h - 1;
     if (touchesEdge || count < w * h * 0.004) continue; // abaikan sudut membulat / noise
 
     const EXTRA = 3; // sedikit melebar supaya tidak ada celah di tepi
@@ -433,10 +486,19 @@ async function hydrateFrame(rec) {
   canvas.width = rec.w;
   canvas.height = rec.h;
   canvas.getContext("2d").drawImage(img, 0, 0, rec.w, rec.h);
-  return { id: rec.id, name: rec.name, canvas, url, w: rec.w, h: rec.h, slots: rec.slots };
+  return {
+    id: rec.id,
+    name: rec.name,
+    canvas,
+    url,
+    w: rec.w,
+    h: rec.h,
+    slots: rec.slots,
+  };
 }
 
-const canvasToBlob = (canvas) => new Promise((r) => canvas.toBlob(r, "image/png"));
+const canvasToBlob = (canvas) =>
+  new Promise((r) => canvas.toBlob(r, "image/png"));
 
 /* ================= KOMPONEN ================= */
 
@@ -481,7 +543,18 @@ export default function PhotoBooth() {
 
   // state terbaru untuk dipakai di timer / event (hindari stale closure)
   const live = useRef({});
-  live.current = { phase, layout, design, caption, shots, slots, customs, adjusts, filter, mirror };
+  live.current = {
+    phase,
+    layout,
+    design,
+    caption,
+    shots,
+    slots,
+    customs,
+    adjusts,
+    filter,
+    mirror,
+  };
 
   /* ---------- kamera + rekaman ---------- */
   const refreshCameras = useCallback(async () => {
@@ -499,7 +572,8 @@ export default function PhotoBooth() {
       setCamReady(false);
 
       // hentikan rekaman & stream lama
-      if (recorderRef.current?.state === "recording") recorderRef.current.stop();
+      if (recorderRef.current?.state === "recording")
+        recorderRef.current.stop();
       streamRef.current?.getTracks().forEach((t) => t.stop());
       streamRef.current = null;
 
@@ -514,7 +588,9 @@ export default function PhotoBooth() {
         });
       } catch {
         if (req !== camReqRef.current) return;
-        setCamError("Kamera tidak bisa diakses. Izinkan akses kamera lalu muat ulang halaman.");
+        setCamError(
+          "Kamera tidak bisa diakses. Izinkan akses kamera lalu muat ulang halaman.",
+        );
         return;
       }
       if (req !== camReqRef.current) {
@@ -525,20 +601,27 @@ export default function PhotoBooth() {
       setCamError("");
       streamRef.current = stream;
       if (videoRef.current) videoRef.current.srcObject = stream;
-      setCamId(stream.getVideoTracks()[0]?.getSettings?.().deviceId || deviceId || "");
+      setCamId(
+        stream.getVideoTracks()[0]?.getSettings?.().deviceId || deviceId || "",
+      );
 
       // rekam sesi (satu segmen per kamera)
       try {
-        const mime = ["video/webm;codecs=vp9", "video/webm;codecs=vp8", "video/webm"].find(
-          (m) => window.MediaRecorder && MediaRecorder.isTypeSupported(m)
+        const mime = [
+          "video/webm;codecs=vp9",
+          "video/webm;codecs=vp8",
+          "video/webm",
+        ].find((m) => window.MediaRecorder && MediaRecorder.isTypeSupported(m));
+        const rec = new MediaRecorder(
+          stream,
+          mime ? { mimeType: mime } : undefined,
         );
-        const rec = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
         const chunks = [];
         rec.ondataavailable = (e) => e.data.size && chunks.push(e.data);
         segmentsRef.current.push(
           new Promise((res) => {
             rec.onstop = () => res(new Blob(chunks, { type: "video/webm" }));
-          })
+          }),
         );
         rec.start(1000);
         recorderRef.current = rec;
@@ -549,7 +632,7 @@ export default function PhotoBooth() {
       setCamReady(true);
       refreshCameras(); // label kamera baru terisi setelah izin diberikan
     },
-    [refreshCameras]
+    [refreshCameras],
   );
 
   useEffect(() => {
@@ -557,15 +640,20 @@ export default function PhotoBooth() {
     navigator.mediaDevices?.addEventListener?.("devicechange", refreshCameras);
     return () => {
       camReqRef.current++; // batalkan permintaan yang masih berjalan
-      navigator.mediaDevices?.removeEventListener?.("devicechange", refreshCameras);
-      if (recorderRef.current?.state === "recording") recorderRef.current.stop();
+      navigator.mediaDevices?.removeEventListener?.(
+        "devicechange",
+        refreshCameras,
+      );
+      if (recorderRef.current?.state === "recording")
+        recorderRef.current.stop();
       streamRef.current?.getTracks().forEach((t) => t.stop());
     };
   }, [startCamera, refreshCameras]);
 
   // pasang ulang stream saat <video> muncul kembali
   useEffect(() => {
-    if (videoRef.current && streamRef.current) videoRef.current.srcObject = streamRef.current;
+    if (videoRef.current && streamRef.current)
+      videoRef.current.srcObject = streamRef.current;
   }, [phase, camReady]);
 
   const changeCamera = (id) => {
@@ -585,7 +673,10 @@ export default function PhotoBooth() {
           .map((x) => x.value);
         if (alive && loaded.length) setCustoms(loaded);
       } catch {
-        if (alive) setNotice("Bingkai tersimpan gagal dimuat. Bingkai baru tetap bisa diunggah.");
+        if (alive)
+          setNotice(
+            "Bingkai tersimpan gagal dimuat. Bingkai baru tetap bisa diunggah.",
+          );
       }
     })();
     return () => {
@@ -614,7 +705,7 @@ export default function PhotoBooth() {
       chosen.map((id) => {
         const shot = s.shots.find((x) => x.id === id);
         return shot ? loadImg(shot.url) : null;
-      })
+      }),
     );
 
     const frameBlob = custom
@@ -628,10 +719,16 @@ export default function PhotoBooth() {
         });
 
     if (recorderRef.current?.state === "recording") recorderRef.current.stop();
-    const videoBlobs = (await Promise.all(segmentsRef.current)).filter((b) => b.size > 0);
+    const videoBlobs = (await Promise.all(segmentsRef.current)).filter(
+      (b) => b.size > 0,
+    );
     streamRef.current?.getTracks().forEach((t) => t.stop());
 
-    setResult({ frameBlob, frameUrl: URL.createObjectURL(frameBlob), videoBlobs });
+    setResult({
+      frameBlob,
+      frameUrl: URL.createObjectURL(frameBlob),
+      videoBlobs,
+    });
     setBusy(false);
   }, []);
 
@@ -682,7 +779,7 @@ export default function PhotoBooth() {
       const prep = prepareCustomFrame(img);
       if (prep.slots.length === 0) {
         setNotice(
-          "Tidak ada area kosong yang terdeteksi. Buat tempat foto sebagai area TRANSPARAN (PNG), atau warnai hijau murni #00FF00 jika editormu tidak mendukung transparan."
+          "Tidak ada area kosong yang terdeteksi. Buat tempat foto sebagai area TRANSPARAN (PNG), atau warnai hijau murni #00FF00 jika editormu tidak mendukung transparan.",
         );
         return;
       }
@@ -714,7 +811,8 @@ export default function PhotoBooth() {
           blob,
         });
       } catch {
-        msg += "Bingkai bisa dipakai sekarang, tapi gagal disimpan sehingga akan hilang saat aplikasi ditutup.";
+        msg +=
+          "Bingkai bisa dipakai sekarang, tapi gagal disimpan sehingga akan hilang saat aplikasi ditutup.";
       }
       if (msg) setNotice(msg.trim());
     } catch {
@@ -756,7 +854,10 @@ export default function PhotoBooth() {
     ctx.filter = "none";
     c.toBlob((blob) => {
       const id = ++shotId.current;
-      setShots((prev) => [...prev, { id, blob, url: URL.createObjectURL(blob), w, h }]);
+      setShots((prev) => [
+        ...prev,
+        { id, blob, url: URL.createObjectURL(blob), w, h },
+      ]);
     }, "image/png");
     setFlash(true);
     setTimeout(() => setFlash(false), 140);
@@ -815,7 +916,10 @@ export default function PhotoBooth() {
     if (!shot) return;
     const ia = shot.w / shot.h;
     const sa = aspectFor(s.design, s.layout, s.customs, i);
-    setAdjusts((prev) => ({ ...prev, [i]: clampAdj(fn(prev[i] || DEF_ADJ), ia, sa) }));
+    setAdjusts((prev) => ({
+      ...prev,
+      [i]: clampAdj(fn(prev[i] || DEF_ADJ), ia, sa),
+    }));
   }, []);
 
   const rebase = (i) => {
@@ -825,7 +929,10 @@ export default function PhotoBooth() {
     g.base = {
       cur: { ...(live.current.adjusts[i] || DEF_ADJ) },
       p0: pts[0],
-      dist: pts.length > 1 ? Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y) : 0,
+      dist:
+        pts.length > 1
+          ? Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y)
+          : 0,
     };
   };
 
@@ -846,11 +953,18 @@ export default function PhotoBooth() {
     const { base, rect } = g;
     if (pts.length >= 2 && base.dist > 0) {
       const dist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
-      updateAdjust(g.slot, () => ({ ...base.cur, zoom: base.cur.zoom * (dist / base.dist) }));
+      updateAdjust(g.slot, () => ({
+        ...base.cur,
+        zoom: base.cur.zoom * (dist / base.dist),
+      }));
     } else {
       const dx = (pts[0].x - base.p0.x) / rect.width;
       const dy = (pts[0].y - base.p0.y) / rect.height;
-      updateAdjust(g.slot, () => ({ ...base.cur, ox: base.cur.ox + dx, oy: base.cur.oy + dy }));
+      updateAdjust(g.slot, () => ({
+        ...base.cur,
+        ox: base.cur.ox + dx,
+        oy: base.cur.oy + dy,
+      }));
     }
   };
 
@@ -872,7 +986,10 @@ export default function PhotoBooth() {
       e.preventDefault();
       const i = Number(t.dataset.slot);
       setSel(i);
-      updateAdjust(i, (c) => ({ ...c, zoom: c.zoom * (e.deltaY < 0 ? 1.08 : 1 / 1.08) }));
+      updateAdjust(i, (c) => ({
+        ...c,
+        zoom: c.zoom * (e.deltaY < 0 ? 1.08 : 1 / 1.08),
+      }));
     };
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => el.removeEventListener("wheel", onWheel);
@@ -886,13 +1003,16 @@ export default function PhotoBooth() {
     const zip = new JSZip();
     const d = new Date();
     const stamp = `${d.getFullYear()}${pad2(d.getMonth() + 1)}${pad2(d.getDate())}-${pad2(
-      d.getHours()
+      d.getHours(),
     )}${pad2(d.getMinutes())}`;
     const root = zip.folder(`photobooth-${stamp}`);
 
     const vids = result.videoBlobs || [];
     vids.forEach((b, i) =>
-      root.file(vids.length === 1 ? "video-sesi.webm" : `video-sesi-${i + 1}.webm`, b)
+      root.file(
+        vids.length === 1 ? "video-sesi.webm" : `video-sesi-${i + 1}.webm`,
+        b,
+      ),
     );
     const fotoDir = root.folder("foto");
     shots.forEach((s, i) => fotoDir.file(`foto-${pad2(i + 1)}.png`, s.blob));
@@ -926,7 +1046,9 @@ export default function PhotoBooth() {
           alt=""
           draggable={false}
           className="pb-slot-img"
-          style={{ transform: `translate(${a.ox * 100}%, ${a.oy * 100}%) scale(${a.zoom})` }}
+          style={{
+            transform: `translate(${a.ox * 100}%, ${a.oy * 100}%) scale(${a.zoom})`,
+          }}
         />
         <button
           type="button"
@@ -957,7 +1079,8 @@ export default function PhotoBooth() {
 
   // pratinjau bingkai (dipakai di fase 1 dan 3)
   const renderPreview = (picking) => {
-    const slotShot = (i) => (picking && slots[i] != null ? shotById(slots[i]) : null);
+    const slotShot = (i) =>
+      picking && slots[i] != null ? shotById(slots[i]) : null;
 
     if (custom) {
       return (
@@ -965,7 +1088,8 @@ export default function PhotoBooth() {
           ref={previewRef}
           className="pb-custom-preview"
           style={{
-            width: custom.w >= custom.h ? "min(560px, 100%)" : "min(240px, 100%)",
+            width:
+              custom.w >= custom.h ? "min(560px, 100%)" : "min(240px, 100%)",
             aspectRatio: `${custom.w} / ${custom.h}`,
           }}
         >
@@ -985,7 +1109,11 @@ export default function PhotoBooth() {
                 }}
                 {...slotHandlers(sh, i)}
               >
-                {sh ? slotImage(sh, i) : <span className="pb-slot-num">{i + 1}</span>}
+                {sh ? (
+                  slotImage(sh, i)
+                ) : (
+                  <span className="pb-slot-num">{i + 1}</span>
+                )}
               </div>
             );
           })}
@@ -1008,7 +1136,11 @@ export default function PhotoBooth() {
               key={i}
               {...slotHandlers(sh, i)}
             >
-              {sh ? slotImage(sh, i) : <span className="pb-slot-num">{i + 1}</span>}
+              {sh ? (
+                slotImage(sh, i)
+              ) : (
+                <span className="pb-slot-num">{i + 1}</span>
+              )}
             </div>
           );
         })}
@@ -1017,7 +1149,8 @@ export default function PhotoBooth() {
     );
   };
 
-  const selShot = phase === "pick" && slots[sel] != null ? shotById(slots[sel]) : null;
+  const selShot =
+    phase === "pick" && slots[sel] != null ? shotById(slots[sel]) : null;
   const selAdj = adjusts[sel] || DEF_ADJ;
 
   return (
@@ -1043,7 +1176,10 @@ export default function PhotoBooth() {
             </button>
             <div className="pb-steps" aria-hidden="true">
               {Object.keys(PHASES).map((k) => (
-                <span key={k} className={`pb-step${k === phase ? " is-active" : ""}`} />
+                <span
+                  key={k}
+                  className={`pb-step${k === phase ? " is-active" : ""}`}
+                />
               ))}
             </div>
           </>
@@ -1078,7 +1214,8 @@ export default function PhotoBooth() {
             <div className="pb-controls">
               {custom ? (
                 <p className="pb-hint pb-hint--static">
-                  Susunan mengikuti bingkai unggahanmu ({custom.slots.length} foto).
+                  Susunan mengikuti bingkai unggahanmu ({custom.slots.length}{" "}
+                  foto).
                 </p>
               ) : (
                 <>
@@ -1107,7 +1244,9 @@ export default function PhotoBooth() {
                     className={`pb-frame-btn${design === key ? " is-active" : ""}`}
                     onClick={() => setDesign(key)}
                   >
-                    <span className={`pb-frame-icon ${landscape ? "is-landscape" : "is-portrait"}`}>
+                    <span
+                      className={`pb-frame-icon ${landscape ? "is-landscape" : "is-portrait"}`}
+                    >
                       <i />
                       <i />
                       <i />
@@ -1140,7 +1279,10 @@ export default function PhotoBooth() {
                   </button>
                 ))}
 
-                <button className="pb-frame-btn pb-upload-btn" onClick={() => fileRef.current?.click()}>
+                <button
+                  className="pb-frame-btn pb-upload-btn"
+                  onClick={() => fileRef.current?.click()}
+                >
                   <span className="pb-upload-plus">+</span>
                   <span className="pb-frame-name">Unggah</span>
                   <span className="pb-frame-kind">bingkaimu</span>
@@ -1154,9 +1296,14 @@ export default function PhotoBooth() {
                 onChange={onUpload}
               />
               <p className="pb-help">
-                Area <b>transparan</b> di PNG = tempat foto (atau warnai hijau <b>#00FF00</b> kalau
-                pakai JPG). Bingkai yang diunggah tersimpan otomatis.{" "}
-                <button type="button" className="pb-link" onClick={downloadTemplate}>
+                Area <b>transparan</b> di PNG = tempat foto (atau warnai hijau{" "}
+                <b>#00FF00</b> kalau pakai JPG). Bingkai yang diunggah tersimpan
+                otomatis.{" "}
+                <button
+                  type="button"
+                  className="pb-link"
+                  onClick={downloadTemplate}
+                >
                   Unduh contoh template
                 </button>
               </p>
@@ -1196,7 +1343,9 @@ export default function PhotoBooth() {
                   filter: FILTERS[filter].css,
                 }}
               />
-              {!camReady && !camError && <div className="pb-overlay-text">Menyalakan kamera…</div>}
+              {!camReady && !camError && (
+                <div className="pb-overlay-text">Menyalakan kamera…</div>
+              )}
               {countdown > 0 && (
                 <div className="pb-countdown" key={countdown}>
                   {countdown}
@@ -1214,7 +1363,9 @@ export default function PhotoBooth() {
                   onChange={(e) => changeCamera(e.target.value)}
                   disabled={cameras.length === 0}
                 >
-                  {cameras.length === 0 && <option value="">Mencari kamera…</option>}
+                  {cameras.length === 0 && (
+                    <option value="">Mencari kamera…</option>
+                  )}
                   {cameras.map((c, i) => (
                     <option key={c.deviceId || i} value={c.deviceId}>
                       {c.label || `Kamera ${i + 1}`}
@@ -1222,6 +1373,19 @@ export default function PhotoBooth() {
                   ))}
                 </select>
               </label>
+
+              <div className="pb-controls">
+                <button
+                  className="pb-btn"
+                  onClick={startCountdown}
+                  disabled={!!countdown}
+                >
+                  {countdown ? "Siap-siap…" : "Jepret!"}
+                </button>
+                <button className="pb-btn pb-btn--ghost" onClick={goNext}>
+                  Selesai foto →
+                </button>
+              </div>
 
               <div className="pb-checks">
                 <label className="pb-check">
@@ -1256,15 +1420,6 @@ export default function PhotoBooth() {
                 ))}
               </div>
             </div>
-
-            <div className="pb-controls">
-              <button className="pb-btn" onClick={startCountdown} disabled={!!countdown}>
-                {countdown ? "Siap-siap…" : "Jepret!"}
-              </button>
-              <button className="pb-btn pb-btn--ghost" onClick={goNext}>
-                Selesai foto →
-              </button>
-            </div>
           </div>
 
           <div className="pb-thumbs">
@@ -1273,7 +1428,9 @@ export default function PhotoBooth() {
               {shots.map((s) => (
                 <img key={s.id} src={s.url} alt="" />
               ))}
-              {shots.length === 0 && <span className="pb-hint">Belum ada foto</span>}
+              {shots.length === 0 && (
+                <span className="pb-hint">Belum ada foto</span>
+              )}
             </div>
           </div>
         </div>
@@ -1284,7 +1441,8 @@ export default function PhotoBooth() {
         <div className="pb-layout">
           <div className="pb-camera-wrap">
             <p className="pb-label">
-              Ketuk foto untuk memasukkan ke bingkai ({slots.filter((x) => x != null).length}/{n})
+              Ketuk foto untuk memasukkan ke bingkai (
+              {slots.filter((x) => x != null).length}/{n})
             </p>
             <div className="pb-thumb-grid is-pick">
               {shots.map((s) => {
@@ -1296,17 +1454,21 @@ export default function PhotoBooth() {
                     onClick={() => toggleShot(s.id)}
                   >
                     <img src={s.url} alt="" />
-                    {at >= 0 && <span className="pb-thumb-badge">{at + 1}</span>}
+                    {at >= 0 && (
+                      <span className="pb-thumb-badge">{at + 1}</span>
+                    )}
                   </button>
                 );
               })}
-              {shots.length === 0 && <span className="pb-hint">Tidak ada foto yang diambil</span>}
+              {shots.length === 0 && (
+                <span className="pb-hint">Tidak ada foto yang diambil</span>
+              )}
             </div>
 
             <div className="pb-adjust">
               <p className="pb-hint pb-hint--static">
-                Usap foto di bingkai untuk menggeser posisinya. Cubit dua jari (atau scroll mouse)
-                untuk zoom.
+                Usap foto di bingkai untuk menggeser posisinya. Cubit dua jari
+                (atau scroll mouse) untuk zoom.
               </p>
               {selShot && (
                 <div className="pb-adjust-row">
@@ -1318,7 +1480,10 @@ export default function PhotoBooth() {
                     step="0.01"
                     value={selAdj.zoom}
                     onChange={(e) =>
-                      updateAdjust(sel, (c) => ({ ...c, zoom: Number(e.target.value) }))
+                      updateAdjust(sel, (c) => ({
+                        ...c,
+                        zoom: Number(e.target.value),
+                      }))
                     }
                     aria-label="Zoom"
                   />
@@ -1354,10 +1519,17 @@ export default function PhotoBooth() {
                 className={`pb-strip-img ${landscape ? "is-landscape" : "is-portrait"}`}
               />
               <div className="pb-actions">
-                <button className="pb-btn" onClick={downloadZip} disabled={busy}>
+                <button
+                  className="pb-btn"
+                  onClick={downloadZip}
+                  disabled={busy}
+                >
                   {busy ? "Menyiapkan ZIP…" : "Unduh Semua (.zip)"}
                 </button>
-                <button className="pb-btn pb-btn--ghost" onClick={() => window.location.reload()}>
+                <button
+                  className="pb-btn pb-btn--ghost"
+                  onClick={() => window.location.reload()}
+                >
                   Sesi Baru
                 </button>
               </div>
