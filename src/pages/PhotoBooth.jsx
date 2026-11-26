@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import "./css/photobooth-style.css";
-import "./css/photobooth-flow.css";
-import "./css/photobooth-custom.css";
+import "./css/photobooth.css";
+
+import { frameStorage } from "./js/frameStorage"; // BARU: penyimpanan bingkai unggahan
 
 /* ================= KONFIGURASI ================= */
 
@@ -29,12 +29,26 @@ const DESIGNS = {
   pastel: { name: "Pastel" },
 };
 
+// filter kamera (dipakai di pratinjau CSS dan dibakar ke foto lewat ctx.filter)
+const FILTERS = {
+  none: { name: "Normal", css: "none" },
+  bw: { name: "Hitam Putih", css: "grayscale(1) contrast(1.1)" },
+  sepia: { name: "Sepia", css: "sepia(0.85) contrast(1.05)" },
+  warm: { name: "Hangat", css: "sepia(0.25) saturate(1.3) hue-rotate(-10deg) brightness(1.05)" },
+  cool: { name: "Dingin", css: "saturate(1.1) hue-rotate(15deg) brightness(1.03)" },
+  vivid: { name: "Cerah", css: "saturate(1.6) contrast(1.1)" },
+  fade: { name: "Pudar", css: "contrast(0.85) brightness(1.1) saturate(0.8)" },
+  vintage: { name: "Vintage", css: "sepia(0.4) contrast(1.1) brightness(0.95) saturate(1.2)" },
+};
+
 const MAX_CUSTOM_SLOTS = 8;
 const MAX_CUSTOM_SIDE = 2400;
+const MAX_ZOOM = 4;
 
 const slotCount = (l) => LAYOUTS[l].cols * LAYOUTS[l].rows;
 const pad2 = (n) => String(n).padStart(2, "0");
 const fmt = (s) => `${Math.floor(s / 60)}:${pad2(s % 60)}`;
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 
 const findCustom = (design, customs) =>
   design.startsWith("custom:") ? customs.find((c) => "custom:" + c.id === design) : null;
@@ -42,6 +56,33 @@ const countFor = (design, layout, customs) => {
   const c = findCustom(design, customs);
   return c ? c.slots.length : slotCount(layout);
 };
+// rasio lebar/tinggi kotak foto ke-i
+const aspectFor = (design, layout, customs, i) => {
+  const c = findCustom(design, customs);
+  if (c) {
+    const s = c.slots[i] || c.slots[0];
+    return s.w / s.h;
+  }
+  return LAYOUTS[layout].w / LAYOUTS[layout].h;
+};
+
+const newId = () =>
+  window.crypto?.randomUUID?.() ?? "id-" + Date.now() + "-" + Math.random().toString(16).slice(2);
+
+/* ================= PENYESUAIAN POSISI FOTO ================= */
+
+// zoom >= 1, ox/oy = pergeseran sebagai pecahan lebar/tinggi kotak
+const DEF_ADJ = { zoom: 1, ox: 0, oy: 0 };
+
+// ia = rasio foto, sa = rasio kotak. Batasi supaya kotak selalu terisi penuh.
+function clampAdj(adj, ia, sa) {
+  const z = clamp(adj.zoom, 1, MAX_ZOOM);
+  const cw = Math.max(1, ia / sa); // lebar foto "cover" relatif lebar kotak
+  const ch = Math.max(1, sa / ia);
+  const mx = (cw * z - 1) / 2;
+  const my = (ch * z - 1) / 2;
+  return { zoom: z, ox: clamp(adj.ox, -mx, mx), oy: clamp(adj.oy, -my, my) };
+}
 
 /* ================= UTIL CANVAS ================= */
 
@@ -63,12 +104,21 @@ function roundRect(ctx, x, y, w, h, r) {
   ctx.closePath();
 }
 
-// gambar foto "cover" ke dalam kotak
-function drawCover(ctx, img, x, y, w, h) {
-  const s = Math.max(w / img.width, h / img.height);
-  const sw = w / s;
-  const sh = h / s;
-  ctx.drawImage(img, (img.width - sw) / 2, (img.height - sh) / 2, sw, sh, x, y, w, h);
+// gambar foto "cover" ke dalam kotak, dengan zoom & geser (adj)
+function drawCover(ctx, img, x, y, w, h, adj = DEF_ADJ) {
+  const ia = img.width / img.height;
+  const sa = w / h;
+  const { zoom, ox, oy } = clampAdj(adj, ia, sa);
+  const dw = w * Math.max(1, ia / sa) * zoom;
+  const dh = h * Math.max(1, sa / ia) * zoom;
+  const cx = x + w / 2 + ox * w;
+  const cy = y + h / 2 + oy * h;
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(x, y, w, h);
+  ctx.clip();
+  ctx.drawImage(img, cx - dw / 2, cy - dh / 2, dw, dh);
+  ctx.restore();
 }
 
 /* ---------- gaya per desain bawaan ---------- */
@@ -91,7 +141,7 @@ const CAPTION = {
   postcard: ["#3d2f22", "italic 600 42px 'Cormorant Garamond', serif"],
 };
 
-async function renderFrame({ layout, design, images, caption }) {
+async function renderFrame({ layout, design, images, caption, adjusts }) {
   try {
     await Promise.all([
       document.fonts.load("600 48px 'Cormorant Garamond'"),
@@ -209,7 +259,7 @@ async function renderFrame({ layout, design, images, caption }) {
       ctx.clip();
     }
     if (img) {
-      drawCover(ctx, img, x, y, L.w, L.h);
+      drawCover(ctx, img, x, y, L.w, L.h, adjusts?.[i]);
     } else {
       ctx.fillStyle = design === "film" ? "#3a2c1e" : "rgba(138,115,85,0.2)";
       ctx.fillRect(x, y, L.w, L.h);
@@ -341,7 +391,7 @@ function detectSlots(canvas) {
   return rows.flatMap((r) => r.items.sort((a, b) => a.x - b.x));
 }
 
-async function renderCustomFrame({ custom, images }) {
+async function renderCustomFrame({ custom, images, adjusts }) {
   const c = document.createElement("canvas");
   c.width = custom.w;
   c.height = custom.h;
@@ -350,7 +400,7 @@ async function renderCustomFrame({ custom, images }) {
   custom.slots.forEach((s, i) => {
     ctx.fillStyle = "#2a1f14";
     ctx.fillRect(s.x, s.y, s.w, s.h);
-    if (images[i]) drawCover(ctx, images[i], s.x, s.y, s.w, s.h);
+    if (images[i]) drawCover(ctx, images[i], s.x, s.y, s.w, s.h, adjusts?.[i]);
   });
   ctx.drawImage(custom.canvas, 0, 0); // bingkai di atas foto
 
@@ -375,6 +425,19 @@ function downloadTemplate() {
   }, "image/png");
 }
 
+// bingkai tersimpan (blob) → objek siap pakai di state
+async function hydrateFrame(rec) {
+  const url = URL.createObjectURL(rec.blob);
+  const img = await loadImg(url);
+  const canvas = document.createElement("canvas");
+  canvas.width = rec.w;
+  canvas.height = rec.h;
+  canvas.getContext("2d").drawImage(img, 0, 0, rec.w, rec.h);
+  return { id: rec.id, name: rec.name, canvas, url, w: rec.w, h: rec.h, slots: rec.slots };
+}
+
+const canvasToBlob = (canvas) => new Promise((r) => canvas.toBlob(r, "image/png"));
+
 /* ================= KOMPONEN ================= */
 
 export default function PhotoBooth() {
@@ -384,72 +447,151 @@ export default function PhotoBooth() {
   const [layout, setLayout] = useState("strip");
   const [design, setDesign] = useState("film");
   const [caption, setCaption] = useState("");
-  const [customs, setCustoms] = useState([]); // bingkai unggahan
+  const [customs, setCustoms] = useState([]); // bingkai unggahan (tersimpan di storage)
   const [notice, setNotice] = useState("");
 
-  const [shots, setShots] = useState([]); // {id, blob, url}
+  const [shots, setShots] = useState([]); // {id, blob, url, w, h}
   const [slots, setSlots] = useState([]); // array id foto (atau null)
+  const [adjusts, setAdjusts] = useState({}); // { indexSlot: {zoom, ox, oy} }
+  const [sel, setSel] = useState(0); // slot yang sedang disesuaikan
   const [countdown, setCountdown] = useState(0);
   const [flash, setFlash] = useState(false);
   const [camError, setCamError] = useState("");
-  const [result, setResult] = useState(null); // {frameBlob, frameUrl, videoBlob}
+  const [camReady, setCamReady] = useState(false);
+  const [result, setResult] = useState(null); // {frameBlob, frameUrl, videoBlobs}
   const [busy, setBusy] = useState(false);
+
+  // BARU
+  const [timerOn, setTimerOn] = useState(true); // timer sesi (per fase)
+  const [countdownOn, setCountdownOn] = useState(true); // hitung mundur 3-2-1 sebelum jepret
+  const [filter, setFilter] = useState("none");
+  const [mirror, setMirror] = useState(true); // cermin: layar & hasil selalu sama
+  const [cameras, setCameras] = useState([]);
+  const [camId, setCamId] = useState("");
 
   const videoRef = useRef(null);
   const streamRef = useRef(null);
   const recorderRef = useRef(null);
-  const chunksRef = useRef([]);
-  const videoPromiseRef = useRef(null);
+  const segmentsRef = useRef([]); // satu rekaman per kamera yang dipakai
+  const camReqRef = useRef(0);
   const shotId = useRef(0);
-  const customId = useRef(0);
   const fileRef = useRef(null);
+  const previewRef = useRef(null);
+  const gesture = useRef({ pts: new Map(), slot: -1, base: null, rect: null });
 
-  // state terbaru untuk dipakai di timer (hindari stale closure)
+  // state terbaru untuk dipakai di timer / event (hindari stale closure)
   const live = useRef({});
-  live.current = { phase, layout, design, caption, shots, slots, customs };
+  live.current = { phase, layout, design, caption, shots, slots, customs, adjusts, filter, mirror };
 
-  /* ---------- kamera + rekaman (mulai dari awal sesi) ---------- */
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
+  /* ---------- kamera + rekaman ---------- */
+  const refreshCameras = useCallback(async () => {
+    try {
+      const list = await navigator.mediaDevices.enumerateDevices();
+      setCameras(list.filter((d) => d.kind === "videoinput"));
+    } catch {
+      /* abaikan */
+    }
+  }, []);
+
+  const startCamera = useCallback(
+    async (deviceId) => {
+      const req = ++camReqRef.current;
+      setCamReady(false);
+
+      // hentikan rekaman & stream lama
+      if (recorderRef.current?.state === "recording") recorderRef.current.stop();
+      streamRef.current?.getTracks().forEach((t) => t.stop());
+      streamRef.current = null;
+
+      const size = { width: { ideal: 1280 }, height: { ideal: 960 } };
+      let stream;
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { width: { ideal: 1280 }, height: { ideal: 960 }, facingMode: "user" },
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: deviceId
+            ? { deviceId: { exact: deviceId }, ...size }
+            : { ...size, facingMode: "user" },
           audio: false,
         });
-        if (cancelled) {
-          stream.getTracks().forEach((t) => t.stop());
-          return;
-        }
-        streamRef.current = stream;
-        if (videoRef.current) videoRef.current.srcObject = stream;
+      } catch {
+        if (req !== camReqRef.current) return;
+        setCamError("Kamera tidak bisa diakses. Izinkan akses kamera lalu muat ulang halaman.");
+        return;
+      }
+      if (req !== camReqRef.current) {
+        stream.getTracks().forEach((t) => t.stop());
+        return;
+      }
 
+      setCamError("");
+      streamRef.current = stream;
+      if (videoRef.current) videoRef.current.srcObject = stream;
+      setCamId(stream.getVideoTracks()[0]?.getSettings?.().deviceId || deviceId || "");
+
+      // rekam sesi (satu segmen per kamera)
+      try {
         const mime = ["video/webm;codecs=vp9", "video/webm;codecs=vp8", "video/webm"].find(
           (m) => window.MediaRecorder && MediaRecorder.isTypeSupported(m)
         );
         const rec = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
-        chunksRef.current = [];
-        rec.ondataavailable = (e) => e.data.size && chunksRef.current.push(e.data);
-        videoPromiseRef.current = new Promise((res) => {
-          rec.onstop = () => res(new Blob(chunksRef.current, { type: "video/webm" }));
-        });
+        const chunks = [];
+        rec.ondataavailable = (e) => e.data.size && chunks.push(e.data);
+        segmentsRef.current.push(
+          new Promise((res) => {
+            rec.onstop = () => res(new Blob(chunks, { type: "video/webm" }));
+          })
+        );
         rec.start(1000);
         recorderRef.current = rec;
       } catch {
-        setCamError("Kamera tidak bisa diakses. Izinkan akses kamera lalu muat ulang halaman.");
+        /* rekaman tidak didukung → foto tetap jalan */
       }
-    })();
+
+      setCamReady(true);
+      refreshCameras(); // label kamera baru terisi setelah izin diberikan
+    },
+    [refreshCameras]
+  );
+
+  useEffect(() => {
+    startCamera(null);
+    navigator.mediaDevices?.addEventListener?.("devicechange", refreshCameras);
     return () => {
-      cancelled = true;
+      camReqRef.current++; // batalkan permintaan yang masih berjalan
+      navigator.mediaDevices?.removeEventListener?.("devicechange", refreshCameras);
       if (recorderRef.current?.state === "recording") recorderRef.current.stop();
       streamRef.current?.getTracks().forEach((t) => t.stop());
     };
-  }, []);
+  }, [startCamera, refreshCameras]);
 
   // pasang ulang stream saat <video> muncul kembali
   useEffect(() => {
     if (videoRef.current && streamRef.current) videoRef.current.srcObject = streamRef.current;
-  }, [phase]);
+  }, [phase, camReady]);
+
+  const changeCamera = (id) => {
+    if (!id || id === camId) return;
+    setCamId(id);
+    startCamera(id);
+  };
+
+  /* ---------- muat bingkai tersimpan ---------- */
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const rows = await frameStorage.list();
+        const loaded = (await Promise.allSettled(rows.map(hydrateFrame)))
+          .filter((x) => x.status === "fulfilled")
+          .map((x) => x.value);
+        if (alive && loaded.length) setCustoms(loaded);
+      } catch {
+        if (alive) setNotice("Bingkai tersimpan gagal dimuat. Bingkai baru tetap bisa diunggah.");
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   /* ---------- selesai: render bingkai + hentikan rekaman ---------- */
   const finish = useCallback(async () => {
@@ -476,19 +618,20 @@ export default function PhotoBooth() {
     );
 
     const frameBlob = custom
-      ? await renderCustomFrame({ custom, images })
+      ? await renderCustomFrame({ custom, images, adjusts: s.adjusts })
       : await renderFrame({
           layout: s.layout,
           design: s.design,
           images,
           caption: s.caption.trim(),
+          adjusts: s.adjusts,
         });
 
     if (recorderRef.current?.state === "recording") recorderRef.current.stop();
-    const videoBlob = videoPromiseRef.current ? await videoPromiseRef.current : null;
+    const videoBlobs = (await Promise.all(segmentsRef.current)).filter((b) => b.size > 0);
     streamRef.current?.getTracks().forEach((t) => t.stop());
 
-    setResult({ frameBlob, frameUrl: URL.createObjectURL(frameBlob), videoBlob });
+    setResult({ frameBlob, frameUrl: URL.createObjectURL(frameBlob), videoBlobs });
     setBusy(false);
   }, []);
 
@@ -500,6 +643,8 @@ export default function PhotoBooth() {
       setRemaining(PHASES.shoot.seconds);
     } else if (s.phase === "shoot") {
       setSlots(Array(countFor(s.design, s.layout, s.customs)).fill(null));
+      setAdjusts({});
+      setSel(0);
       setPhase("pick");
       setRemaining(PHASES.pick.seconds);
     } else if (s.phase === "pick") {
@@ -507,9 +652,9 @@ export default function PhotoBooth() {
     }
   }, [finish]);
 
-  /* ---------- timer ---------- */
+  /* ---------- timer (bisa dimatikan) ---------- */
   useEffect(() => {
-    if (phase === "done") return;
+    if (phase === "done" || !timerOn) return;
     const t = setInterval(() => {
       setRemaining((r) => {
         if (r <= 1) {
@@ -520,9 +665,9 @@ export default function PhotoBooth() {
       });
     }, 1000);
     return () => clearInterval(t);
-  }, [phase, goNext]);
+  }, [phase, goNext, timerOn]);
 
-  /* ---------- unggah bingkai ---------- */
+  /* ---------- unggah bingkai (disimpan ke storage) ---------- */
   const onUpload = async (e) => {
     const file = e.target.files?.[0];
     e.target.value = "";
@@ -542,23 +687,36 @@ export default function PhotoBooth() {
         return;
       }
       const slotsFound = prep.slots.slice(0, MAX_CUSTOM_SLOTS);
+      const blob = await canvasToBlob(prep.canvas);
+      const frame = {
+        id: newId(),
+        name: file.name.replace(/\.[^.]+$/, "").slice(0, 12) || "Bingkaiku",
+        canvas: prep.canvas,
+        url: URL.createObjectURL(blob),
+        w: prep.w,
+        h: prep.h,
+        slots: slotsFound,
+      };
+      setCustoms((prev) => [...prev, frame]);
+      setDesign("custom:" + frame.id);
+
+      let msg = "";
       if (prep.slots.length > MAX_CUSTOM_SLOTS) {
-        setNotice(`Terdeteksi ${prep.slots.length} area, dipakai ${MAX_CUSTOM_SLOTS} yang pertama.`);
+        msg = `Terdeteksi ${prep.slots.length} area, dipakai ${MAX_CUSTOM_SLOTS} yang pertama. `;
       }
-      const id = ++customId.current;
-      setCustoms((prev) => [
-        ...prev,
-        {
-          id,
-          name: file.name.replace(/\.[^.]+$/, "").slice(0, 12) || "Bingkaiku",
-          canvas: prep.canvas,
-          url: prep.canvas.toDataURL("image/png"),
-          w: prep.w,
-          h: prep.h,
-          slots: slotsFound,
-        },
-      ]);
-      setDesign("custom:" + id);
+      try {
+        await frameStorage.save({
+          id: frame.id,
+          name: frame.name,
+          w: frame.w,
+          h: frame.h,
+          slots: frame.slots,
+          blob,
+        });
+      } catch {
+        msg += "Bingkai bisa dipakai sekarang, tapi gagal disimpan sehingga akan hilang saat aplikasi ditutup.";
+      }
+      if (msg) setNotice(msg.trim());
     } catch {
       setNotice("Gambar tidak bisa dibaca. Coba simpan ulang sebagai PNG.");
     } finally {
@@ -566,20 +724,39 @@ export default function PhotoBooth() {
     }
   };
 
-  /* ---------- ambil foto ---------- */
+  const deleteCustom = async (id) => {
+    if (!window.confirm("Hapus bingkai ini dari penyimpanan?")) return;
+    try {
+      await frameStorage.remove(id);
+    } catch {
+      setNotice("Bingkai gagal dihapus dari penyimpanan.");
+      return;
+    }
+    setCustoms((prev) => prev.filter((c) => c.id !== id));
+    setDesign((d) => (d === "custom:" + id ? "film" : d));
+  };
+
+  /* ---------- ambil foto (hasil = persis seperti di layar) ---------- */
   const snap = useCallback(() => {
     const v = videoRef.current;
     if (!v || !v.videoWidth) return;
+    const { filter: fKey, mirror: mir } = live.current;
+    const w = v.videoWidth;
+    const h = v.videoHeight;
     const c = document.createElement("canvas");
-    c.width = v.videoWidth;
-    c.height = v.videoHeight;
+    c.width = w;
+    c.height = h;
     const ctx = c.getContext("2d");
-    ctx.translate(c.width, 0);
-    ctx.scale(-1, 1); // sama dengan pratinjau (cermin)
-    ctx.drawImage(v, 0, 0);
+    if (mir) {
+      ctx.translate(w, 0);
+      ctx.scale(-1, 1);
+    }
+    ctx.filter = FILTERS[fKey]?.css || "none";
+    ctx.drawImage(v, 0, 0, w, h);
+    ctx.filter = "none";
     c.toBlob((blob) => {
       const id = ++shotId.current;
-      setShots((prev) => [...prev, { id, blob, url: URL.createObjectURL(blob) }]);
+      setShots((prev) => [...prev, { id, blob, url: URL.createObjectURL(blob), w, h }]);
     }, "image/png");
     setFlash(true);
     setTimeout(() => setFlash(false), 140);
@@ -587,6 +764,10 @@ export default function PhotoBooth() {
 
   const startCountdown = () => {
     if (countdown) return;
+    if (!countdownOn) {
+      snap();
+      return;
+    }
     let n = 3;
     setCountdown(n);
     const t = setInterval(() => {
@@ -603,18 +784,99 @@ export default function PhotoBooth() {
 
   /* ---------- pilih foto ke slot ---------- */
   const toggleShot = (id) => {
-    setSlots((prev) => {
-      const next = [...prev];
-      const at = next.indexOf(id);
-      if (at >= 0) {
-        next[at] = null;
-        return next;
-      }
-      const free = next.indexOf(null);
-      if (free >= 0) next[free] = id;
-      return next;
+    const next = [...slots];
+    const at = next.indexOf(id);
+    if (at >= 0) {
+      next[at] = null;
+      setSlots(next);
+      setAdjusts((a) => {
+        const c = { ...a };
+        delete c[at];
+        return c;
+      });
+      return;
+    }
+    const free = next.indexOf(null);
+    if (free < 0) return;
+    next[free] = id;
+    setSlots(next);
+    setAdjusts((a) => {
+      const c = { ...a };
+      delete c[free];
+      return c;
     });
+    setSel(free);
   };
+
+  /* ---------- geser / zoom foto di dalam bingkai ---------- */
+  const updateAdjust = useCallback((i, fn) => {
+    const s = live.current;
+    const shot = s.shots.find((x) => x.id === s.slots[i]);
+    if (!shot) return;
+    const ia = shot.w / shot.h;
+    const sa = aspectFor(s.design, s.layout, s.customs, i);
+    setAdjusts((prev) => ({ ...prev, [i]: clampAdj(fn(prev[i] || DEF_ADJ), ia, sa) }));
+  }, []);
+
+  const rebase = (i) => {
+    const g = gesture.current;
+    const pts = [...g.pts.values()];
+    g.slot = i;
+    g.base = {
+      cur: { ...(live.current.adjusts[i] || DEF_ADJ) },
+      p0: pts[0],
+      dist: pts.length > 1 ? Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y) : 0,
+    };
+  };
+
+  const onSlotDown = (e, i) => {
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+    const g = gesture.current;
+    g.rect = e.currentTarget.getBoundingClientRect();
+    g.pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    setSel(i);
+    rebase(i);
+  };
+
+  const onSlotMove = (e) => {
+    const g = gesture.current;
+    if (!g.pts.has(e.pointerId) || !g.base) return;
+    g.pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    const pts = [...g.pts.values()];
+    const { base, rect } = g;
+    if (pts.length >= 2 && base.dist > 0) {
+      const dist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+      updateAdjust(g.slot, () => ({ ...base.cur, zoom: base.cur.zoom * (dist / base.dist) }));
+    } else {
+      const dx = (pts[0].x - base.p0.x) / rect.width;
+      const dy = (pts[0].y - base.p0.y) / rect.height;
+      updateAdjust(g.slot, () => ({ ...base.cur, ox: base.cur.ox + dx, oy: base.cur.oy + dy }));
+    }
+  };
+
+  const onSlotUp = (e) => {
+    const g = gesture.current;
+    g.pts.delete(e.pointerId);
+    if (g.pts.size > 0) rebase(g.slot);
+    else g.base = null;
+  };
+
+  // scroll mouse = zoom (perlu listener non-pasif supaya halaman tidak ikut bergulir)
+  useEffect(() => {
+    if (phase !== "pick") return;
+    const el = previewRef.current;
+    if (!el) return;
+    const onWheel = (e) => {
+      const t = e.target.closest?.("[data-slot]");
+      if (!t) return;
+      e.preventDefault();
+      const i = Number(t.dataset.slot);
+      setSel(i);
+      updateAdjust(i, (c) => ({ ...c, zoom: c.zoom * (e.deltaY < 0 ? 1.08 : 1 / 1.08) }));
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, [phase, updateAdjust]);
 
   /* ---------- unduh ZIP ---------- */
   const downloadZip = async () => {
@@ -628,7 +890,10 @@ export default function PhotoBooth() {
     )}${pad2(d.getMinutes())}`;
     const root = zip.folder(`photobooth-${stamp}`);
 
-    if (result.videoBlob) root.file("video-sesi.webm", result.videoBlob);
+    const vids = result.videoBlobs || [];
+    vids.forEach((b, i) =>
+      root.file(vids.length === 1 ? "video-sesi.webm" : `video-sesi-${i + 1}.webm`, b)
+    );
     const fotoDir = root.folder("foto");
     shots.forEach((s, i) => fotoDir.file(`foto-${pad2(i + 1)}.png`, s.blob));
     root.file("bingkai.png", result.frameBlob);
@@ -649,7 +914,46 @@ export default function PhotoBooth() {
   const L = LAYOUTS[layout];
   const landscape = custom ? custom.w > custom.h : L.cols > 1;
   const shotById = (id) => shots.find((s) => s.id === id);
-  const urgent = remaining <= 10 && phase !== "done";
+  const urgent = timerOn && remaining <= 10 && phase !== "done";
+
+  // isi satu kotak foto di pratinjau (bisa digeser / dizoom saat fase pilih)
+  const slotImage = (sh, i) => {
+    const a = adjusts[i] || DEF_ADJ;
+    return (
+      <>
+        <img
+          src={sh.url}
+          alt=""
+          draggable={false}
+          className="pb-slot-img"
+          style={{ transform: `translate(${a.ox * 100}%, ${a.oy * 100}%) scale(${a.zoom})` }}
+        />
+        <button
+          type="button"
+          className="pb-slot-x"
+          aria-label="Keluarkan foto"
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleShot(sh.id);
+          }}
+        >
+          ×
+        </button>
+      </>
+    );
+  };
+
+  const slotHandlers = (sh, i) =>
+    sh
+      ? {
+          "data-slot": i,
+          onPointerDown: (e) => onSlotDown(e, i),
+          onPointerMove: onSlotMove,
+          onPointerUp: onSlotUp,
+          onPointerCancel: onSlotUp,
+        }
+      : {};
 
   // pratinjau bingkai (dipakai di fase 1 dan 3)
   const renderPreview = (picking) => {
@@ -658,6 +962,7 @@ export default function PhotoBooth() {
     if (custom) {
       return (
         <div
+          ref={previewRef}
           className="pb-custom-preview"
           style={{
             width: custom.w >= custom.h ? "min(560px, 100%)" : "min(240px, 100%)",
@@ -669,16 +974,18 @@ export default function PhotoBooth() {
             return (
               <div
                 key={i}
-                className={`pb-custom-slot${sh ? " is-filled" : ""}`}
+                className={`pb-custom-slot${sh ? " is-filled" : ""}${
+                  sh && sel === i ? " is-selected" : ""
+                }`}
                 style={{
                   left: `${(s.x / custom.w) * 100}%`,
                   top: `${(s.y / custom.h) * 100}%`,
                   width: `${(s.w / custom.w) * 100}%`,
                   height: `${(s.h / custom.h) * 100}%`,
                 }}
-                onClick={() => sh && toggleShot(sh.id)}
+                {...slotHandlers(sh, i)}
               >
-                {sh ? <img src={sh.url} alt="" /> : <span className="pb-slot-num">{i + 1}</span>}
+                {sh ? slotImage(sh, i) : <span className="pb-slot-num">{i + 1}</span>}
               </div>
             );
           })}
@@ -689,6 +996,7 @@ export default function PhotoBooth() {
 
     return (
       <div
+        ref={previewRef}
         className={`pb-strip-preview ${landscape ? "is-landscape" : "is-portrait"}`}
         data-frame={design}
       >
@@ -696,11 +1004,11 @@ export default function PhotoBooth() {
           const sh = slotShot(i);
           return (
             <div
-              className={`pb-slot${sh ? " is-filled" : ""}`}
+              className={`pb-slot${sh ? " is-filled" : ""}${sh && sel === i ? " is-selected" : ""}`}
               key={i}
-              onClick={() => sh && toggleShot(sh.id)}
+              {...slotHandlers(sh, i)}
             >
-              {sh ? <img src={sh.url} alt="" /> : <span className="pb-slot-num">{i + 1}</span>}
+              {sh ? slotImage(sh, i) : <span className="pb-slot-num">{i + 1}</span>}
             </div>
           );
         })}
@@ -709,6 +1017,9 @@ export default function PhotoBooth() {
     );
   };
 
+  const selShot = phase === "pick" && slots[sel] != null ? shotById(slots[sel]) : null;
+  const selAdj = adjusts[sel] || DEF_ADJ;
+
   return (
     <div className="pb-page">
       <header className="pb-header">
@@ -716,9 +1027,20 @@ export default function PhotoBooth() {
         {phase !== "done" ? (
           <>
             <p className="pb-subtitle">{PHASES[phase].label}</p>
-            <div className={`pb-timer${urgent ? " is-urgent" : ""}`} role="timer">
-              {fmt(remaining)}
+            <div
+              className={`pb-timer${urgent ? " is-urgent" : ""}${timerOn ? "" : " is-off"}`}
+              role="timer"
+            >
+              {timerOn ? fmt(remaining) : "∞"}
             </div>
+            <button
+              type="button"
+              className={`pb-toggle${timerOn ? " is-on" : ""}`}
+              onClick={() => setTimerOn((v) => !v)}
+              aria-pressed={timerOn}
+            >
+              Timer: {timerOn ? "Nyala" : "Mati"}
+            </button>
             <div className="pb-steps" aria-hidden="true">
               {Object.keys(PHASES).map((k) => (
                 <span key={k} className={`pb-step${k === phase ? " is-active" : ""}`} />
@@ -800,6 +1122,18 @@ export default function PhotoBooth() {
                     className={`pb-frame-btn${design === "custom:" + c.id ? " is-active" : ""}`}
                     onClick={() => setDesign("custom:" + c.id)}
                   >
+                    <span
+                      className="pb-custom-del"
+                      role="button"
+                      aria-label="Hapus bingkai"
+                      title="Hapus bingkai"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        deleteCustom(c.id);
+                      }}
+                    >
+                      ×
+                    </span>
                     <img className="pb-custom-thumb" src={c.url} alt="" />
                     <span className="pb-frame-name">{c.name}</span>
                     <span className="pb-frame-kind">{c.slots.length} foto</span>
@@ -821,7 +1155,7 @@ export default function PhotoBooth() {
               />
               <p className="pb-help">
                 Area <b>transparan</b> di PNG = tempat foto (atau warnai hijau <b>#00FF00</b> kalau
-                pakai JPG).{" "}
+                pakai JPG). Bingkai yang diunggah tersimpan otomatis.{" "}
                 <button type="button" className="pb-link" onClick={downloadTemplate}>
                   Unduh contoh template
                 </button>
@@ -851,16 +1185,76 @@ export default function PhotoBooth() {
         <div className="pb-layout">
           <div className="pb-camera-wrap">
             <div className="pb-camera-frame">
-              <video ref={videoRef} className="pb-video" autoPlay playsInline muted />
-              {!streamRef.current && !camError && (
-                <div className="pb-overlay-text">Menyalakan kamera…</div>
-              )}
+              <video
+                ref={videoRef}
+                className="pb-video"
+                autoPlay
+                playsInline
+                muted
+                style={{
+                  transform: mirror ? "scaleX(-1)" : "none",
+                  filter: FILTERS[filter].css,
+                }}
+              />
+              {!camReady && !camError && <div className="pb-overlay-text">Menyalakan kamera…</div>}
               {countdown > 0 && (
                 <div className="pb-countdown" key={countdown}>
                   {countdown}
                 </div>
               )}
               <div className={`pb-flash${flash ? " is-on" : ""}`} />
+            </div>
+
+            <div className="pb-tools">
+              <label className="pb-field">
+                <span className="pb-label">Kamera</span>
+                <select
+                  className="pb-select"
+                  value={camId}
+                  onChange={(e) => changeCamera(e.target.value)}
+                  disabled={cameras.length === 0}
+                >
+                  {cameras.length === 0 && <option value="">Mencari kamera…</option>}
+                  {cameras.map((c, i) => (
+                    <option key={c.deviceId || i} value={c.deviceId}>
+                      {c.label || `Kamera ${i + 1}`}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <div className="pb-checks">
+                <label className="pb-check">
+                  <input
+                    type="checkbox"
+                    checked={countdownOn}
+                    onChange={(e) => setCountdownOn(e.target.checked)}
+                  />
+                  Hitung mundur 3 detik
+                </label>
+                <label className="pb-check">
+                  <input
+                    type="checkbox"
+                    checked={mirror}
+                    onChange={(e) => setMirror(e.target.checked)}
+                  />
+                  Mode cermin
+                </label>
+              </div>
+
+              <p className="pb-label">Filter</p>
+              <div className="pb-filters">
+                {Object.entries(FILTERS).map(([key, f]) => (
+                  <button
+                    key={key}
+                    type="button"
+                    className={`pb-filter-chip${filter === key ? " is-active" : ""}`}
+                    onClick={() => setFilter(key)}
+                  >
+                    {f.name}
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div className="pb-controls">
@@ -890,7 +1284,7 @@ export default function PhotoBooth() {
         <div className="pb-layout">
           <div className="pb-camera-wrap">
             <p className="pb-label">
-              Ketuk foto untuk memasukkan / mengeluarkan dari bingkai ({slots.filter((x) => x != null).length}/{n})
+              Ketuk foto untuk memasukkan ke bingkai ({slots.filter((x) => x != null).length}/{n})
             </p>
             <div className="pb-thumb-grid is-pick">
               {shots.map((s) => {
@@ -908,6 +1302,37 @@ export default function PhotoBooth() {
               })}
               {shots.length === 0 && <span className="pb-hint">Tidak ada foto yang diambil</span>}
             </div>
+
+            <div className="pb-adjust">
+              <p className="pb-hint pb-hint--static">
+                Usap foto di bingkai untuk menggeser posisinya. Cubit dua jari (atau scroll mouse)
+                untuk zoom.
+              </p>
+              {selShot && (
+                <div className="pb-adjust-row">
+                  <span className="pb-label">Foto {sel + 1}</span>
+                  <input
+                    type="range"
+                    min="1"
+                    max={MAX_ZOOM}
+                    step="0.01"
+                    value={selAdj.zoom}
+                    onChange={(e) =>
+                      updateAdjust(sel, (c) => ({ ...c, zoom: Number(e.target.value) }))
+                    }
+                    aria-label="Zoom"
+                  />
+                  <button
+                    type="button"
+                    className="pb-btn pb-btn--ghost pb-btn--small"
+                    onClick={() => updateAdjust(sel, () => DEF_ADJ)}
+                  >
+                    Reset
+                  </button>
+                </div>
+              )}
+            </div>
+
             <button className="pb-btn" onClick={goNext}>
               Selesai &amp; Buat Bingkai
             </button>
