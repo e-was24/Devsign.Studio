@@ -1,5 +1,165 @@
 /* ===== Connect: tombol, modal, dock kontrol (tema kertas vintage) ===== */
 
+/* ikon SVG: sejajar dengan teks, tanpa garis tepi dari aturan songs.css */
+.cn-modal .type-option svg,
+.cn-dock svg,
+.cn-btn svg {
+    stroke: none;
+}
+.cn-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.cn-peer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.cn-x {
+    display: flex;
+    align-items: center;
+}
+.cn-dock-sub svg {
+    margin-top: -2px;
+}
+
+.cn-dock-btns {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+/* ---- sembunyikan: panel mengecil & masuk ke amplop di pojok kanan bawah ---- */
+.cn-wrap.hidden .cn-dock {
+    transform: translateX(calc(-50% + 50vw - 50px)) translateY(-18px) scale(0.1) rotate(8deg);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: transform 0.5s cubic-bezier(0.55, 0, 0.25, 1), opacity 0.3s ease 0.2s, visibility 0s 0.5s;
+}
+
+/* amplop kertas kraft */
+.cn-envelope {
+    position: fixed;
+    right: 14px;
+    bottom: 14px;
+    z-index: 40;
+    width: 72px;
+    height: 50px;
+    padding: 0;
+    background: #d8c9a3;
+    border: 1px solid #a3906c;
+    border-radius: 2px;
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2), 0 8px 16px rgba(60, 45, 25, 0.3);
+    cursor: pointer;
+    perspective: 260px;
+    opacity: 0;
+    transform: translateY(24px) scale(0.7);
+    pointer-events: none;
+    /* saat panel keluar lagi: tutup amplop memudar belakangan, setelah tutupnya terbuka */
+    transition: opacity 0.25s ease 0.3s, transform 0.35s ease 0.3s;
+}
+.cn-wrap.hidden .cn-envelope {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+    transition: opacity 0.2s ease 0.25s, transform 0.4s cubic-bezier(0.3, 1.4, 0.5, 1) 0.25s;
+}
+.cn-wrap.hidden .cn-envelope:hover {
+    transform: translate(-1px, -2px);
+}
+
+/* kantong depan berbentuk V */
+.cn-env-front {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(#e8dbb6, #dccb9e);
+    clip-path: polygon(0 0, 50% 58%, 100% 0, 100% 100%, 0 100%);
+}
+
+/* tutup amplop: terbuka (naik ke atas) -> menutup */
+.cn-env-flap {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 62%;
+    background: #cbb98a;
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    transform-origin: top;
+    transform: rotateX(180deg);
+    transition: transform 0.35s ease;
+    z-index: 2;
+}
+.cn-wrap.hidden .cn-env-flap {
+    transform: rotateX(0deg);
+    transition-delay: 0.5s;
+}
+
+/* segel lilin */
+.cn-env-seal {
+    position: absolute;
+    left: 50%;
+    top: 52%;
+    width: 14px;
+    height: 14px;
+    margin: -7px 0 0 -7px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #c0553f, #8f3322);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+    transform: scale(0);
+    transition: transform 0.15s ease;
+    z-index: 3;
+}
+.cn-wrap.hidden .cn-env-seal {
+    transform: scale(1);
+    transition: transform 0.25s cubic-bezier(0.3, 1.6, 0.5, 1) 0.8s;
+}
+
+/* penanda musik sedang diputar */
+.cn-env-eq {
+    position: absolute;
+    right: -8px;
+    top: -9px;
+    width: 22px;
+    height: 22px;
+    box-sizing: border-box;
+    padding-bottom: 5px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 2px;
+    background: #c8a45e;
+    border: 1px solid #7a5c34;
+    border-radius: 50%;
+    z-index: 4;
+}
+.cn-env-eq i {
+    display: block;
+    width: 2px;
+    height: 4px;
+    background: #3a2f22;
+    animation: cn-bar 0.9s ease-in-out infinite;
+}
+.cn-env-eq i:nth-child(2) { animation-delay: 0.2s; }
+.cn-env-eq i:nth-child(3) { animation-delay: 0.4s; }
+@keyframes cn-bar {
+    0%, 100% { height: 3px; }
+    50% { height: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cn-dock,
+    .cn-envelope,
+    .cn-env-flap,
+    .cn-env-seal {
+        transition-duration: 0.01s !important;
+        transition-delay: 0s !important;
+    }
+    .cn-env-eq i { animation: none; }
+}
+
 /* kelompok tombol di header (Hubungkan + aksi utama) */
 .cn-actions {
     display: flex;
@@ -156,7 +316,9 @@
     position: fixed;
     left: 50%;
     bottom: 14px;
-    transform: translateX(-50%) rotate(-0.4deg);
+    transform: translateX(-50%) translateY(0) scale(1) rotate(-0.4deg);
+    transform-origin: 50% 100%;
+    transition: transform 0.5s cubic-bezier(0.55, 0, 0.25, 1), opacity 0.3s ease 0.15s, visibility 0s;
     z-index: 40; /* di bawah modal (50) dan popup player (60) */
     width: min(440px, calc(100vw - 24px));
     padding: 18px 18px 14px;
