@@ -13,7 +13,6 @@ import { PlayerProvider } from "./context/PlayerContext";
 import MiniPlayer from "./components/MiniPlayer";
 
 
-
 import PhotoBooth from "./pages/PhotoBooth";
 import Calender from "./pages/CalendarPage";
 import FolderGallery from "./pages/Foldergallery";
@@ -43,7 +42,6 @@ function App() {
                 <Route path="foldergallery" element={<FolderGallery />} />
                 <Route path="foldergallery/:slug" element={<FolderGallery />} />
 
-                
               </Route>
             </Route>
           </Routes>
