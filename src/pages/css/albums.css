@@ -1,0 +1,244 @@
+/* Gaya tambahan halaman lagu: rak album, sampul + piringan, lirik.
+   Dipakai bersama songs.css (modal, kartu lagu, dan pemutar tetap di sana). */
+
+/* ---------- rak album ---------- */
+.al-shelf {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 34px 22px;
+    max-width: 760px;
+    margin: 0 auto;
+    padding-top: 10px;
+}
+
+.al-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 0;
+    background: none;
+    border: 0;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.al-name {
+    margin-top: 8px;
+    max-width: 100%;
+    font-family: 'Special Elite', monospace;
+    font-size: 14px;
+    color: #3a2f22;
+    text-transform: capitalize;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.al-count {
+    font-size: 13px;
+    color: #7a6642;
+}
+
+/* ---------- sampul album; piringan hitam mengintip dari sisi kanan ---------- */
+.al-sleeve {
+    position: relative;
+    width: 84%;
+    aspect-ratio: 1;
+    transition: transform 0.25s ease;
+}
+
+.al-item:nth-child(even) .al-sleeve { transform: rotate(1.2deg); }
+.al-item:nth-child(3n) .al-sleeve { transform: rotate(-1deg); }
+.al-item:hover .al-sleeve { transform: rotate(0) translateY(-3px); }
+
+.al-cover {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    background: #d8c9a3 center / cover no-repeat;
+    border: 5px solid #fffdf6;
+    box-shadow: 0 2px 2px rgba(0,0,0,0.15), 0 8px 16px rgba(60,45,25,0.25);
+    filter: sepia(0.18);
+    color: #7a6642;
+}
+
+.al-cover b {
+    font: 400 clamp(32px, 9vw, 58px) 'Special Elite', monospace;
+}
+
+/* selotip di atas sampul */
+.al-cover::before {
+    content: "";
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    width: 54px;
+    height: 20px;
+    margin-left: -27px;
+    background: rgba(222, 208, 170, 0.8);
+    border: 1px solid rgba(150,130,90,0.3);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+    transform: rotate(-4deg);
+}
+
+.al-vinyl {
+    position: absolute;
+    z-index: 1;
+    top: 4%;
+    right: -17%;
+    width: 92%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle, #1f1810 0 3%, #c8a45e 4% 16%, #1f1810 17% 19%, #2d241a 20% 38%, #1f1810 39% 41%, #2d241a 42% 70%, #1f1810 71%);
+    box-shadow: 2px 3px 8px rgba(0,0,0,0.35);
+    transition: transform 0.35s ease;
+}
+
+.al-item:hover .al-vinyl,
+.al-hero:hover .al-vinyl { transform: translateX(9%) rotate(40deg); }
+
+/* ---------- isi album ---------- */
+.al-hero {
+    display: flex;
+    align-items: flex-end;
+    gap: 22px;
+    max-width: 640px;
+    margin: 6px auto 34px;
+}
+
+.al-hero-cover { flex: 0 0 min(230px, 48%); }
+
+.al-hero-info { min-width: 0; padding-bottom: 6px; }
+
+.al-hero-info h2 {
+    margin-bottom: 4px;
+    font-family: 'Special Elite', monospace;
+    font-size: 24px;
+    font-weight: 400;
+    color: #4a3826;
+    text-transform: capitalize;
+    overflow-wrap: anywhere;
+}
+
+.al-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+
+.al-link {
+    padding: 6px 12px;
+    background: transparent;
+    border: 1px dashed #a3906c;
+    border-radius: 3px;
+    color: #7a6642;
+    font-family: 'Special Elite', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.al-link:hover { color: #3a2f22; border-color: #7a5c34; background: rgba(255,255,255,0.35); }
+.al-link.danger:hover { color: #a13d2b; border-color: #a13d2b; }
+
+ol.album { list-style: none; padding: 0; }
+
+.al-num {
+    flex: 0 0 auto;
+    width: 18px;
+    font-family: 'Special Elite', monospace;
+    font-size: 13px;
+    color: #a3906c;
+    text-align: right;
+}
+
+.al-lyr {
+    flex: 0 0 auto;
+    padding: 4px 8px;
+    background: transparent;
+    border: 1px solid #b0a184;
+    border-radius: 3px;
+    color: #7a6642;
+    font-family: 'Special Elite', monospace;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.al-lyr.has { background: #c8a45e; border-color: #7a5c34; color: #3a2f22; }
+.al-lyr:hover { border-color: #7a5c34; color: #3a2f22; }
+
+/* ---------- form & lirik ---------- */
+.modal.wide { width: min(460px, 92vw); max-height: 92vh; overflow-y: auto; }
+
+.modal select,
+.modal textarea {
+    background: #fffdf6;
+    border: 1px solid #b0a184;
+    color: #3a2f22;
+    padding: 8px 10px;
+    border-radius: 2px;
+    font-size: 14px;
+    font-family: 'Kalam', cursive;
+}
+
+.modal select:focus,
+.modal textarea:focus {
+    outline: none;
+    border-color: #c8a45e;
+    box-shadow: 0 0 0 2px rgba(200,164,94,0.25);
+}
+
+.al-text { resize: vertical; line-height: 1.6; }
+
+.al-cover-pick { display: flex; align-items: center; gap: 14px; }
+
+.al-prev {
+    flex: 0 0 96px;
+    height: 96px;
+    display: grid;
+    place-items: center;
+    background: #d8c9a3 center / cover no-repeat;
+    border: 4px solid #fffdf6;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.25);
+    color: #7a6642;
+    font: 400 28px 'Special Elite', monospace;
+}
+
+.al-hint { margin-top: 6px; font-size: 12px; color: #7a6642; }
+
+.al-lyr-artist {
+    margin: -10px 0 14px;
+    text-align: center;
+    color: #7a6642;
+    font-size: 14px;
+    text-transform: capitalize;
+}
+
+/* lirik di atas kertas bergaris */
+.al-lyrics {
+    max-height: 52vh;
+    overflow-y: auto;
+    padding: 4px 8px 0;
+    background: repeating-linear-gradient(to bottom, transparent 0 27px, rgba(163,144,108,0.35) 27px 28px);
+    background-attachment: local;
+    border-bottom: 1px solid rgba(163,144,108,0.35);
+    font: 16px/28px 'Kalam', cursive;
+    color: #3a2f22;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+/* ---------- layar sempit ---------- */
+@media (max-width: 520px) {
+    .al-hero { flex-direction: column; align-items: flex-start; }
+    .al-hero-cover { flex-basis: auto; width: 62%; }
+    .al-num { display: none; }
+    .song-card { gap: 10px; padding-inline: 12px; }
+    .al-lyr { padding: 4px 6px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .al-sleeve, .al-vinyl { transition: none; }
+}
