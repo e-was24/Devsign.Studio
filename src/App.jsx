@@ -10,8 +10,9 @@ import AccessGate from "./components/AccessGate";
 import ExpiredPage from "./pages/Expired";
 import Musik from "./pages/Songs";
 import { PlayerProvider } from "./context/PlayerContext";
+import { ConnectProvider } from "./context/ConnectContext";
+import { ConnectDock } from "./context/ConnectPanel";
 import MiniPlayer from "./components/MiniPlayer";
-
 
 import PhotoBooth from "./pages/PhotoBooth";
 import Calender from "./pages/CalendarPage";
@@ -24,29 +25,31 @@ function App() {
     <Router>
       <ScrollToTop />
       <PlayerProvider>
-        <AccessGate>
-          <Routes>
-            <Route>
-              <Route path="/" element={<Home />}>
-                <Route index element={<Visitior />} />
-                <Route path="visitor" element={<Visitior />} />
-                <Route path="galery/:slug" element={<Galery />} />
-                <Route path="elan" element={<ElanPage />} />
-                <Route path="riska" element={<RiskaPage />} />
-                <Route path="shop" element={<Shop />} />
-                <Route path="journey" element={<Journey />} />
-                <Route path="token-expired" element={<ExpiredPage />} />
-                <Route path="musik" element={<Musik />} />
-                <Route path="calender" element={<Calender />} />
-                <Route path="photo-booth" element={<PhotoBooth />}/>
-                <Route path="foldergallery" element={<FolderGallery />} />
-                <Route path="foldergallery/:slug" element={<FolderGallery />} />
-
+        <ConnectProvider>
+          <AccessGate>
+            <Routes>
+              <Route>
+                <Route path="/" element={<Home />}>
+                  <Route index element={<Visitior />} />
+                  <Route path="visitor" element={<Visitior />} />
+                  <Route path="galery/:slug" element={<Galery />} />
+                  <Route path="elan" element={<ElanPage />} />
+                  <Route path="riska" element={<RiskaPage />} />
+                  <Route path="shop" element={<Shop />} />
+                  <Route path="journey" element={<Journey />} />
+                  <Route path="token-expired" element={<ExpiredPage />} />
+                  <Route path="musik" element={<Musik />} />
+                  <Route path="calender" element={<Calender />} />
+                  <Route path="photo-booth" element={<PhotoBooth />} />
+                  <Route path="foldergallery" element={<FolderGallery />} />
+                  <Route path="foldergallery/:slug" element={<FolderGallery />} />
+                </Route>
               </Route>
-            </Route>
-          </Routes>
-        </AccessGate>
-        <MiniPlayer />
+            </Routes>
+          </AccessGate>
+          <MiniPlayer />
+          <ConnectDock />
+        </ConnectProvider>
       </PlayerProvider>
     </Router>
   );
