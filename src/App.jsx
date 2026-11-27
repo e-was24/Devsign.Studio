@@ -13,7 +13,9 @@ import { PlayerProvider } from "./context/PlayerContext";
 import MiniPlayer from "./components/MiniPlayer";
 
 
+
 import PhotoBooth from "./pages/PhotoBooth";
+import Calender from "./pages/CalendarPage";
 import FolderGallery from "./pages/Foldergallery";
 import ScrollToTop from "./scripts/ScrollToTop";
 import "./App.css";
@@ -36,11 +38,12 @@ function App() {
                 <Route path="journey" element={<Journey />} />
                 <Route path="token-expired" element={<ExpiredPage />} />
                 <Route path="musik" element={<Musik />} />
+                <Route path="calender" element={<Calender />} />
                 <Route path="photo-booth" element={<PhotoBooth />}/>
                 <Route path="foldergallery" element={<FolderGallery />} />
                 <Route path="foldergallery/:slug" element={<FolderGallery />} />
 
-               
+                
               </Route>
             </Route>
           </Routes>

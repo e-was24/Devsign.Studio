@@ -10,6 +10,7 @@ import { isGuestSession } from "../components/AccessGate";
 import GuestInviteButton from "../components/GuestInviteButton";
 import OpenMusikArea from "../components/OpenMusikArea";
 import PhotoBoothArea from "../components/OpenPhotoBooth";
+import OpenCalenderArea from "../components/OpenCalendar";
 
 import "./css/journey-style.css";
 
@@ -216,6 +217,7 @@ export default function Journey() {
                 />
                 <OpenMusikArea onOpen={() => setSidebarOpen(false)} />
                 <PhotoBoothArea onOpen={() => setSidebarOpen(false)} />
+                <OpenCalenderArea onOpen={() => setSidebarOpen(false)} />
               </div>
             </div>
           </>
