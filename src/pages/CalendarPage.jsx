@@ -263,7 +263,7 @@ function Gallery({ dateKey, info, journey, onClose, onChange }) {
 
 /* ---------- halaman utama ---------- */
 // onBack: fungsi navigasi (mis. () => navigate("/")); jika tidak diisi, tombol jadi link ke homeHref
-export default function CalendarPage({ onBack, homeHref = "/" }) {
+export default function CalendarPage({ onBack, homeHref = "/journey" }) {
   const [days, setDays] = useState({});
   const [jmap, setJmap] = useState({});        // { "2026-11-27": [item Journey, ...] }
   const [openKey, setOpenKey] = useState(null);
